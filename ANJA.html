@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Herys Ultimate V7.0 - Dual Split</title>
+    <style>
+        body { background-color: #050507; color: white; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 15px; margin: 0; touch-action: manipulation; }
+        
+        .brand-name { font-size: 38px; font-weight: 900; letter-spacing: 10px; color: #f97316; text-transform: uppercase; margin: 10px 0 20px 0; text-shadow: 0 0 20px rgba(249, 115, 22, 0.5); }
+
+        .split-container { display: flex; gap: 10px; width: 100%; max-width: 600px; }
+        .engine-block { flex: 1; background: #0c0c0f; border-radius: 20px; padding: 15px; border: 1px solid #1a1a20; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
+        
+        .tag { font-size: 9px; color: #f97316; font-weight: bold; text-align: center; margin-bottom: 15px; letter-spacing: 2px; border-bottom: 1px solid #222; padding-bottom: 5px; }
+
+        label { font-size: 8px; color: #555; font-weight: bold; display: block; margin-bottom: 5px; text-transform: uppercase; }
+        input { width: 100%; background: #000; border: 1px solid #222; border-radius: 10px; padding: 12px; color: #f97316; font-family: monospace; font-size: 15px; outline: none; box-sizing: border-box; margin-bottom: 15px; text-align: center; }
+
+        .res-stack { margin-top: 15px; display: none; flex-direction: column; gap: 10px; }
+        .card { background: #050507; border-radius: 15px; padding: 12px; text-align: center; border: 1px solid #1a1a20; }
+        .time-val { font-size: 15px; font-weight: bold; color: #fff; margin: 5px 0; font-family: monospace; }
+        
+        .glow-purple { border-color: #9b59b6; box-shadow: 0 0 15px rgba(155, 89, 182, 0.2); }
+        .glow-pink { border-color: #e91e63; box-shadow: 0 0 15px rgba(233, 30, 99, 0.2); }
+
+        .btn-predict { background: linear-gradient(135deg, #f97316, #ea580c); color: white; border: none; padding: 20px; border-radius: 15px; font-weight: bold; width: 100%; max-width: 400px; cursor: pointer; margin-top: 25px; text-transform: uppercase; letter-spacing: 1px; }
+        
+        #safe-A, #safe-B { font-size: 8px; text-align: center; font-weight: bold; margin-bottom: 10px; height: 12px; }
+        footer { margin-top: 30px; font-size: 8px; color: #333; letter-spacing: 2px; }
+    </style>
+</head>
+<body>
+
+    <div class="brand-name">HERYS</div>
+
+    <div class="split-container">
+        <div class="engine-block">
+            <div class="tag">ENGINE A</div>
+            <label>HEURE (A)</label>
+            <input type="text" id="timeA" placeholder="08:30" inputmode="numeric">
+            <label>RÉSULTAT (A)</label>
+            <input type="text" id="multiA" placeholder="1.50" inputmode="decimal">
+            <div id="safe-A"></div>
+            
+            <div id="resStackA" class="res-stack">
+                <div class="card glow-purple">
+                    <div id="resA1" class="time-val">--:--:--</div>
+                    <div style="font-size: 8px; color: #9b59b6;">VIOLET 💜</div>
+                </div>
+                <div class="card" id="cardA2">
+                    <div id="resA2" class="time-val">--:--:--</div>
+                    <div id="statA2" style="font-size: 8px;">WAIT</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="engine-block">
+            <div class="tag">ENGINE B</div>
+            <label>HEURE (B)</label>
+            <input type="text" id="timeB" placeholder="08:32" inputmode="numeric">
+            <label>RÉSULTAT (B)</label>
+            <input type="text" id="multiB" placeholder="12.00" inputmode="decimal">
+            <div id="safe-B"></div>
+
+            <div id="resStackB" class="res-stack">
+                <div class="card glow-purple">
+                    <div id="resB1" class="time-val">--:--:--</div>
+                    <div style="font-size: 8px; color: #9b59b6;">VIOLET 💜</div>
+                </div>
+                <div class="card" id="cardB2">
+                    <div id="resB2" class="time-val">--:--:--</div>
+                    <div id="statB2" style="font-size: 8px;">WAIT</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button id="mainBtn" class="btn-predict" onclick="runDualAnalysis()">LANCER L'ASSEMBLAGE</button>
+
+    <footer>© 2026 HERYS TECHNOLOGY</footer>
+
+    <script>
+        function runDualAnalysis() {
+            calculate('A', 'timeA', 'multiA', 'resStackA', 'resA1', 'resA2', 'cardA2', 'statA2', 'safe-A');
+            calculate('B', 'timeB', 'multiB', 'resStackB', 'resB1', 'resB2', 'cardB2', 'statB2', 'safe-B');
+        }
+
+        function calculate(type, tId, mId, stackId, r1, r2, c2, s2, safeId) {
+            const time = document.getElementById(tId).value;
+            const x = parseFloat(document.getElementById(mId).value);
+            if(!time.includes(':') || isNaN(x)) return;
+
+            document.getElementById(stackId).style.display = 'flex';
+            let [h, m] = time.split(':').map(Number);
+            
+            let min1, sec1, min2, sec2;
+            const safeMsg = document.getElementById(safeId);
+
+            if (x < 1.3) {
+                min1 = 2; sec1 = 45; min2 = 5; sec2 = 12;
+                safeMsg.innerText = "🛡️ STABILISATION"; safeMsg.style.color = "#f97316";
+            } else if (x >= 10) {
+                min1 = 3; sec1 = 20; min2 = 7; sec2 = 05;
+                safeMsg.innerText = "⚠️ PRUDENCE"; safeMsg.style.color = "#e91e63";
+            } else {
+                min1 = 1; sec1 = 55; min2 = 3; sec2 = 30;
+                safeMsg.innerText = "✅ FLUIDE"; safeMsg.style.color = "#22c55e";
+            }
+
+            function calc(mAdd, sBase) {
+                let s = Math.floor(Math.random() * 15) + sBase;
+                let nm = m + mAdd; let nh = h;
+                if(s >= 60) { s -= 60; nm += 1; }
+                if(nm >= 60) { nm -= 60; nh += 1; }
+                const pad = (n) => n < 10 ? '0'+n : n;
+                return pad(nh)+":"+pad(nm)+":"+pad(s);
+            }
+
+            document.getElementById(r1).innerText = calc(min1, sec1);
+            document.getElementById(r2).innerText = calc(min2, sec2);
+
+            const card2 = document.getElementById(c2);
+            const stat2 = document.getElementById(s2);
+            if(x < 2) {
+                card2.className = "card glow-pink";
+                stat2.innerText = "ROSE 🌸"; stat2.style.color = "#e91e63";
+            } else {
+                card2.className = "card glow-purple";
+                stat2.innerText = "VIOLET 💜"; stat2.style.color = "#9b59b6";
+            }
+        }
+    </script>
+</body>
+</html>
