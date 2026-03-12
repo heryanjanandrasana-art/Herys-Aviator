@@ -3,139 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Herys Ultimate V7.0 - Dual Split</title>
+    <title>Herys Ultimate V7.0 - Ultra Green</title>
     
     <style>
-        /* Protection : Cache le site tant que l'accès n'est pas validé */
         body { display: none; background-color: #050507; color: white; font-family: 'Segoe UI', sans-serif; flex-direction: column; align-items: center; padding: 15px; margin: 0; }
         
-        /* Styles Graphiques HERYS */
+        /* Styles Graphiques */
         .brand-name { font-size: 38px; font-weight: 900; letter-spacing: 10px; color: #f97316; text-transform: uppercase; margin: 10px 0 20px 0; text-shadow: 0 0 20px rgba(249, 115, 22, 0.5); }
         .split-container { display: flex; gap: 10px; width: 100%; max-width: 600px; }
-        .engine-block { flex: 1; background: #0c0c0f; border-radius: 20px; padding: 15px; border: 1px solid #1a1a20; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
+        .engine-block { flex: 1; background: #0c0c0f; border-radius: 20px; padding: 15px; border: 1px solid #1a1a20; box-shadow: 0 10px 30px rgba(0,0,0,0.6); position: relative; overflow: hidden; }
+        
         .tag { font-size: 9px; color: #f97316; font-weight: bold; text-align: center; margin-bottom: 15px; letter-spacing: 2px; border-bottom: 1px solid #222; padding-bottom: 5px; }
         label { font-size: 9px; color: #444; font-weight: bold; display: block; margin-bottom: 5px; text-transform: uppercase; }
-        input { width: 100%; background: #000; border: 1px solid #222; border-radius: 10px; padding: 12px; color: #f97316; font-family: monospace; font-size: 15px; outline: none; box-sizing: border-box; margin-bottom: 15px; text-align: center; }
+        input { width: 100%; background: #000; border: 1px solid #222; border-radius: 10px; padding: 12px; color: #f97316; font-family: monospace; font-size: 15px; outline: none; box-sizing: border-box; margin-bottom: 15px; text-align: center; transition: 0.3s; }
+        input:focus { border-color: #f97316; box-shadow: 0 0 10px rgba(249, 115, 22, 0.3); }
+
+        /* Barre de Tendance Dynamique */
+        .trend-container { width: 100%; height: 4px; background: #111; border-radius: 2px; margin-bottom: 15px; overflow: hidden; }
+        .trend-fill { height: 100%; width: 0%; transition: width 0.8s ease, background 0.8s ease; }
+
         .res-stack { margin-top: 15px; display: none; flex-direction: column; gap: 10px; }
-        .card { background: #050507; border-radius: 15px; padding: 12px; text-align: center; border: 1px solid #1a1a20; }
+        .card { background: #050507; border-radius: 15px; padding: 12px; text-align: center; border: 1px solid #1a1a20; transition: 0.5s; }
         .time-val { font-size: 15px; font-weight: bold; color: #fff; margin: 5px 0; font-family: monospace; }
+        
         .glow-purple { border-color: #9b59b6; box-shadow: 0 0 15px rgba(155, 89, 182, 0.2); }
         .glow-pink { border-color: #e91e63; box-shadow: 0 0 15px rgba(233, 30, 99, 0.2); }
-        .btn-predict { background: linear-gradient(135deg, #f97316, #ea580c); color: white; border: none; padding: 20px; border-radius: 15px; font-weight: bold; width: 100%; max-width: 400px; cursor: pointer; margin-top: 25px; text-transform: uppercase; }
-        #safe-A, #safe-B { font-size: 8px; text-align: center; font-weight: bold; margin-bottom: 10px; }
+        .glow-green { border-color: #22c55e !important; box-shadow: 0 0 20px rgba(34, 197, 94, 0.4) !important; }
+
+        .btn-predict { background: linear-gradient(135deg, #f97316, #ea580c); color: white; border: none; padding: 20px; border-radius: 15px; font-weight: bold; width: 100%; max-width: 400px; cursor: pointer; margin-top: 25px; text-transform: uppercase; transition: 0.3s; }
+        #safe-A, #safe-B { font-size: 8px; text-align: center; font-weight: bold; margin-bottom: 5px; }
     </style>
 
     <script>
-        // --- TA LISTE D'UTILISATEURS AVEC TON CODE ---
-        const UTILISATEURS_AUTORISES = {
-            "hery": "Nandrasana",   // Ton code d'accès personnalisé
-            "admin": "Nandrasana"   // Optionnel : un autre pseudo avec le même code
-        };
-
+        // --- SYSTÈME D'ACCÈS (Inchangé) ---
+        const UTILISATEURS_AUTORISES = { "hery": "Nandrasana", "admin": "Nandrasana" };
         function verifierAcces() {
-            const sessionActive = sessionStorage.getItem("access_granted");
-
-            if (sessionActive !== "true") {
+            if (sessionStorage.getItem("access_granted") !== "true") {
                 const nom = prompt("NOM D'UTILISATEUR HERYS :");
                 const mdp = prompt("MOT DE PASSE :");
-
                 if (UTILISATEURS_AUTORISES[nom] && UTILISATEURS_AUTORISES[nom] === mdp) {
                     sessionStorage.setItem("access_granted", "true");
                     alert("Accès accordé. Bienvenue " + nom);
-                    // On force l'affichage avant le reload
-                    document.body.style.display = "flex";
                     window.location.reload(); 
                 } else {
-                    alert("Identifiants incorrects ! Redirection...");
                     window.location.href = "https://www.google.com";
                 }
             } else {
-                // Affichage du site si déjà connecté
-                document.addEventListener("DOMContentLoaded", () => {
-                    document.body.style.display = "flex";
-                });
+                document.addEventListener("DOMContentLoaded", () => { document.body.style.display = "flex"; });
+            }
+        }
+        verifierAcces();
+
+        // --- MOTEUR DE CALCUL ---
+        function runDualAnalysis() {
+            calculate('A', 'timeA', 'multiA', 'resStackA', 'resA1', 'resA2', 'cardA2', 'statA2', 'safe-A', 'trendA');
+            calculate('B', 'timeB', 'multiB', 'resStackB', 'resB1', 'resB2', 'cardB2', 'statB2', 'safe-B', 'trendB');
+
+            // Double Confirmation Vibration
+            const valA = parseFloat(document.getElementById('multiA').value);
+            const valB = parseFloat(document.getElementById('multiB').value);
+            if (valA <= 1.05 && valB <= 1.05 && navigator.vibrate) {
+                navigator.vibrate([500, 100, 500]);
             }
         }
 
-        // Lancement immédiat de la vérification
-        verifierAcces();
-    </script>
-</head>
-<body>
-
-    <div class="brand-name">HERYS</div>
-
-    <div class="split-container">
-        <div class="engine-block">
-            <div class="tag">ENGINE A</div>
-            <label>HEURE BET (A)</label>
-            <input type="text" id="timeA" placeholder="08:30">
-            <label>RESULTAT X (A)</label>
-            <input type="text" id="multiA" placeholder="1.50">
-            <div id="safe-A"></div>
-            
-            <div id="resStackA" class="res-stack">
-                <div class="card glow-purple">
-                    <div id="resA1" class="time-val">--:--:--</div>
-                    <div style="font-size: 8px; color: #9b59b6;">VIOLET 💜</div>
-                </div>
-                <div class="card" id="cardA2">
-                    <div id="resA2" class="time-val">--:--:--</div>
-                    <div id="statA2" style="font-size: 8px;">WAIT</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="engine-block">
-            <div class="tag">ENGINE B</div>
-            <label>HEURE BET (B)</label>
-            <input type="text" id="timeB" placeholder="08:32">
-            <label>RESULTAT X (B)</label>
-            <input type="text" id="multiB" placeholder="12.00">
-            <div id="safe-B"></div>
-
-            <div id="resStackB" class="res-stack">
-                <div class="card glow-purple">
-                    <div id="resB1" class="time-val">--:--:--</div>
-                    <div style="font-size: 8px; color: #9b59b6;">VIOLET 💜</div>
-                </div>
-                <div class="card" id="cardB2">
-                    <div id="resB2" class="time-val">--:--:--</div>
-                    <div id="statB2" style="font-size: 8px;">WAIT</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <button id="mainBtn" class="btn-predict" onclick="runDualAnalysis()">LANCER L'ASSEMBLAGE DOUBLE</button>
-
-    <script>
-        // Logique de calcul originale
-        function runDualAnalysis() {
-            calculate('A', 'timeA', 'multiA', 'resStackA', 'resA1', 'resA2', 'cardA2', 'statA2', 'safe-A');
-            calculate('B', 'timeB', 'multiB', 'resStackB', 'resB1', 'resB2', 'cardB2', 'statB2', 'safe-B');
-        }
-
-        function calculate(type, tId, mId, stackId, r1, r2, c2, s2, safeId) {
+        function calculate(type, tId, mId, stackId, r1, r2, c2, s2, safeId, trendId) {
             const time = document.getElementById(tId).value;
             const x = parseFloat(document.getElementById(mId).value);
             if(!time.includes(':') || isNaN(x)) return;
 
             document.getElementById(stackId).style.display = 'flex';
             let [h, m] = time.split(':').map(Number);
-            
             let min1, sec1, min2, sec2;
             const safeMsg = document.getElementById(safeId);
+            const trend = document.getElementById(trendId);
 
-            if (x < 1.3) {
-                min1 = 2; sec1 = 45; min2 = 5; sec2 = 12;
-                safeMsg.innerText = "🛡️ STABILISATION"; safeMsg.style.color = "#f97316";
-            } else if (x >= 10) {
-                min1 = 3; sec1 = 20; min2 = 7; sec2 = 05;
-                safeMsg.innerText = "⚠️ PRUDENCE"; safeMsg.style.color = "#e91e63";
-            } else {
-                min1 = 1; sec1 = 55; min2 = 3; sec2 = 30;
-                safeMsg.innerText = "✅ FLUIDE"; safeMsg.style.color = "#22c55e";
+            if (type === 'A') { // ANCIEN CODE
+                if (x < 1.3) { min1 = 2; sec1 = 45; min2 = 5; sec2 = 12; safeMsg.innerText = "🛡️ STABILISATION"; safeMsg.style.color = "#f97316"; trend.style.width = "40%"; trend.style.background = "#f97316"; }
+                else if (x >= 10) { min1 = 3; sec1 = 20; min2 = 7; sec2 = 05; safeMsg.innerText = "⚠️ PRUDENCE"; safeMsg.style.color = "#e91e63"; trend.style.width = "20%"; trend.style.background = "#e91e63"; }
+                else { min1 = 1; sec1 = 55; min2 = 3; sec2 = 30; safeMsg.innerText = "✅ FLUIDE"; safeMsg.style.color = "#22c55e"; trend.style.width = "70%"; trend.style.background = "#22c55e"; }
+            } else { // NOUVEAU CODE B (SPECIAL VERT)
+                if (x <= 1.05) { min1 = 3; sec1 = 10; min2 = 6; sec2 = 40; safeMsg.innerText = "💎 SIGNAL VERT DÉTECTÉ"; safeMsg.style.color = "#22c55e"; trend.style.width = "100%"; trend.style.background = "#22c55e"; trend.style.boxShadow = "0 0 10px #22c55e"; }
+                else if (x < 2) { min1 = 2; sec1 = 15; min2 = 4; sec2 = 50; safeMsg.innerText = "✅ FLUIDE"; safeMsg.style.color = "#22c55e"; trend.style.width = "60%"; trend.style.background = "#f97316"; }
+                else { min1 = 4; sec1 = 05; min2 = 8; sec2 = 20; safeMsg.innerText = "⚠️ PRUDENCE"; safeMsg.style.color = "#e91e63"; trend.style.width = "15%"; trend.style.background = "#e91e63"; }
             }
 
             function calc(mAdd, sBase) {
@@ -152,14 +102,48 @@
 
             const card2 = document.getElementById(c2);
             const stat2 = document.getElementById(s2);
-            if(x < 2) {
-                card2.className = "card glow-pink";
-                stat2.innerText = "ROSE 🌸"; stat2.style.color = "#e91e63";
-            } else {
-                card2.className = "card glow-purple";
-                stat2.innerText = "VIOLET 💜"; stat2.style.color = "#9b59b6";
-            }
+            card2.style = ""; // Reset styles
+            if(type === 'B' && x <= 1.05) { card2.className = "card glow-green"; stat2.innerText = "VERT 🔋"; stat2.style.color = "#22c55e"; }
+            else if(x < 2) { card2.className = "card glow-pink"; stat2.innerText = "ROSE 🌸"; stat2.style.color = "#e91e63"; }
+            else { card2.className = "card glow-purple"; stat2.innerText = "VIOLET 💜"; stat2.style.color = "#9b59b6"; }
         }
     </script>
+</head>
+<body>
+
+    <div class="brand-name">HERYS</div>
+
+    <div class="split-container">
+        <div class="engine-block">
+            <div class="tag">ENGINE A</div>
+            <label>HEURE (A)</label>
+            <input type="text" id="timeA" placeholder="21:12">
+            <label>RESULTAT X</label>
+            <input type="text" id="multiA" placeholder="1.63">
+            <div id="safe-A"></div>
+            <div class="trend-container"><div id="trendA" class="trend-fill"></div></div>
+            <div id="resStackA" class="res-stack">
+                <div class="card glow-purple"><div id="resA1" class="time-val">--:--:--</div><div style="font-size: 8px; color: #9b59b6;">VIOLET 💜</div></div>
+                <div class="card" id="cardA2"><div id="resA2" class="time-val">--:--:--</div><div id="statA2" style="font-size: 8px;">WAIT</div></div>
+            </div>
+        </div>
+
+        <div class="engine-block">
+            <div class="tag">ENGINE B</div>
+            <label>HEURE (B)</label>
+            <input type="text" id="timeB" placeholder="21:16">
+            <label>RESULTAT X</label>
+            <input type="text" id="multiB" placeholder="1.00">
+            <div id="safe-B"></div>
+            <div class="trend-container"><div id="trendB" class="trend-fill"></div></div>
+            <div id="resStackB" class="res-stack">
+                <div class="card glow-purple"><div id="resB1" class="time-val">--:--:--</div><div style="font-size: 8px; color: #9b59b6;">VIOLET 💜</div></div>
+                <div class="card" id="cardB2"><div id="resB2" class="time-val">--:--:--</div><div id="statB2" style="font-size: 8px;">WAIT</div></div>
+            </div>
+        </div>
+    </div>
+
+    <button id="mainBtn" class="btn-predict" onclick="runDualAnalysis()">DÉBUTER L'ASSEMBLAGE ULTIME</button>
+
 </body>
 </html>
