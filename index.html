@@ -3,147 +3,202 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Herys Ultimate V7.0 - Ultra Green</title>
-    
+    <title>HERYS ULTIMATE HYBRID</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { display: none; background-color: #050507; color: white; font-family: 'Segoe UI', sans-serif; flex-direction: column; align-items: center; padding: 15px; margin: 0; }
+        :root { --green: #22c55e; --pink: #e91e63; --purple: #9b59b6; --blue: #3498db; --bg: #050505; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; }
         
-        /* Styles Graphiques */
-        .brand-name { font-size: 38px; font-weight: 900; letter-spacing: 10px; color: #f97316; text-transform: uppercase; margin: 10px 0 20px 0; text-shadow: 0 0 20px rgba(249, 115, 22, 0.5); }
-        .split-container { display: flex; gap: 10px; width: 100%; max-width: 600px; }
-        .engine-block { flex: 1; background: #0c0c0f; border-radius: 20px; padding: 15px; border: 1px solid #1a1a20; box-shadow: 0 10px 30px rgba(0,0,0,0.6); position: relative; overflow: hidden; }
+        /* Écran de Sécurité */
+        #loginScreen { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .app-container { width: 100%; max-width: 400px; background: #111; border: 1px solid #333; border-radius: 15px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); position: relative; }
         
-        .tag { font-size: 9px; color: #f97316; font-weight: bold; text-align: center; margin-bottom: 15px; letter-spacing: 2px; border-bottom: 1px solid #222; padding-bottom: 5px; }
-        label { font-size: 9px; color: #444; font-weight: bold; display: block; margin-bottom: 5px; text-transform: uppercase; }
-        input { width: 100%; background: #000; border: 1px solid #222; border-radius: 10px; padding: 12px; color: #f97316; font-family: monospace; font-size: 15px; outline: none; box-sizing: border-box; margin-bottom: 15px; text-align: center; transition: 0.3s; }
-        input:focus { border-color: #f97316; box-shadow: 0 0 10px rgba(249, 115, 22, 0.3); }
+        .brand { font-size: 28px; font-weight: bold; color: var(--green); text-align: center; letter-spacing: 6px; margin-bottom: 5px; }
+        .version { font-size: 8px; color: #555; text-align: center; margin-bottom: 20px; }
 
-        /* Barre de Tendance Dynamique */
-        .trend-container { width: 100%; height: 4px; background: #111; border-radius: 2px; margin-bottom: 15px; overflow: hidden; }
-        .trend-fill { height: 100%; width: 0%; transition: width 0.8s ease, background 0.8s ease; }
-
-        .res-stack { margin-top: 15px; display: none; flex-direction: column; gap: 10px; }
-        .card { background: #050507; border-radius: 15px; padding: 12px; text-align: center; border: 1px solid #1a1a20; transition: 0.5s; }
-        .time-val { font-size: 15px; font-weight: bold; color: #fff; margin: 5px 0; font-family: monospace; }
+        label { font-size: 10px; color: #888; text-transform: uppercase; margin-bottom: 5px; display: block; }
+        input { width: 100%; background: #000; border: 1px solid #333; color: white; padding: 12px; border-radius: 8px; text-align: center; font-size: 18px; box-sizing: border-box; margin-bottom: 10px; outline: none; }
         
-        .glow-purple { border-color: #9b59b6; box-shadow: 0 0 15px rgba(155, 89, 182, 0.2); }
-        .glow-pink { border-color: #e91e63; box-shadow: 0 0 15px rgba(233, 30, 99, 0.2); }
-        .glow-green { border-color: #22c55e !important; box-shadow: 0 0 20px rgba(34, 197, 94, 0.4) !important; }
+        .btn-main { width: 100%; background: var(--green); color: black; border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
+        .btn-clear { width: 100%; background: none; color: #555; border: 1px solid #333; padding: 8px; border-radius: 8px; margin-top: 10px; font-size: 10px; cursor: pointer; }
 
-        .btn-predict { background: linear-gradient(135deg, #f97316, #ea580c); color: white; border: none; padding: 20px; border-radius: 15px; font-weight: bold; width: 100%; max-width: 400px; cursor: pointer; margin-top: 25px; text-transform: uppercase; transition: 0.3s; }
-        #safe-A, #safe-B { font-size: 8px; text-align: center; font-weight: bold; margin-bottom: 5px; }
+        .history-container { margin-top: 15px; background: #0a0a0a; border-radius: 8px; padding: 10px; border: 1px solid #222; min-height: 40px; display: flex; flex-wrap: wrap; gap: 6px; max-height: 100px; overflow-y: auto; }
+        .token { padding: 4px 10px; border-radius: 5px; font-size: 11px; font-weight: bold; color: white; border: 1px solid rgba(255,255,255,0.1); }
+        .t-blue { background: var(--blue); }
+        .t-purple { background: var(--purple); }
+        .t-pink { background: var(--pink); }
+
+        .res-stack { margin-top: 20px; display: flex; gap: 10px; }
+        .card { flex: 1; background: #0a0a0a; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #222; }
+        .glow-green { border-color: var(--green); }
+        .glow-purple { border-color: var(--purple); }
+        .glow-pink { border-color: var(--pink); }
+
+        .stats-box { margin-top: 20px; padding: 10px; background: #000; border-radius: 8px; font-size: 12px; text-align: center; border: 1px solid #222; color: #aaa; }
+        #chart-container { margin-top: 15px; height: 130px; width: 100%; }
+        
+        .logout-btn { position: absolute; top: -40px; right: 0; font-size: 10px; color: var(--pink); border: 1px solid var(--pink); background: none; padding: 5px 12px; border-radius: 20px; cursor: pointer; }
     </style>
-
-    <script>
-        // --- SYSTÈME D'ACCÈS (Inchangé) ---
-        const UTILISATEURS_AUTORISES = { "hery": "Nandrasana", "admin": "Nandrasana" };
-        function verifierAcces() {
-            if (sessionStorage.getItem("access_granted") !== "true") {
-                const nom = prompt("NOM D'UTILISATEUR HERYS :");
-                const mdp = prompt("MOT DE PASSE :");
-                if (UTILISATEURS_AUTORISES[nom] && UTILISATEURS_AUTORISES[nom] === mdp) {
-                    sessionStorage.setItem("access_granted", "true");
-                    alert("Accès accordé. Bienvenue " + nom);
-                    window.location.reload(); 
-                } else {
-                    window.location.href = "https://www.google.com";
-                }
-            } else {
-                document.addEventListener("DOMContentLoaded", () => { document.body.style.display = "flex"; });
-            }
-        }
-        verifierAcces();
-
-        // --- MOTEUR DE CALCUL ---
-        function runDualAnalysis() {
-            calculate('A', 'timeA', 'multiA', 'resStackA', 'resA1', 'resA2', 'cardA2', 'statA2', 'safe-A', 'trendA');
-            calculate('B', 'timeB', 'multiB', 'resStackB', 'resB1', 'resB2', 'cardB2', 'statB2', 'safe-B', 'trendB');
-
-            // Double Confirmation Vibration
-            const valA = parseFloat(document.getElementById('multiA').value);
-            const valB = parseFloat(document.getElementById('multiB').value);
-            if (valA <= 1.05 && valB <= 1.05 && navigator.vibrate) {
-                navigator.vibrate([500, 100, 500]);
-            }
-        }
-
-        function calculate(type, tId, mId, stackId, r1, r2, c2, s2, safeId, trendId) {
-            const time = document.getElementById(tId).value;
-            const x = parseFloat(document.getElementById(mId).value);
-            if(!time.includes(':') || isNaN(x)) return;
-
-            document.getElementById(stackId).style.display = 'flex';
-            let [h, m] = time.split(':').map(Number);
-            let min1, sec1, min2, sec2;
-            const safeMsg = document.getElementById(safeId);
-            const trend = document.getElementById(trendId);
-
-            if (type === 'A') { // ANCIEN CODE
-                if (x < 1.3) { min1 = 2; sec1 = 45; min2 = 5; sec2 = 12; safeMsg.innerText = "🛡️ STABILISATION"; safeMsg.style.color = "#f97316"; trend.style.width = "40%"; trend.style.background = "#f97316"; }
-                else if (x >= 10) { min1 = 3; sec1 = 20; min2 = 7; sec2 = 05; safeMsg.innerText = "⚠️ PRUDENCE"; safeMsg.style.color = "#e91e63"; trend.style.width = "20%"; trend.style.background = "#e91e63"; }
-                else { min1 = 1; sec1 = 55; min2 = 3; sec2 = 30; safeMsg.innerText = "✅ FLUIDE"; safeMsg.style.color = "#22c55e"; trend.style.width = "70%"; trend.style.background = "#22c55e"; }
-            } else { // NOUVEAU CODE B (SPECIAL VERT)
-                if (x <= 1.05) { min1 = 3; sec1 = 10; min2 = 6; sec2 = 40; safeMsg.innerText = "💎 SIGNAL VERT DÉTECTÉ"; safeMsg.style.color = "#22c55e"; trend.style.width = "100%"; trend.style.background = "#22c55e"; trend.style.boxShadow = "0 0 10px #22c55e"; }
-                else if (x < 2) { min1 = 2; sec1 = 15; min2 = 4; sec2 = 50; safeMsg.innerText = "✅ FLUIDE"; safeMsg.style.color = "#22c55e"; trend.style.width = "60%"; trend.style.background = "#f97316"; }
-                else { min1 = 4; sec1 = 05; min2 = 8; sec2 = 20; safeMsg.innerText = "⚠️ PRUDENCE"; safeMsg.style.color = "#e91e63"; trend.style.width = "15%"; trend.style.background = "#e91e63"; }
-            }
-
-            function calc(mAdd, sBase) {
-                let s = Math.floor(Math.random() * 15) + sBase;
-                let nm = m + mAdd; let nh = h;
-                if(s >= 60) { s -= 60; nm += 1; }
-                if(nm >= 60) { nm -= 60; nh += 1; }
-                const pad = (n) => n < 10 ? '0'+n : n;
-                return pad(nh)+":"+pad(nm)+":"+pad(s);
-            }
-
-            document.getElementById(r1).innerText = calc(min1, sec1);
-            document.getElementById(r2).innerText = calc(min2, sec2);
-
-            const card2 = document.getElementById(c2);
-            const stat2 = document.getElementById(s2);
-            card2.style = ""; // Reset styles
-            if(type === 'B' && x <= 1.05) { card2.className = "card glow-green"; stat2.innerText = "VERT 🔋"; stat2.style.color = "#22c55e"; }
-            else if(x < 2) { card2.className = "card glow-pink"; stat2.innerText = "ROSE 🌸"; stat2.style.color = "#e91e63"; }
-            else { card2.className = "card glow-purple"; stat2.innerText = "VIOLET 💜"; stat2.style.color = "#9b59b6"; }
-        }
-    </script>
 </head>
 <body>
 
-    <div class="brand-name">HERYS</div>
-
-    <div class="split-container">
-        <div class="engine-block">
-            <div class="tag">ENGINE A</div>
-            <label>HEURE (A)</label>
-            <input type="text" id="timeA" placeholder="21:12">
-            <label>RESULTAT X</label>
-            <input type="text" id="multiA" placeholder="1.63">
-            <div id="safe-A"></div>
-            <div class="trend-container"><div id="trendA" class="trend-fill"></div></div>
-            <div id="resStackA" class="res-stack">
-                <div class="card glow-purple"><div id="resA1" class="time-val">--:--:--</div><div style="font-size: 8px; color: #9b59b6;">VIOLET 💜</div></div>
-                <div class="card" id="cardA2"><div id="resA2" class="time-val">--:--:--</div><div id="statA2" style="font-size: 8px;">WAIT</div></div>
-            </div>
-        </div>
-
-        <div class="engine-block">
-            <div class="tag">ENGINE B</div>
-            <label>HEURE (B)</label>
-            <input type="text" id="timeB" placeholder="21:16">
-            <label>RESULTAT X</label>
-            <input type="text" id="multiB" placeholder="1.00">
-            <div id="safe-B"></div>
-            <div class="trend-container"><div id="trendB" class="trend-fill"></div></div>
-            <div id="resStackB" class="res-stack">
-                <div class="card glow-purple"><div id="resB1" class="time-val">--:--:--</div><div style="font-size: 8px; color: #9b59b6;">VIOLET 💜</div></div>
-                <div class="card" id="cardB2"><div id="resB2" class="time-val">--:--:--</div><div id="statB2" style="font-size: 8px;">WAIT</div></div>
-            </div>
-        </div>
+    <div id="loginScreen">
+        <h1 style="color:var(--green); letter-spacing:8px; margin-bottom:20px;">HERYS</h1>
+        <input type="text" id="username" placeholder="IDENTIFIANT" style="width:250px;">
+        <input type="password" id="passkey" placeholder="CODE D'ACCÈS" style="width:250px;">
+        <button onclick="unlock()" class="btn-main" style="width:250px; margin-top:10px;">DÉVERROUILLER</button>
     </div>
 
-    <button id="mainBtn" class="btn-predict" onclick="runDualAnalysis()">DÉBUTER L'ASSEMBLAGE ULTIME</button>
+    <div class="app-container" id="mainApp" style="margin-top:50px;">
+        <button class="logout-btn" onclick="logout()">🔴 DÉCONNEXION</button>
+        <div class="brand">HERYS</div>
+        <div class="version">HYBRID v5.0 [SECURE]</div>
 
+        <label>Dernier crash (X)</label>
+        <input type="number" id="lastX" placeholder="0.00" step="0.01" autofocus>
+        <button class="btn-main" onclick="processHybrid()">Analyser & Prédire</button>
+        <button class="btn-clear" onclick="clearFast()">🗑️ VIDER L'HISTORIQUE (VITE)</button>
+
+        <label style="margin-top:20px;">Historique (Ancien ➔ Récent)</label>
+        <div class="history-container" id="sessionHistory"></div>
+
+        <div id="resStack" class="res-stack">
+            <div class="card glow-purple">
+                <div id="time1" style="font-size:18px; font-weight:bold;">--:--:--</div>
+                <div style="font-size:9px; color:var(--purple); font-weight:bold;">VIOLET 💜</div>
+            </div>
+            <div class="card" id="card2">
+                <div id="time2" style="font-size:18px; font-weight:bold;">--:--:--</div>
+                <div id="type2" style="font-size:9px; font-weight:bold;">Nandrasana</div>
+            </div>
+        </div>
+
+        <div class="stats-box">WIN RATE: <span id="winRate" style="color:var(--green); font-weight:bold;">0%</span></div>
+        <div id="chart-container"><canvas id="myChart"></canvas></div>
+    </div>
+
+<script>
+    let sessionData = [];
+    let wins = 0; let total = 0; let chart;
+    let inactivityTimer;
+
+    // --- SÉCURITÉ CONFIGURÉE ---
+    function unlock() {
+        const user = document.getElementById('username').value;
+        const pass = document.getElementById('passkey').value;
+        
+        // Paramètres : hery / Nandrasana
+        if(user === "hery" && pass === "Nandrasana") {
+            document.getElementById('loginScreen').style.display = 'none';
+            sessionStorage.setItem('hery_auth', 'true');
+            resetInactivityTimer();
+        } else {
+            alert("Identifiant ou Code incorrect !");
+        }
+    }
+
+    function resetInactivityTimer() {
+        clearTimeout(inactivityTimer);
+        inactivityTimer = setTimeout(() => { logout(); }, 300000); // 5 min
+    }
+
+    ['mousedown', 'keypress', 'touchstart'].forEach(evt => 
+        document.addEventListener(evt, resetInactivityTimer, true)
+    );
+
+    function logout() {
+        sessionStorage.clear();
+        location.reload();
+    }
+
+    function clearFast() {
+        if(confirm("Effacer l'historique de session ?")) {
+            sessionData = []; wins = 0; total = 0;
+            document.getElementById('sessionHistory').innerHTML = "";
+            document.getElementById('winRate').innerText = "0%";
+            if(chart) chart.destroy();
+        }
+    }
+
+    // --- ENGINE HYBRIDE ---
+    function processHybrid() {
+        resetInactivityTimer();
+        const input = document.getElementById('lastX');
+        const x = parseFloat(input.value);
+        if(isNaN(x)) return;
+
+        saveToHistory(x);
+
+        const now = new Date();
+        const h = now.getHours(); const m = now.getMinutes();
+        let m1, s1, m2, s2, next;
+        
+        if (x <= 1.05) { m1=3; s1=12; m2=6; s2=45; next={n:"VERT 🔋", c:"var(--green)", g:"glow-green"}; }
+        else if (x < 2) { m1=2; s1=20; m2=5; s2=10; next={n:"ROSE 🌸", c:"var(--pink)", g:"glow-pink"}; }
+        else { m1=4; s1=05; m2=8; s2=15; next={n:"VIOLET 💜", c:"var(--purple)", g:"glow-purple"}; }
+
+        document.getElementById('time1').innerText = calcTime(h, m, m1, s1);
+        document.getElementById('time2').innerText = calcTime(h, m, m2, s2);
+        
+        const c2 = document.getElementById('card2');
+        c2.className = "card " + next.g;
+        document.getElementById('type2').innerText = next.n;
+        document.getElementById('type2').style.color = next.c;
+
+        updateStats(x);
+        input.value = "";
+        input.focus();
+    }
+
+    function saveToHistory(x) {
+        sessionData.push(x);
+        const container = document.getElementById('sessionHistory');
+        const badge = document.createElement('div');
+        let cClass = x >= 10 ? 't-pink' : (x >= 2 ? 't-purple' : 't-blue');
+        badge.className = `token ${cClass}`;
+        badge.innerText = x.toFixed(2);
+        container.appendChild(badge);
+        container.scrollLeft = container.scrollWidth;
+    }
+
+    function calcTime(h, m, addM, addS) {
+        let s = Math.floor(Math.random() * 20) + addS;
+        let nm = m + addM; let nh = h;
+        if(s >= 60) { s -= 60; nm += 1; }
+        if(nm >= 60) { nm -= 60; nh += 1; }
+        if(nh >= 24) nh = 0;
+        const pad = (n) => n < 10 ? '0'+n : n;
+        return pad(nh)+":"+pad(nm)+":"+pad(s);
+    }
+
+    function updateStats(x) {
+        total++; if(x >= 2) wins++;
+        document.getElementById('winRate').innerText = Math.round((wins/total)*100) + "%";
+        drawChart();
+    }
+
+    function drawChart() {
+        const ctx = document.getElementById('myChart').getContext('2d');
+        if(chart) chart.destroy();
+        chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: sessionData.map((_, i) => i + 1),
+                datasets: [{
+                    data: sessionData,
+                    borderColor: '#22c55e',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    fill: true,
+                    backgroundColor: 'rgba(34, 197, 94, 0.05)'
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { display: false }, x: { display: false } }, plugins: { legend: { display: false } } }
+        });
+    }
+
+    window.onload = () => { if(sessionStorage.getItem('hery_auth') === 'true') { document.getElementById('loginScreen').style.display = 'none'; resetInactivityTimer(); } };
+</script>
 </body>
 </html>
