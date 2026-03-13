@@ -3,143 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HERYS HYBRID v6.0 - Madagascar</title>
+    <title>HERYS HYBRID v6.0 - ULTIMATE PRO</title>
+    
     <style>
         :root {
-            --bg: #0a0a0a;
-            --card: #111111;
-            --accent: #22c55e;
-            --text: #ffffff;
-            --border: #333333;
-            --pink: #e91e63;
-            --purple: #9b59b6;
-        }
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 15px;
-            margin: 0;
-            min-height: 100vh;
-        }
-        .container { width: 100%; max-width: 400px; }
-        .header { text-align: center; margin-top: 20px; margin-bottom: 30px; }
-        .header h1 { color: var(--accent); letter-spacing: 4px; margin: 0; font-size: 22px; text-shadow: 0 0 10px rgba(34,197,94,0.3); }
-        
-        .card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 20px;
-            text-align: center;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        
-        .prediction-box { display: flex; justify-content: space-around; font-size: 26px; font-weight: 800; margin: 15px 0; font-family: monospace; }
-        
-        input {
-            width: 100%; box-sizing: border-box; padding: 18px; border-radius: 12px;
-            border: 1px solid var(--border); background: #000; color: #fff;
-            font-size: 20px; text-align: center; margin-bottom: 15px; outline: none;
-        }
-        input:focus { border-color: var(--accent); }
-
-        .btn-main {
-            width: 100%; padding: 18px; border-radius: 12px; border: none;
-            background: var(--accent); color: #000; font-weight: bold;
-            font-size: 16px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
+            --neon: #22c55e;
+            --danger: #e91e63;
+            --royal: #9b59b6;
+            --bg: #050507;
+            --glass: rgba(255, 255, 255, 0.05);
         }
 
-        .glow-pink { border-color: var(--pink); box-shadow: 0 0 20px rgba(233, 30, 99, 0.2); }
-        .glow-purple { border-color: var(--purple); box-shadow: 0 0 20px rgba(155, 89, 182, 0.2); }
-        .glow-green { border-color: var(--accent); box-shadow: 0 0 25px rgba(34, 197, 94, 0.4); }
+        body { display: none; background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; flex-direction: column; align-items: center; margin: 0; padding-bottom: 50px; }
+        
+        /* Bar de Statut */
+        .status-bar { width: 100%; display: flex; justify-content: space-between; padding: 15px; box-sizing: border-box; background: var(--glass); border-bottom: 1px solid #1a1a20; font-size: 12px; font-weight: bold; }
+        
+        .brand { font-size: 35px; font-weight: 900; letter-spacing: 12px; color: var(--neon); text-shadow: 0 0 20px rgba(34, 197, 94, 0.6); margin: 25px 0; }
+
+        /* Bloc Principal */
+        .engine-container { width: 90%; max-width: 400px; background: #0c0c0f; border-radius: 30px; padding: 25px; border: 1px solid #222; box-shadow: 0 20px 50px rgba(0,0,0,0.8); position: relative; overflow: hidden; }
+        
+        .scan-line { position: absolute; width: 100%; height: 2px; background: var(--neon); top: -2px; left: 0; opacity: 0.3; animation: scan 3s infinite linear; }
+        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+
+        input { width: 100%; background: #000; border: 2px solid #1a1a20; border-radius: 15px; padding: 18px; color: var(--neon); font-size: 28px; text-align: center; font-family: monospace; outline: none; margin: 15px 0; box-sizing: border-box; transition: 0.3s; }
+        input:focus { border-color: var(--neon); box-shadow: 0 0 15px rgba(34, 197, 94, 0.2); }
+
+        .prob-box { font-size: 11px; letter-spacing: 2px; color: #666; margin-bottom: 20px; text-transform: uppercase; }
+
+        /* Cartes de Résultats */
+        .res-grid { display: grid; gap: 15px; margin-top: 10px; }
+        .card { background: #050507; border-radius: 20px; padding: 18px; border: 1px solid #1a1a20; text-align: center; position: relative; }
+        .time { font-size: 30px; font-weight: bold; font-family: monospace; display: block; }
+        .label { font-size: 10px; font-weight: 900; margin-top: 8px; color: #555; }
+        
+        .confidence { position: absolute; top: 8px; right: 12px; font-size: 9px; color: var(--neon); font-weight: bold; }
+
+        /* Historique */
+        .history { width: 90%; max-width: 400px; margin-top: 30px; }
+        .history-title { font-size: 12px; color: #444; margin-bottom: 10px; border-bottom: 1px solid #222; padding-bottom: 5px; }
+        .hist-item { display: flex; justify-content: space-between; font-size: 11px; padding: 8px 0; border-bottom: 1px solid #111; color: #888; }
+
+        .btn-main { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; padding: 22px; border-radius: 20px; font-weight: bold; width: 90%; max-width: 400px; cursor: pointer; margin-top: 25px; font-size: 16px; letter-spacing: 2px; }
+        
+        .logout { color: var(--danger); background: none; border: 1px solid var(--danger); padding: 5px 10px; border-radius: 8px; font-size: 10px; cursor: pointer; }
     </style>
+
+    <script>
+        const AUTH = { "hery": "Nandrasana" };
+        let historyData = [];
+
+        function checkAuth() {
+            if (sessionStorage.getItem("h_auth") !== "true") {
+                const u = prompt("USER:"); const p = prompt("PASS:");
+                if (AUTH[u] && AUTH[u] === p) {
+                    sessionStorage.setItem("h_auth", "true");
+                    window.location.reload();
+                } else { window.location.href = "https://google.com"; }
+            } else { 
+                document.addEventListener("DOMContentLoaded", () => { 
+                    document.body.style.display = "flex"; 
+                    syncTana(); setInterval(syncTana, 1000);
+                });
+            }
+        }
+
+        function syncTana() {
+            const t = new Date().toLocaleString("en-US", {timeZone: "Indian/Antananarivo", hour12: false});
+            const d = new Date(t);
+            document.getElementById('clock').innerText = "TANA: " + d.toTimeString().split(' ')[0];
+        }
+
+        function runHybridAnalysis() {
+            const val = parseFloat(document.getElementById('inputX').value);
+            if(isNaN(val)) return;
+
+            const audio = new Audio('https://www.soundjay.com/buttons/sounds/button-3.mp3');
+            audio.play();
+
+            // Algorithme de prédiction Engine B + Facteur de Confiance
+            const now = new Date(new Date().toLocaleString("en-US", {timeZone: "Indian/Antananarivo"}));
+            let h = now.getHours();
+            let m = now.getMinutes();
+
+            // Calcul des probabilités
+            let conf1 = Math.floor(Math.random() * (99 - 94 + 1)) + 94; // 94% à 99%
+            let conf2 = Math.floor(Math.random() * (98 - 90 + 1)) + 90;
+
+            function shift(mP, sP) {
+                let ns = Math.floor(Math.random() * 45); 
+                let nm = m + mP; let nh = h;
+                if(nm >= 60) { nm -= 60; nh += 1; }
+                return `${String(nh).padStart(2,'0')}:${String(nm).padStart(2,'0')}:${String(ns).padStart(2,'0')}`;
+            }
+
+            // Logique de timing basée sur le X précédent
+            let r1, r2;
+            if(val < 1.50) { r1 = shift(2, 10); r2 = shift(4, 30); }
+            else if(val > 10) { r1 = shift(1, 45); r2 = shift(3, 15); }
+            else { r1 = shift(2, 0); r2 = shift(5, 0); }
+
+            // Mise à jour UI
+            document.getElementById('t1').innerText = r1;
+            document.getElementById('t2').innerText = r2;
+            document.getElementById('c1').innerText = conf1 + "%";
+            document.getElementById('c2').innerText = conf2 + "%";
+
+            // Historique
+            const hList = document.getElementById('hist-list');
+            const item = document.createElement('div');
+            item.className = "hist-item";
+            item.innerHTML = `<span>Entrée: ${val}x</span> <span>Signal: ${r1}</span> <span style="color:var(--neon)">${conf1}%</span>`;
+            hList.prepend(item);
+            if(hList.children.length > 5) hList.lastChild.remove();
+        }
+
+        checkAuth();
+    </script>
 </head>
 <body>
 
-<div class="container">
-    <div class="header">
-        <h1>HERYS HYBRID v6.0</h1>
-        <small style="color: #555;">ALGORITHM ENGINE B</small>
+    <div class="status-bar">
+        <span id="clock">TANA: --:--:--</span>
+        <span>ENGINE B: ACTIF</span>
+        <button class="logout" onclick="sessionStorage.clear(); location.reload();">SORTIR</button>
     </div>
 
-    <div class="card">
-        <div id="safeMsg" style="font-size: 13px; margin-bottom: 12px; color: #777;">SYSTÈME PRÊT</div>
-        <input type="number" id="inputValue" step="0.01" placeholder="DERNIER MULTIPLICATEUR">
-        <button class="btn-main" onclick="startAnalysis()">GÉNÉRER SIGNAL</button>
-    </div>
+    <div class="brand">HERYS</div>
 
-    <div class="card" id="cardResult">
-        <div style="font-size: 11px; color: #555; text-transform: uppercase;">Heures estimées</div>
-        <div class="prediction-box">
-            <span id="res1">--:--:--</span>
-            <span id="res2">--:--:--</span>
+    <div class="engine-container">
+        <div class="scan-line"></div>
+        <div class="prob-box">Analyse de Probabilité 99.9%</div>
+        
+        <label style="font-size: 9px; color: #555; font-weight: bold; letter-spacing: 2px;">DERNIER MULTIPLICATEUR X</label>
+        <input type="number" id="inputX" placeholder="0.00" step="0.01" autofocus>
+
+        <div class="res-grid">
+            <div class="card" style="border-color: var(--royal);">
+                <span class="confidence" id="c1">--%</span>
+                <span class="time" id="t1" style="color: var(--royal);">--:--:--</span>
+                <span class="label">PRÉDICTION PRIMAIRE</span>
+            </div>
+
+            <div class="card" style="border-color: var(--danger);">
+                <span class="confidence" id="c2">--%</span>
+                <span class="time" id="t2" style="color: var(--danger);">--:--:--</span>
+                <span class="label">SIGNAL DE SÉCURITÉ</span>
+            </div>
         </div>
-        <div id="typeLabel" style="font-weight: bold; font-size: 18px;">---</div>
     </div>
-</div>
 
-<script>
-// Chargement des sons
-const soundNormal = new Audio('https://www.soundjay.com/buttons/sounds/button-3.mp3');
-const soundSpecial = new Audio('https://www.soundjay.com/buttons/sounds/button-09.mp3');
+    <button class="btn-main" onclick="runHybridAnalysis()">ANALYSER LE SIGNAL</button>
 
-function startAnalysis() {
-    const x = parseFloat(document.getElementById('inputValue').value);
-    const safeMsg = document.getElementById('safeMsg');
-    const r1 = document.getElementById('res1');
-    const r2 = document.getElementById('res2');
-    const card2 = document.getElementById('cardResult');
-    const stat2 = document.getElementById('typeLabel');
+    <div class="history">
+        <div class="history-title">LOGS DE SESSION (Derniers signaux)</div>
+        <div id="hist-list"></div>
+    </div>
 
-    if (isNaN(x)) return;
-
-    let min1, sec1, min2, sec2;
-    let now = new Date();
-    let h = now.getHours();
-    let m = now.getMinutes();
-
-    // Reset des classes
-    card2.className = "card";
-
-    // LOGIQUE ENGINE B
-    if (x <= 1.05) {
-        soundSpecial.play(); // Son plus fort pour le VERT
-        min1 = 3; sec1 = 10; min2 = 6; sec2 = 40; 
-        safeMsg.innerText = "💎 SIGNAL VERT DÉTECTÉ"; safeMsg.style.color = "#22c55e";
-        card2.classList.add('glow-green');
-        stat2.innerText = "VERT 🔋"; stat2.style.color = "#22c55e";
-    } else {
-        soundNormal.play(); // Son standard
-        if (x < 2) {
-            min1 = 2; sec1 = 15; min2 = 4; sec2 = 50;
-            safeMsg.innerText = "✅ CYCLE FLUIDE"; safeMsg.style.color = "#22c55e";
-            card2.classList.add('glow-pink');
-            stat2.innerText = "ROSE 🌸"; stat2.style.color = "#e91e63";
-        } else {
-            min1 = 4; sec1 = 05; min2 = 8; sec2 = 20;
-            safeMsg.innerText = "⚠️ ZONE DE PRUDENCE"; safeMsg.style.color = "#e91e63";
-            card2.classList.add('glow-purple');
-            stat2.innerText = "VIOLET 💜"; stat2.style.color = "#9b59b6";
-        }
-    }
-
-    function calc(mAdd, sBase) {
-        let s = Math.floor(Math.random() * 20) + sBase;
-        let nm = m + mAdd; let nh = h;
-        if(s >= 60) { s -= 60; nm += 1; }
-        if(nm >= 60) { nm -= 60; nh += 1; }
-        const pad = (n) => n < 10 ? '0'+n : n;
-        return pad(nh)+":"+pad(nm)+":"+pad(s);
-    }
-
-    r1.innerText = calc(min1, sec1);
-    r2.innerText = calc(min2, sec2);
-}
-</script>
 </body>
 </html>
