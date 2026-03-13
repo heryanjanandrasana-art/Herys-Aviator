@@ -3,202 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HERYS ULTIMATE HYBRID</title>
+    <title>Hybrid Engine - Madagascar Edition</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { --green: #22c55e; --pink: #e91e63; --purple: #9b59b6; --blue: #3498db; --bg: #050505; }
-        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; }
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --green: #22c55e;
+            --pink: #ec4899;
+            --purple: #a855f7;
+            --text: #f8fafc;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .card {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        .glow-green { border: 2px solid var(--green); box-shadow: 0 0 15px rgba(34, 197, 94, 0.2); }
+        .glow-pink { border: 2px solid var(--pink); box-shadow: 0 0 15px rgba(236, 72, 153, 0.2); }
+        .glow-purple { border: 2px solid var(--purple); box-shadow: 0 0 15px rgba(168, 85, 247, 0.2); }
         
-        /* Écran de Sécurité */
-        #loginScreen { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .app-container { width: 100%; max-width: 400px; background: #111; border: 1px solid #333; border-radius: 15px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); position: relative; }
-        
-        .brand { font-size: 28px; font-weight: bold; color: var(--green); text-align: center; letter-spacing: 6px; margin-bottom: 5px; }
-        .version { font-size: 8px; color: #555; text-align: center; margin-bottom: 20px; }
-
-        label { font-size: 10px; color: #888; text-transform: uppercase; margin-bottom: 5px; display: block; }
-        input { width: 100%; background: #000; border: 1px solid #333; color: white; padding: 12px; border-radius: 8px; text-align: center; font-size: 18px; box-sizing: border-box; margin-bottom: 10px; outline: none; }
-        
-        .btn-main { width: 100%; background: var(--green); color: black; border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
-        .btn-clear { width: 100%; background: none; color: #555; border: 1px solid #333; padding: 8px; border-radius: 8px; margin-top: 10px; font-size: 10px; cursor: pointer; }
-
-        .history-container { margin-top: 15px; background: #0a0a0a; border-radius: 8px; padding: 10px; border: 1px solid #222; min-height: 40px; display: flex; flex-wrap: wrap; gap: 6px; max-height: 100px; overflow-y: auto; }
-        .token { padding: 4px 10px; border-radius: 5px; font-size: 11px; font-weight: bold; color: white; border: 1px solid rgba(255,255,255,0.1); }
-        .t-blue { background: var(--blue); }
-        .t-purple { background: var(--purple); }
-        .t-pink { background: var(--pink); }
-
-        .res-stack { margin-top: 20px; display: flex; gap: 10px; }
-        .card { flex: 1; background: #0a0a0a; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #222; }
-        .glow-green { border-color: var(--green); }
-        .glow-purple { border-color: var(--purple); }
-        .glow-pink { border-color: var(--pink); }
-
-        .stats-box { margin-top: 20px; padding: 10px; background: #000; border-radius: 8px; font-size: 12px; text-align: center; border: 1px solid #222; color: #aaa; }
-        #chart-container { margin-top: 15px; height: 130px; width: 100%; }
-        
-        .logout-btn { position: absolute; top: -40px; right: 0; font-size: 10px; color: var(--pink); border: 1px solid var(--pink); background: none; padding: 5px 12px; border-radius: 20px; cursor: pointer; }
+        input {
+            width: 80%;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            margin-bottom: 10px;
+            background: #334155;
+            color: white;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            background: var(--green);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .stats { display: flex; justify-content: space-around; width: 100%; margin-top: 10px; font-size: 14px; }
+        .history { display: flex; overflow-x: auto; gap: 5px; padding: 10px; width: 100%; max-width: 400px; }
+        .token { padding: 5px 10px; border-radius: 5px; font-size: 12px; white-space: nowrap; }
+        .t-blue { background: #3b82f6; } .t-purple { background: var(--purple); } .t-pink { background: var(--pink); }
     </style>
 </head>
 <body>
 
-    <div id="loginScreen">
-        <h1 style="color:var(--green); letter-spacing:8px; margin-bottom:20px;">HERYS</h1>
-        <input type="text" id="username" placeholder="IDENTIFIANT" style="width:250px;">
-        <input type="password" id="passkey" placeholder="CODE D'ACCÈS" style="width:250px;">
-        <button onclick="unlock()" class="btn-main" style="width:250px; margin-top:10px;">DÉVERROUILLER</button>
-    </div>
-
-    <div class="app-container" id="mainApp" style="margin-top:50px;">
-        <button class="logout-btn" onclick="logout()">🔴 DÉCONNEXION</button>
-        <div class="brand">HERYS</div>
-        <div class="version">HYBRID v5.0 [SECURE]</div>
-
-        <label>Dernier crash (X)</label>
-        <input type="number" id="lastX" placeholder="0.00" step="0.01" autofocus>
-        <button class="btn-main" onclick="processHybrid()">Analyser & Prédire</button>
-        <button class="btn-clear" onclick="clearFast()">🗑️ VIDER L'HISTORIQUE (VITE)</button>
-
-        <label style="margin-top:20px;">Historique (Ancien ➔ Récent)</label>
-        <div class="history-container" id="sessionHistory"></div>
-
-        <div id="resStack" class="res-stack">
-            <div class="card glow-purple">
-                <div id="time1" style="font-size:18px; font-weight:bold;">--:--:--</div>
-                <div style="font-size:9px; color:var(--purple); font-weight:bold;">VIOLET 💜</div>
-            </div>
-            <div class="card" id="card2">
-                <div id="time2" style="font-size:18px; font-weight:bold;">--:--:--</div>
-                <div id="type2" style="font-size:9px; font-weight:bold;">Nandrasana</div>
-            </div>
+    <div class="card" id="cardMain">
+        <h2>Hybrid Engine</h2>
+        <div class="stats">
+            <div>Win Rate: <span id="winRate">0%</span></div>
+            <div>Time: <span id="liveClock">00:00:00</span></div>
         </div>
-
-        <div class="stats-box">WIN RATE: <span id="winRate" style="color:var(--green); font-weight:bold;">0%</span></div>
-        <div id="chart-container"><canvas id="myChart"></canvas></div>
+        <canvas id="myChart" style="height:100px; width:100%; margin-top:10px;"></canvas>
     </div>
+
+    <div class="card" id="card2">
+        <h3 id="type2">EN ATTENTE...</h3>
+        <div style="display:flex; justify-content: space-around; font-size: 20px; font-weight: bold;">
+            <div id="time1">--:--:--</div>
+            <div id="time2">--:--:--</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <input type="number" id="lastX" step="0.01" placeholder="Dernier multiplicateur...">
+        <button onclick="processHybrid()">ANALYSER</button>
+        <br>
+        <button onclick="testSignal()" style="margin-top:15px; background:transparent; border:1px solid #555; color:#888; font-size:11px;">🔊 TESTER L'ALERTE</button>
+    </div>
+
+    <div class="history" id="sessionHistory"></div>
 
 <script>
     let sessionData = [];
-    let wins = 0; let total = 0; let chart;
-    let inactivityTimer;
-
-    // --- SÉCURITÉ CONFIGURÉE ---
-    function unlock() {
-        const user = document.getElementById('username').value;
-        const pass = document.getElementById('passkey').value;
-        
-        // Paramètres : hery / Nandrasana
-        if(user === "hery" && pass === "Nandrasana") {
-            document.getElementById('loginScreen').style.display = 'none';
-            sessionStorage.setItem('hery_auth', 'true');
-            resetInactivityTimer();
-        } else {
-            alert("Identifiant ou Code incorrect !");
-        }
-    }
-
-    function resetInactivityTimer() {
-        clearTimeout(inactivityTimer);
-        inactivityTimer = setTimeout(() => { logout(); }, 300000); // 5 min
-    }
-
-    ['mousedown', 'keypress', 'touchstart'].forEach(evt => 
-        document.addEventListener(evt, resetInactivityTimer, true)
-    );
-
-    function logout() {
-        sessionStorage.clear();
-        location.reload();
-    }
-
-    function clearFast() {
-        if(confirm("Effacer l'historique de session ?")) {
-            sessionData = []; wins = 0; total = 0;
-            document.getElementById('sessionHistory').innerHTML = "";
-            document.getElementById('winRate').innerText = "0%";
-            if(chart) chart.destroy();
-        }
-    }
-
-    // --- ENGINE HYBRIDE ---
-    function processHybrid() {
-        resetInactivityTimer();
-        const input = document.getElementById('lastX');
-        const x = parseFloat(input.value);
-        if(isNaN(x)) return;
-
-        saveToHistory(x);
-
-        const now = new Date();
-        const h = now.getHours(); const m = now.getMinutes();
-        let m1, s1, m2, s2, next;
-        
-        if (x <= 1.05) { m1=3; s1=12; m2=6; s2=45; next={n:"VERT 🔋", c:"var(--green)", g:"glow-green"}; }
-        else if (x < 2) { m1=2; s1=20; m2=5; s2=10; next={n:"ROSE 🌸", c:"var(--pink)", g:"glow-pink"}; }
-        else { m1=4; s1=05; m2=8; s2=15; next={n:"VIOLET 💜", c:"var(--purple)", g:"glow-purple"}; }
-
-        document.getElementById('time1').innerText = calcTime(h, m, m1, s1);
-        document.getElementById('time2').innerText = calcTime(h, m, m2, s2);
-        
-        const c2 = document.getElementById('card2');
-        c2.className = "card " + next.g;
-        document.getElementById('type2').innerText = next.n;
-        document.getElementById('type2').style.color = next.c;
-
-        updateStats(x);
-        input.value = "";
-        input.focus();
-    }
-
-    function saveToHistory(x) {
-        sessionData.push(x);
-        const container = document.getElementById('sessionHistory');
-        const badge = document.createElement('div');
-        let cClass = x >= 10 ? 't-pink' : (x >= 2 ? 't-purple' : 't-blue');
-        badge.className = `token ${cClass}`;
-        badge.innerText = x.toFixed(2);
-        container.appendChild(badge);
-        container.scrollLeft = container.scrollWidth;
-    }
-
-    function calcTime(h, m, addM, addS) {
-        let s = Math.floor(Math.random() * 20) + addS;
-        let nm = m + addM; let nh = h;
-        if(s >= 60) { s -= 60; nm += 1; }
-        if(nm >= 60) { nm -= 60; nh += 1; }
-        if(nh >= 24) nh = 0;
-        const pad = (n) => n < 10 ? '0'+n : n;
-        return pad(nh)+":"+pad(nm)+":"+pad(s);
-    }
-
-    function updateStats(x) {
-        total++; if(x >= 2) wins++;
-        document.getElementById('winRate').innerText = Math.round((wins/total)*100) + "%";
-        drawChart();
-    }
-
-    function drawChart() {
-        const ctx = document.getElementById('myChart').getContext('2d');
-        if(chart) chart.destroy();
-        chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: sessionData.map((_, i) => i + 1),
-                datasets: [{
-                    data: sessionData,
-                    borderColor: '#22c55e',
-                    borderWidth: 2,
-                    tension: 0.4,
-                    pointRadius: 0,
-                    fill: true,
-                    backgroundColor: 'rgba(34, 197, 94, 0.05)'
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false, scales: { y: { display: false }, x: { display: false } }, plugins: { legend: { display: false } } }
-        });
-    }
-
-    window.onload = () => { if(sessionStorage.getItem('hery_auth') === 'true') { document.getElementById('loginScreen').style.display = 'none'; resetInactivityTimer(); } };
-</script>
-</body>
-</html>
+    let chart = null;
+    let
