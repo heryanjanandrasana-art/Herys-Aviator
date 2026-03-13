@@ -3,163 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HERYS HYBRID v6.0 - ULTIMATE PRO</title>
-    
+    <title>HERYS HYBRID v6.0 - COUNTDOWN PRO</title>
     <style>
-        :root {
-            --neon: #22c55e;
-            --danger: #e91e63;
-            --royal: #9b59b6;
-            --bg: #050507;
-            --glass: rgba(255, 255, 255, 0.05);
-        }
-
+        :root { --neon: #22c55e; --danger: #e91e63; --royal: #9b59b6; --bg: #050507; --glass: rgba(255, 255, 255, 0.05); }
         body { display: none; background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; flex-direction: column; align-items: center; margin: 0; padding-bottom: 50px; }
+        .status-bar { width: 100%; display: flex; justify-content: space-between; padding: 15px; box-sizing: border-box; background: var(--glass); border-bottom: 1px solid #1a1a20; font-size: 11px; }
+        .brand { font-size: 32px; font-weight: 900; letter-spacing: 10px; color: var(--neon); text-shadow: 0 0 20px rgba(34, 197, 94, 0.6); margin: 20px 0; }
         
-        /* Bar de Statut */
-        .status-bar { width: 100%; display: flex; justify-content: space-between; padding: 15px; box-sizing: border-box; background: var(--glass); border-bottom: 1px solid #1a1a20; font-size: 12px; font-weight: bold; }
-        
-        .brand { font-size: 35px; font-weight: 900; letter-spacing: 12px; color: var(--neon); text-shadow: 0 0 20px rgba(34, 197, 94, 0.6); margin: 25px 0; }
+        /* Compte à rebours */
+        .timer-display { font-size: 14px; color: #aaa; margin-bottom: 10px; font-weight: bold; letter-spacing: 2px; }
+        #countdown { color: var(--neon); font-size: 22px; }
 
-        /* Bloc Principal */
-        .engine-container { width: 90%; max-width: 400px; background: #0c0c0f; border-radius: 30px; padding: 25px; border: 1px solid #222; box-shadow: 0 20px 50px rgba(0,0,0,0.8); position: relative; overflow: hidden; }
-        
-        .scan-line { position: absolute; width: 100%; height: 2px; background: var(--neon); top: -2px; left: 0; opacity: 0.3; animation: scan 3s infinite linear; }
+        .engine-container { width: 90%; max-width: 400px; background: #0c0c0f; border-radius: 25px; padding: 20px; border: 1px solid #222; position: relative; overflow: hidden; }
+        .scan-line { position: absolute; width: 100%; height: 2px; background: var(--neon); top: -2px; left: 0; opacity: 0.2; animation: scan 3s infinite linear; }
         @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
-
-        input { width: 100%; background: #000; border: 2px solid #1a1a20; border-radius: 15px; padding: 18px; color: var(--neon); font-size: 28px; text-align: center; font-family: monospace; outline: none; margin: 15px 0; box-sizing: border-box; transition: 0.3s; }
-        input:focus { border-color: var(--neon); box-shadow: 0 0 15px rgba(34, 197, 94, 0.2); }
-
-        .prob-box { font-size: 11px; letter-spacing: 2px; color: #666; margin-bottom: 20px; text-transform: uppercase; }
-
-        /* Cartes de Résultats */
-        .res-grid { display: grid; gap: 15px; margin-top: 10px; }
-        .card { background: #050507; border-radius: 20px; padding: 18px; border: 1px solid #1a1a20; text-align: center; position: relative; }
-        .time { font-size: 30px; font-weight: bold; font-family: monospace; display: block; }
-        .label { font-size: 10px; font-weight: 900; margin-top: 8px; color: #555; }
         
-        .confidence { position: absolute; top: 8px; right: 12px; font-size: 9px; color: var(--neon); font-weight: bold; }
+        label { font-size: 9px; color: #555; font-weight: bold; display: block; margin-top: 10px; text-transform: uppercase; }
+        input { width: 100%; background: #000; border: 1px solid #1a1a20; border-radius: 12px; padding: 15px; color: var(--neon); font-size: 22px; text-align: center; margin: 8px 0; box-sizing: border-box; outline: none; }
+        input[type="time"] { color-scheme: dark; }
 
-        /* Historique */
-        .history { width: 90%; max-width: 400px; margin-top: 30px; }
-        .history-title { font-size: 12px; color: #444; margin-bottom: 10px; border-bottom: 1px solid #222; padding-bottom: 5px; }
-        .hist-item { display: flex; justify-content: space-between; font-size: 11px; padding: 8px 0; border-bottom: 1px solid #111; color: #888; }
+        .res-grid { display: grid; gap: 12px; margin-top: 15px; }
+        .card { background: #050507; border-radius: 15px; padding: 15px; border: 1px solid #1a1a20; text-align: center; }
+        .time { font-size: 28px; font-weight: bold; font-family: monospace; display: block; letter-spacing: 2px; }
+        .label { font-size: 9px; font-weight: 900; margin-top: 5px; color: #444; }
 
-        .btn-main { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; padding: 22px; border-radius: 20px; font-weight: bold; width: 90%; max-width: 400px; cursor: pointer; margin-top: 25px; font-size: 16px; letter-spacing: 2px; }
-        
-        .logout { color: var(--danger); background: none; border: 1px solid var(--danger); padding: 5px 10px; border-radius: 8px; font-size: 10px; cursor: pointer; }
+        .btn-main { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; padding: 20px; border-radius: 15px; font-weight: bold; width: 90%; max-width: 400px; cursor: pointer; margin-top: 20px; font-size: 16px; text-transform: uppercase; }
+        .history { width: 90%; max-width: 400px; margin-top: 25px; font-size: 10px; color: #666; }
     </style>
 
     <script>
         const AUTH = { "hery": "Nandrasana" };
-        let historyData = [];
+        let countdownInterval;
 
         function checkAuth() {
             if (sessionStorage.getItem("h_auth") !== "true") {
                 const u = prompt("USER:"); const p = prompt("PASS:");
-                if (AUTH[u] && AUTH[u] === p) {
-                    sessionStorage.setItem("h_auth", "true");
-                    window.location.reload();
-                } else { window.location.href = "https://google.com"; }
-            } else { 
-                document.addEventListener("DOMContentLoaded", () => { 
-                    document.body.style.display = "flex"; 
-                    syncTana(); setInterval(syncTana, 1000);
-                });
-            }
+                if (AUTH[u] && AUTH[u] === p) { sessionStorage.setItem("h_auth", "true"); window.location.reload(); }
+                else { window.location.href = "https://google.com"; }
+            } else { document.addEventListener("DOMContentLoaded", () => { document.body.style.display = "flex"; syncTana(); setInterval(syncTana, 1000); }); }
         }
 
         function syncTana() {
             const t = new Date().toLocaleString("en-US", {timeZone: "Indian/Antananarivo", hour12: false});
-            const d = new Date(t);
-            document.getElementById('clock').innerText = "TANA: " + d.toTimeString().split(' ')[0];
+            document.getElementById('clock').innerText = "EAT TANA: " + new Date(t).toTimeString().split(' ')[0];
+        }
+
+        function startTimer(targetTimeStr) {
+            clearInterval(countdownInterval);
+            const countdownEl = document.getElementById('countdown');
+            
+            countdownInterval = setInterval(() => {
+                const now = new Date(new Date().toLocaleString("en-US", {timeZone: "Indian/Antananarivo"}));
+                const [h, m, s] = targetTimeStr.split(':').map(Number);
+                const target = new Date(now);
+                target.setHours(h, m, s, 0);
+
+                const diff = target - now;
+
+                if (diff <= 0) {
+                    countdownEl.innerText = "PRÊT ! MISER MAINTENANT";
+                    countdownEl.style.color = "#e91e63";
+                    clearInterval(countdownInterval);
+                } else {
+                    const mins = Math.floor(diff / 60000);
+                    const secs = Math.floor((diff % 60000) / 1000);
+                    countdownEl.innerText = `${mins}m ${secs}s RESTANTS`;
+                    countdownEl.style.color = "#22c55e";
+                }
+            }, 1000);
         }
 
         function runHybridAnalysis() {
-            const val = parseFloat(document.getElementById('inputX').value);
-            if(isNaN(val)) return;
+            const lastX = parseFloat(document.getElementById('inputX').value);
+            const lastTimeVal = document.getElementById('lastTime').value;
+            if(isNaN(lastX) || !lastTimeVal) return alert("Remplir l'heure et le X");
 
-            const audio = new Audio('https://www.soundjay.com/buttons/sounds/button-3.mp3');
-            audio.play();
-
-            // Algorithme de prédiction Engine B + Facteur de Confiance
-            const now = new Date(new Date().toLocaleString("en-US", {timeZone: "Indian/Antananarivo"}));
-            let h = now.getHours();
-            let m = now.getMinutes();
-
-            // Calcul des probabilités
-            let conf1 = Math.floor(Math.random() * (99 - 94 + 1)) + 94; // 94% à 99%
-            let conf2 = Math.floor(Math.random() * (98 - 90 + 1)) + 90;
-
-            function shift(mP, sP) {
-                let ns = Math.floor(Math.random() * 45); 
-                let nm = m + mP; let nh = h;
+            let [h, m] = lastTimeVal.split(':').map(Number);
+            
+            function predict(addMin) {
+                let sec = 07; // Pause de 7s respectée
+                let nm = m + addMin;
+                let nh = h;
                 if(nm >= 60) { nm -= 60; nh += 1; }
-                return `${String(nh).padStart(2,'0')}:${String(nm).padStart(2,'0')}:${String(ns).padStart(2,'0')}`;
+                return `${String(nh).padStart(2,'0')}:${String(nm).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
             }
 
-            // Logique de timing basée sur le X précédent
-            let r1, r2;
-            if(val < 1.50) { r1 = shift(2, 10); r2 = shift(4, 30); }
-            else if(val > 10) { r1 = shift(1, 45); r2 = shift(3, 15); }
-            else { r1 = shift(2, 0); r2 = shift(5, 0); }
-
-            // Mise à jour UI
+            let r1 = predict(lastX < 2.0 ? 2 : 3);
             document.getElementById('t1').innerText = r1;
-            document.getElementById('t2').innerText = r2;
-            document.getElementById('c1').innerText = conf1 + "%";
-            document.getElementById('c2').innerText = conf2 + "%";
+            document.getElementById('t2').innerText = predict(5);
+            
+            // Lancer le chrono sur le premier signal
+            startTimer(r1);
 
-            // Historique
-            const hList = document.getElementById('hist-list');
             const item = document.createElement('div');
-            item.className = "hist-item";
-            item.innerHTML = `<span>Entrée: ${val}x</span> <span>Signal: ${r1}</span> <span style="color:var(--neon)">${conf1}%</span>`;
-            hList.prepend(item);
-            if(hList.children.length > 5) hList.lastChild.remove();
+            item.innerHTML = `Explosion: ${lastTimeVal} -> <b style="color:var(--neon)">Décollage: ${r1}</b>`;
+            document.getElementById('hist-list').prepend(item);
         }
-
         checkAuth();
     </script>
 </head>
 <body>
-
     <div class="status-bar">
-        <span id="clock">TANA: --:--:--</span>
-        <span>ENGINE B: ACTIF</span>
-        <button class="logout" onclick="sessionStorage.clear(); location.reload();">SORTIR</button>
+        <span id="clock">--:--:--</span>
+        <span onclick="sessionStorage.clear(); location.reload();" style="color:var(--danger); cursor:pointer;">SORTIR</span>
     </div>
 
     <div class="brand">HERYS</div>
 
+    <div class="timer-display">PROCHAIN SIGNAL DANS : <span id="countdown">-- --</span></div>
+
     <div class="engine-container">
         <div class="scan-line"></div>
-        <div class="prob-box">Analyse de Probabilité 99.9%</div>
-        
-        <label style="font-size: 9px; color: #555; font-weight: bold; letter-spacing: 2px;">DERNIER MULTIPLICATEUR X</label>
-        <input type="number" id="inputX" placeholder="0.00" step="0.01" autofocus>
+        <label>Heure du dernier vol (ex: 17:56)</label>
+        <input type="time" id="lastTime">
+        <label>Multiplicateur (X)</label>
+        <input type="number" id="inputX" placeholder="1.21">
 
         <div class="res-grid">
             <div class="card" style="border-color: var(--royal);">
-                <span class="confidence" id="c1">--%</span>
                 <span class="time" id="t1" style="color: var(--royal);">--:--:--</span>
-                <span class="label">PRÉDICTION PRIMAIRE</span>
+                <span class="label">DÉCOLLAGE ESTIMÉ</span>
             </div>
-
             <div class="card" style="border-color: var(--danger);">
-                <span class="confidence" id="c2">--%</span>
                 <span class="time" id="t2" style="color: var(--danger);">--:--:--</span>
-                <span class="label">SIGNAL DE SÉCURITÉ</span>
+                <span class="label">SIGNAL SÉCURITÉ</span>
             </div>
         </div>
     </div>
 
-    <button class="btn-main" onclick="runHybridAnalysis()">ANALYSER LE SIGNAL</button>
+    <button class="btn-main" onclick="runHybridAnalysis()">Générer Signal & Chrono</button>
 
-    <div class="history">
-        <div class="history-title">LOGS DE SESSION (Derniers signaux)</div>
-        <div id="hist-list"></div>
-    </div>
-
+    <div class="history" id="hist-list"></div>
 </body>
 </html>
