@@ -3,136 +3,279 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HERYS HYBRID v6.0 - COUNTDOWN PRO</title>
+    <title>HERYS - Analyseur Pro</title>
     <style>
-        :root { --neon: #22c55e; --danger: #e91e63; --royal: #9b59b6; --bg: #050507; --glass: rgba(255, 255, 255, 0.05); }
-        body { display: none; background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; flex-direction: column; align-items: center; margin: 0; padding-bottom: 50px; }
-        .status-bar { width: 100%; display: flex; justify-content: space-between; padding: 15px; box-sizing: border-box; background: var(--glass); border-bottom: 1px solid #1a1a20; font-size: 11px; }
-        .brand { font-size: 32px; font-weight: 900; letter-spacing: 10px; color: var(--neon); text-shadow: 0 0 20px rgba(34, 197, 94, 0.6); margin: 20px 0; }
-        
-        /* Compte à rebours */
-        .timer-display { font-size: 14px; color: #aaa; margin-bottom: 10px; font-weight: bold; letter-spacing: 2px; }
-        #countdown { color: var(--neon); font-size: 22px; }
+        :root {
+            --royal: #7300ff;
+            --danger: #ff4b2b;
+            --bg: #0a0a0a;
+            --card-bg: #161616;
+        }
 
-        .engine-container { width: 90%; max-width: 400px; background: #0c0c0f; border-radius: 25px; padding: 20px; border: 1px solid #222; position: relative; overflow: hidden; }
-        .scan-line { position: absolute; width: 100%; height: 2px; background: var(--neon); top: -2px; left: 0; opacity: 0.2; animation: scan 3s infinite linear; }
-        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
-        
-        label { font-size: 9px; color: #555; font-weight: bold; display: block; margin-top: 10px; text-transform: uppercase; }
-        input { width: 100%; background: #000; border: 1px solid #1a1a20; border-radius: 12px; padding: 15px; color: var(--neon); font-size: 22px; text-align: center; margin: 8px 0; box-sizing: border-box; outline: none; }
-        input[type="time"] { color-scheme: dark; }
+        body {
+            background-color: var(--bg);
+            color: white;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-        .res-grid { display: grid; gap: 12px; margin-top: 15px; }
-        .card { background: #050507; border-radius: 15px; padding: 15px; border: 1px solid #1a1a20; text-align: center; }
-        .time { font-size: 28px; font-weight: bold; font-family: monospace; display: block; letter-spacing: 2px; }
-        .label { font-size: 9px; font-weight: 900; margin-top: 5px; color: #444; }
+        .header {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
 
-        .btn-main { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; padding: 20px; border-radius: 15px; font-weight: bold; width: 90%; max-width: 400px; cursor: pointer; margin-top: 20px; font-size: 16px; text-transform: uppercase; }
-        .history { width: 90%; max-width: 400px; margin-top: 25px; font-size: 10px; color: #666; }
+        .brand {
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--royal);
+            text-shadow: 0 0 15px rgba(115, 0, 255, 0.5);
+            margin-bottom: 5px;
+        }
+
+        .engine-container {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid #222;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        label { font-size: 11px; color: #888; text-transform: uppercase; display: block; margin: 10px 0 5px; }
+
+        input {
+            width: 100%;
+            background: #000;
+            border: 1px solid #333;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            box-sizing: border-box;
+            outline: none;
+            font-size: 16px;
+        }
+
+        input:focus { border-color: var(--royal); }
+
+        /* Analyseur de Cycles */
+        #cycle-analyzer {
+            background: rgba(255,255,255,0.03);
+            padding: 15px;
+            border-radius: 12px;
+            margin: 15px 0;
+            border: 1px solid #333;
+            text-align: center;
+            position: relative;
+        }
+
+        .btn-reset {
+            position: absolute; top: 10px; right: 12px;
+            font-size: 9px; color: var(--danger); cursor: pointer;
+            border: 1px solid var(--danger); padding: 2px 6px;
+            border-radius: 4px; text-transform: uppercase;
+        }
+
+        .res-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .card {
+            border: 1px solid #333;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .card .time { font-size: 18px; font-weight: bold; display: block; }
+        .card .label { font-size: 9px; color: #888; }
+
+        .btn-main {
+            width: 100%;
+            background: var(--royal);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        .btn-main:active { transform: scale(0.98); }
+
+        .history {
+            width: 100%;
+            max-width: 400px;
+            margin-top: 20px;
+        }
+
+        .history-item {
+            background: rgba(255,255,255,0.05);
+            margin-bottom: 8px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            border-left: 3px solid var(--royal);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
     </style>
-
-    <script>
-        const AUTH = { "hery": "Nandrasana" };
-        let countdownInterval;
-
-        function checkAuth() {
-            if (sessionStorage.getItem("h_auth") !== "true") {
-                const u = prompt("USER:"); const p = prompt("PASS:");
-                if (AUTH[u] && AUTH[u] === p) { sessionStorage.setItem("h_auth", "true"); window.location.reload(); }
-                else { window.location.href = "https://google.com"; }
-            } else { document.addEventListener("DOMContentLoaded", () => { document.body.style.display = "flex"; syncTana(); setInterval(syncTana, 1000); }); }
-        }
-
-        function syncTana() {
-            const t = new Date().toLocaleString("en-US", {timeZone: "Indian/Antananarivo", hour12: false});
-            document.getElementById('clock').innerText = "EAT TANA: " + new Date(t).toTimeString().split(' ')[0];
-        }
-
-        function startTimer(targetTimeStr) {
-            clearInterval(countdownInterval);
-            const countdownEl = document.getElementById('countdown');
-            
-            countdownInterval = setInterval(() => {
-                const now = new Date(new Date().toLocaleString("en-US", {timeZone: "Indian/Antananarivo"}));
-                const [h, m, s] = targetTimeStr.split(':').map(Number);
-                const target = new Date(now);
-                target.setHours(h, m, s, 0);
-
-                const diff = target - now;
-
-                if (diff <= 0) {
-                    countdownEl.innerText = "PRÊT ! MISER MAINTENANT";
-                    countdownEl.style.color = "#e91e63";
-                    clearInterval(countdownInterval);
-                } else {
-                    const mins = Math.floor(diff / 60000);
-                    const secs = Math.floor((diff % 60000) / 1000);
-                    countdownEl.innerText = `${mins}m ${secs}s RESTANTS`;
-                    countdownEl.style.color = "#22c55e";
-                }
-            }, 1000);
-        }
-
-        function runHybridAnalysis() {
-            const lastX = parseFloat(document.getElementById('inputX').value);
-            const lastTimeVal = document.getElementById('lastTime').value;
-            if(isNaN(lastX) || !lastTimeVal) return alert("Remplir l'heure et le X");
-
-            let [h, m] = lastTimeVal.split(':').map(Number);
-            
-            function predict(addMin) {
-                let sec = 07; // Pause de 7s respectée
-                let nm = m + addMin;
-                let nh = h;
-                if(nm >= 60) { nm -= 60; nh += 1; }
-                return `${String(nh).padStart(2,'0')}:${String(nm).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
-            }
-
-            let r1 = predict(lastX < 2.0 ? 2 : 3);
-            document.getElementById('t1').innerText = r1;
-            document.getElementById('t2').innerText = predict(5);
-            
-            // Lancer le chrono sur le premier signal
-            startTimer(r1);
-
-            const item = document.createElement('div');
-            item.innerHTML = `Explosion: ${lastTimeVal} -> <b style="color:var(--neon)">Décollage: ${r1}</b>`;
-            document.getElementById('hist-list').prepend(item);
-        }
-        checkAuth();
-    </script>
 </head>
 <body>
-    <div class="status-bar">
-        <span id="clock">--:--:--</span>
-        <span onclick="sessionStorage.clear(); location.reload();" style="color:var(--danger); cursor:pointer;">SORTIR</span>
+
+    <div class="header">
+        <span id="clock">00:00:00</span>
+        <span onclick="location.reload();" style="color:var(--danger); cursor:pointer;">RECHARGER</span>
     </div>
 
     <div class="brand">HERYS</div>
-
-    <div class="timer-display">PROCHAIN SIGNAL DANS : <span id="countdown">-- --</span></div>
+    <div style="font-size: 10px; color: #555; margin-bottom: 15px;">ALGORITHME DE PRÉCISION V3.0</div>
 
     <div class="engine-container">
-        <div class="scan-line"></div>
-        <label>Heure du dernier vol (ex: 17:56)</label>
-        <input type="time" id="lastTime">
-        <label>Multiplicateur (X)</label>
-        <input type="number" id="inputX" placeholder="1.21">
+        <div id="cycle-analyzer">
+            <span class="btn-reset" onclick="resetCycles()">Reset</span>
+            <div style="font-size: 9px; color: #666; letter-spacing: 1px; margin-bottom: 5px;">ANALYSE SYSTÈME</div>
+            <div id="cycle-icon" style="font-size: 24px; margin-bottom: 5px;">📡</div>
+            <div id="cycle-status" style="font-weight: bold; font-size: 13px; color: var(--royal);">EN ATTENTE DE DONNÉES</div>
+        </div>
+
+        <label>Heure du dernier crash (ex: 18:41)</label>
+        <input type="time" id="lastTime" step="1">
+
+        <label>Multiplicateur du crash (X)</label>
+        <input type="number" id="inputX" placeholder="Ex: 1.25" step="0.01">
 
         <div class="res-grid">
             <div class="card" style="border-color: var(--royal);">
                 <span class="time" id="t1" style="color: var(--royal);">--:--:--</span>
-                <span class="label">DÉCOLLAGE ESTIMÉ</span>
+                <span class="label">PROCHAIN VOL</span>
             </div>
-            <div class="card" style="border-color: var(--danger);">
-                <span class="time" id="t2" style="color: var(--danger);">--:--:--</span>
-                <span class="label">SIGNAL SÉCURITÉ</span>
+            <div class="card" style="border-color: #00ff88;">
+                <span class="time" id="t2" style="color: #00ff88;">--:--:--</span>
+                <span class="label">SÉCURITÉ</span>
             </div>
         </div>
+
+        <button class="btn-main" onclick="runAnalysis()">Générer Signal</button>
     </div>
 
-    <button class="btn-main" onclick="runHybridAnalysis()">Générer Signal & Chrono</button>
-
     <div class="history" id="hist-list"></div>
+
+    <script>
+        // Horloge temps réel
+        setInterval(() => {
+            document.getElementById('clock').innerText = new Date().toLocaleTimeString();
+        }, 1000);
+
+        let historiqueX = [];
+
+        function resetCycles() {
+            historiqueX = [];
+            const statusText = document.getElementById('cycle-status');
+            const statusIcon = document.getElementById('cycle-icon');
+            statusIcon.innerText = "📡";
+            statusIcon.style.animation = "none";
+            statusText.innerText = "SYSTÈME RÉINITIALISÉ";
+            statusText.style.color = "var(--royal)";
+            document.getElementById('cycle-analyzer').style.borderColor = "#333";
+        }
+
+        function runAnalysis() {
+            const timeVal = document.getElementById('lastTime').value;
+            const inputX = parseFloat(document.getElementById('inputX').value);
+            const statusText = document.getElementById('cycle-status');
+            const statusIcon = document.getElementById('cycle-icon');
+            const analyzerBox = document.getElementById('cycle-analyzer');
+
+            if (!timeVal || isNaN(inputX)) {
+                alert("Veuillez remplir tous les champs.");
+                return;
+            }
+
+            // --- 1. CALCUL DU TEMPS RÉEL ---
+            // Durée estimée du vol (croissance de 10% par sec)
+            const dureeVol = Math.log(inputX) / Math.log(1.10); 
+            // Pause Transition : 1.25s (Animation) + 5s (Mise) = 6.25s
+            const pauseTransition = 6.25;
+            
+            let [h, m] = timeVal.split(':').map(Number);
+            let date = new Date();
+            date.setHours(h, m, 0);
+
+            // Heure exacte du prochain décollage
+            let prochainDecollage = new Date(date.getTime() + (dureeVol + pauseTransition) * 1000);
+            
+            const format = (d) => d.toTimeString().split(' ')[0];
+            const heureFinale = format(prochainDecollage);
+            
+            // Signal de sécurité (3 secondes avant)
+            let heureSecu = format(new Date(prochainDecollage.getTime() - 3000));
+
+            document.getElementById('t1').innerText = heureFinale;
+            document.getElementById('t2').innerText = heureSecu;
+
+            // --- 2. ANALYSE DES CYCLES ---
+            historiqueX.push(inputX);
+            if(historiqueX.length > 5) historiqueX.shift();
+
+            let petitsVols = historiqueX.filter(x => x < 1.8).length;
+
+            if (historiqueX.length < 3) {
+                statusText.innerText = `ANALYSE : ${historiqueX.length}/3 VOLS`;
+            } else {
+                if (petitsVols >= 3) {
+                    statusIcon.innerText = "⚡";
+                    statusIcon.style.animation = "pulse 1s infinite";
+                    statusText.innerText = "SIGNAL FORT : CYCLE DE MONTÉE";
+                    statusText.style.color = "#00ff88";
+                    analyzerBox.style.borderColor = "#00ff88";
+                } else if (inputX > 15) {
+                    statusIcon.innerText = "❄️";
+                    statusIcon.style.animation = "none";
+                    statusText.innerText = "ZONE FROIDE : PRUDENCE";
+                    statusText.style.color = "#00d4ff";
+                    analyzerBox.style.borderColor = "#00d4ff";
+                } else {
+                    statusIcon.innerText = "🎯";
+                    statusIcon.style.animation = "none";
+                    statusText.innerText = "CYCLE STABLE";
+                    statusText.style.color = "var(--royal)";
+                    analyzerBox.style.borderColor = "var(--royal)";
+                }
+            }
+
+            // --- 3. HISTORIQUE ---
+            const histList = document.getElementById('hist-list');
+            const item = document.createElement('div');
+            item.className = 'history-item';
+            item.innerHTML = `
+                <span>[${heureFinale}]</span>
+                <span>X: <b>${inputX.toFixed(2)}</b></span>
+                <span>${statusIcon.innerText}</span>
+            `;
+            histList.prepend(item);
+        }
+    </script>
 </body>
 </html>
