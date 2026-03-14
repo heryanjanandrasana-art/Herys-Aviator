@@ -3,109 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>HERYS MASTER - ULTIMATE TACTICAL</title>
+    <title>HERYS MASTER - ULTIMATE</title>
     <style>
         :root {
-            --royal: #7300ff; --bg: #0a0a0a; --card-bg: #161616;
-            --success: #00ff88; --danger: #ff3e3e; --neutral: #222;
-            /* Paliers de couleurs */
+            --royal: #7300ff; 
             --lvl-bleu: #00d4ff;   /* 1.00 - 1.99 */
             --lvl-violet: #a335ee; /* 2.00 - 4.99 */
             --lvl-rose: #ff00ff;   /* 5.00 - 9.99 */
             --lvl-vert: #00ff88;   /* 10.00+ */
+            --bg: #0a0a0a;
+            --card-bg: #161616;
+            --danger: #ff3e3e;
         }
+        
         body {
             background-color: var(--bg); color: white;
             font-family: 'Segoe UI', sans-serif; margin: 0; padding: 15px;
             display: flex; flex-direction: column; align-items: center;
         }
-        .engine-container {
-            background: var(--card-bg); width: 100%; max-width: 400px;
-            padding: 20px; border-radius: 20px; border: 1px solid #333;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+
+        .header-title {
+            font-weight: 900; color: var(--royal); font-size: 28px; 
+            margin-bottom: 20px; text-transform: uppercase; letter-spacing: -1px;
         }
+        .header-title span { color: white; font-size: 12px; opacity: 0.5; }
+
+        .engine-container { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 12px; }
+
+        /* BLOC SAISIE (HAUT) */
+        .glass-card {
+            background: var(--card-bg); padding: 15px; border-radius: 15px; 
+            border: 1px solid #333; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        label { font-size: 9px; color: #888; text-transform: uppercase; margin-bottom: 8px; display: block; letter-spacing: 1px; }
         
-        .input-group { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; margin-bottom: 15px; }
+        .input-row { display: flex; gap: 8px; margin-bottom: 10px; }
         input {
-            width: 100%; background: #000; border: 1px solid #333;
-            color: white; padding: 14px; border-radius: 8px; margin-bottom: 10px; box-sizing: border-box;
-            font-size: 16px; outline: none;
+            background: #000; border: 1px solid #333; color: white; 
+            padding: 12px; border-radius: 8px; font-size: 16px; width: 100%;
+            text-align: center; outline: none; transition: 0.3s;
         }
-        input:focus { border-color: var(--royal); }
-        label { font-size: 10px; color: #888; text-transform: uppercase; margin-bottom: 8px; display: block; letter-spacing: 1px; }
-        
+        input:focus { border-color: var(--royal); box-shadow: 0 0 10px rgba(115,0,255,0.2); }
+
         .btn-main {
             width: 100%; background: var(--royal); color: white; border: none;
-            padding: 16px; border-radius: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase;
+            padding: 15px; border-radius: 10px; font-weight: 800; cursor: pointer; text-transform: uppercase;
         }
+
+        /* BOUTON SYNC */
         .btn-sync {
-            width: 100%; background: transparent; color: var(--success);
-            border: 2px solid var(--success); padding: 14px; border-radius: 12px;
-            font-weight: 900; cursor: pointer; margin: 15px 0;
+            width: 100%; background: transparent; color: var(--lvl-vert);
+            border: 2px solid var(--lvl-vert); padding: 14px; border-radius: 12px;
+            font-weight: 900; cursor: pointer; text-transform: uppercase;
+            box-shadow: 0 0 10px rgba(0,255,136,0.1);
         }
 
-        /* Graphique Barres */
+        /* ZONE FLUX */
         .energy-grid {
-            height: 60px; display: flex; align-items: flex-end; gap: 4px;
-            background: rgba(0,0,0,0.5); padding: 10px; border-radius: 8px; margin-bottom: 5px;
+            height: 50px; display: flex; align-items: flex-end; gap: 4px;
+            background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px;
         }
-        .energy-bar { flex: 1; border-radius: 2px 2px 0 0; transition: height 0.5s ease; }
+        .energy-bar { flex: 1; border-radius: 2px; transition: height 0.5s ease; }
 
-        #cycle-status { font-size: 11px; font-weight: bold; text-align: center; margin-bottom: 15px; }
-
-        .time-display {
-            text-align: center; padding: 15px; border: 2px solid #333;
-            border-radius: 15px; margin-bottom: 15px;
+        /* ZONE PREDICTION */
+        .prediction-display {
+            background: var(--card-bg); padding: 20px; border-radius: 20px;
+            border: 2px solid #222; text-align: center; position: relative;
         }
-        #t1 { font-size: 38px; font-weight: 900; letter-spacing: 2px; color: var(--success); }
+        #t1 { font-size: 42px; font-weight: 900; color: var(--lvl-vert); letter-spacing: 2px; margin: 5px 0; }
+        #count-label { font-size: 11px; font-weight: bold; color: var(--danger); height: 15px; }
 
-        /* Historique & Badges */
-        .history-header {
-            display: flex; justify-content: space-between; width: 100%;
-            max-width: 400px; margin-top: 20px; font-size: 11px; color: #555;
-        }
-        #hist-list { width: 100%; max-width: 400px; }
+        /* HISTORIQUE */
         .history-item {
-            background: #111; margin-top: 8px; padding: 12px; border-radius: 10px;
-            display: flex; justify-content: space-between; font-size: 13px; align-items: center;
+            background: #111; margin-top: 8px; padding: 10px 15px; border-radius: 10px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-left: 4px solid var(--royal);
         }
         .badge-x {
-            padding: 6px 12px; border-radius: 8px; font-weight: 900; font-size: 15px;
-            min-width: 65px; text-align: center;
+            padding: 5px 12px; border-radius: 6px; font-weight: 900; font-size: 14px;
         }
     </style>
 </head>
 <body>
 
-    <div style="font-weight: 900; color: var(--royal); font-size: 28px; margin-bottom: 15px;">HERYS MASTER</div>
+    <div class="header-title">HERYS <span>MASTER ELITE</span></div>
     
     <div class="engine-container">
-        <div class="input-group">
-            <label>Saisie Tactique (Heure & X)</label>
-            <div style="display: flex; gap: 8px;">
-                <input type="text" id="manualTime" placeholder="12:00:00" style="flex: 1.5;">
+        <div class="glass-card">
+            <label>Configuration du Signal</label>
+            <div class="input-row">
+                <input type="text" id="manualTime" placeholder="00:00:00" style="flex: 1.5;">
                 <input type="number" id="inputX" placeholder="X.XX" step="0.01" style="flex: 1;">
             </div>
-            <button class="btn-main" onclick="analyze(false)">ANALYSER LE VOL</button>
+            <button class="btn-main" onclick="analyze(false)">Lancer l'Analyse</button>
         </div>
 
-        <button class="btn-sync" onclick="analyze(true)">⚡ SYNC EXPLOSION DIRECTE</button>
+        <button class="btn-sync" onclick="analyze(true)">⚡ SYNC EXPLOSION DIRECTE ⚡</button>
 
-        <div id="energy-container" class="energy-grid"></div>
-        <div id="cycle-status">EN ATTENTE...</div>
+        <div class="glass-card">
+            <label>Flux d'Énergie du Cycle</label>
+            <div id="energy-container" class="energy-grid"></div>
+            <div id="cycle-status" style="text-align: center; font-size: 10px; margin-top: 10px; font-weight: bold;"></div>
+        </div>
 
-        <div class="time-display">
-            <label>Prochaine Prédiction</label>
+        <div class="prediction-display">
+            <label>Prochaine Fenêtre de Vol</label>
             <div id="t1">--:--:--</div>
-            <div id="count-label" style="font-size: 11px; font-weight: bold; color: var(--danger); height: 15px; margin-top: 5px;"></div>
+            <div id="count-label"></div>
         </div>
     </div>
 
-    <div class="history-header">
-        <span>HISTORIQUE DES PRÉDICTIONS</span>
-        <span onclick="clearHistory()" style="cursor:pointer; color: var(--danger);">🗑️ EFFACER</span>
+    <div style="width:100%; max-width:400px; margin-top: 20px;">
+        <div style="display: flex; justify-content: space-between; font-size: 10px; color: #444; padding: 0 5px;">
+            <span>LOGS RÉCENTS</span>
+            <span onclick="clearHistory()" style="cursor:pointer;">EFFACER</span>
+        </div>
+        <div id="hist-list"></div>
     </div>
-    <div id="hist-list"></div>
 
     <script>
         let nextTime = null;
@@ -116,6 +130,13 @@
             document.getElementById('manualTime').value = now.toTimeString().split(' ')[0];
             refreshUI();
         };
+
+        function getPalierColor(val) {
+            if (val < 2) return 'var(--lvl-bleu)';
+            if (val < 5) return 'var(--lvl-violet)';
+            if (val < 10) return 'var(--lvl-rose)';
+            return 'var(--lvl-vert)';
+        }
 
         function analyze(isSync) {
             const inputX = parseFloat(document.getElementById('inputX').value);
@@ -151,40 +172,31 @@
                 bar.className = 'energy-bar';
                 let color = getPalierColor(val);
                 bar.style.backgroundColor = color;
-                bar.style.boxShadow = `0 0 10px ${color}44`;
-                const heightPercent = Math.min((val / 10) * 100, 100);
-                bar.style.height = `${Math.max(heightPercent, 10)}%`; 
+                bar.style.boxShadow = `0 0 8px ${color}66`;
+                const h = Math.min((val / 10) * 100, 100);
+                bar.style.height = `${Math.max(h, 15)}%`; 
                 container.appendChild(bar);
             });
 
             if(historiqueX.length > 0) {
                 const last = historiqueX[historiqueX.length - 1];
-                status.innerHTML = `<span style="color:${getPalierColor(last)}">PRÉDICTION : CYCLE ${last < 2 ? 'RÉCUPÉRATION' : 'PROFIT'}</span>`;
+                status.innerHTML = `ANALYSE : <span style="color:${getPalierColor(last)}">${last < 2 ? 'RÉCUPÉRATION' : 'PROFIT'}</span>`;
             }
 
             [...historiqueX].reverse().forEach(x => {
                 const item = document.createElement('div');
                 item.className = 'history-item';
-                let color = getPalierColor(x);
+                let c = getPalierColor(x);
                 item.innerHTML = `
-                    <span style="color:#666; font-size:10px;">SIGNAL</span> 
-                    <span class="badge-x" style="background:${color}15; color:${color}; border: 1px solid ${color}">
-                        ${x.toFixed(2)}x
-                    </span>
+                    <span style="color:#555; font-size:11px;">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                    <span class="badge-x" style="background:${c}15; color:${c}; border: 1px solid ${c}">${x.toFixed(2)}x</span>
                 `;
                 hist.appendChild(item);
             });
         }
 
-        function getPalierColor(val) {
-            if (val < 2) return 'var(--lvl-bleu)';
-            if (val < 5) return 'var(--lvl-violet)';
-            if (val < 10) return 'var(--lvl-rose)';
-            return 'var(--lvl-vert)';
-        }
-
         function clearHistory() {
-            if(confirm("Effacer l'historique ?")) {
+            if(confirm("Reset ?")) {
                 historiqueX = [];
                 localStorage.removeItem('herys_history');
                 refreshUI();
@@ -195,14 +207,9 @@
             if (!nextTime) return;
             let diff = Math.floor((nextTime - new Date()) / 1000);
             const label = document.getElementById('count-label');
-            if (diff > 0) {
-                label.innerText = `DÉCOLLAGE DANS ${diff}S`;
-            } else if (diff > -5) {
-                label.innerText = "VOL EN COURS...";
-            } else {
-                label.innerText = "";
-                nextTime = null;
-            }
+            if (diff > 0) { label.innerText = `DÉCOLLAGE DANS ${diff}S`; }
+            else if (diff > -5) { label.innerText = "VOL EN COURS..."; label.style.color = "var(--lvl-vert)"; }
+            else { label.innerText = ""; nextTime = null; }
         }, 1000);
     </script>
 </body>
