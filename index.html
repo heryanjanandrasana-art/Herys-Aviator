@@ -2,13 +2,17 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HERYS MASTER-EDITION</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>HERYS MASTER - ULTIMATE TACTICAL</title>
     <style>
         :root {
-            --royal: #7300ff; --rose: #ff00ff; --blue: #00d4ff;
-            --danger: #ff4b2b; --bg: #0a0a0a; --card-bg: #161616;
-            --success: #00ff88;
+            --royal: #7300ff; --bg: #0a0a0a; --card-bg: #161616;
+            --success: #00ff88; --danger: #ff3e3e; --neutral: #222;
+            /* Paliers de couleurs */
+            --lvl-bleu: #00d4ff;   /* 1.00 - 1.99 */
+            --lvl-violet: #a335ee; /* 2.00 - 4.99 */
+            --lvl-rose: #ff00ff;   /* 5.00 - 9.99 */
+            --lvl-vert: #00ff88;   /* 10.00+ */
         }
         body {
             background-color: var(--bg); color: white;
@@ -17,185 +21,186 @@
         }
         .engine-container {
             background: var(--card-bg); width: 100%; max-width: 400px;
-            padding: 20px; border-radius: 20px; border: 1px solid #222;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.7);
+            padding: 20px; border-radius: 20px; border: 1px solid #333;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        /* Timer & Tendance */
-        .time-display {
-            text-align: center; padding: 20px; border: 2px solid #333;
-            border-radius: 15px; margin-bottom: 10px; background: rgba(255,255,255,0.02);
-        }
-        #t1 { font-size: 38px; font-weight: 900; letter-spacing: 1px; }
-        .trend-bar { display: flex; justify-content: center; gap: 15px; font-size: 10px; margin-top: 10px; font-weight: bold; }
         
-        /* Grille & Cards */
-        .res-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 15px 0; }
-        .card { border: 2px solid #333; padding: 12px; border-radius: 12px; text-align: center; transition: 0.5s; }
-        .fiab { font-size: 9px; opacity: 0.7; margin-top: 4px; }
-
-        /* Buttons */
-        .btn-sync {
-            width: 100%; background: transparent; color: var(--success);
-            border: 2px solid var(--success); padding: 14px; border-radius: 12px;
-            font-weight: 900; cursor: pointer; margin-bottom: 15px; transition: 0.2s;
-        }
-        .btn-sync:active { transform: scale(0.95); background: rgba(0,255,136,0.1); }
-        
-        .btn-main {
-            width: 100%; background: var(--royal); color: white;
-            border: none; padding: 16px; border-radius: 12px;
-            font-weight: bold; cursor: pointer; text-transform: uppercase;
-        }
-
-        /* Inputs */
         .input-group { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; margin-bottom: 15px; }
         input {
             width: 100%; background: #000; border: 1px solid #333;
-            color: white; padding: 12px; border-radius: 8px; margin-bottom: 10px; box-sizing: border-box;
+            color: white; padding: 14px; border-radius: 8px; margin-bottom: 10px; box-sizing: border-box;
+            font-size: 16px; outline: none;
         }
-        label { font-size: 10px; color: #666; text-transform: uppercase; margin-bottom: 5px; display: block; }
-
-        /* Animations */
-        @keyframes urgent-blink { 50% { border-color: var(--danger); box-shadow: 0 0 20px var(--danger); transform: scale(1.02); } }
-        .urgent { animation: urgent-blink 0.5s infinite; }
+        input:focus { border-color: var(--royal); }
+        label { font-size: 10px; color: #888; text-transform: uppercase; margin-bottom: 8px; display: block; letter-spacing: 1px; }
         
+        .btn-main {
+            width: 100%; background: var(--royal); color: white; border: none;
+            padding: 16px; border-radius: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase;
+        }
+        .btn-sync {
+            width: 100%; background: transparent; color: var(--success);
+            border: 2px solid var(--success); padding: 14px; border-radius: 12px;
+            font-weight: 900; cursor: pointer; margin: 15px 0;
+        }
+
+        /* Graphique Barres */
+        .energy-grid {
+            height: 60px; display: flex; align-items: flex-end; gap: 4px;
+            background: rgba(0,0,0,0.5); padding: 10px; border-radius: 8px; margin-bottom: 5px;
+        }
+        .energy-bar { flex: 1; border-radius: 2px 2px 0 0; transition: height 0.5s ease; }
+
+        #cycle-status { font-size: 11px; font-weight: bold; text-align: center; margin-bottom: 15px; }
+
+        .time-display {
+            text-align: center; padding: 15px; border: 2px solid #333;
+            border-radius: 15px; margin-bottom: 15px;
+        }
+        #t1 { font-size: 38px; font-weight: 900; letter-spacing: 2px; color: var(--success); }
+
+        /* Historique & Badges */
+        .history-header {
+            display: flex; justify-content: space-between; width: 100%;
+            max-width: 400px; margin-top: 20px; font-size: 11px; color: #555;
+        }
+        #hist-list { width: 100%; max-width: 400px; }
         .history-item {
             background: #111; margin-top: 8px; padding: 12px; border-radius: 10px;
-            display: flex; justify-content: space-between; font-size: 13px; border-left: 4px solid var(--royal);
+            display: flex; justify-content: space-between; font-size: 13px; align-items: center;
+        }
+        .badge-x {
+            padding: 6px 12px; border-radius: 8px; font-weight: 900; font-size: 15px;
+            min-width: 65px; text-align: center;
         }
     </style>
 </head>
 <body>
 
-    <div style="font-weight: 900; color: var(--royal); font-size: 32px; letter-spacing: -1px;">HERYS <span style="color:white; font-size: 12px; vertical-align: middle; opacity: 0.5;">MASTER</span></div>
+    <div style="font-weight: 900; color: var(--royal); font-size: 28px; margin-bottom: 15px;">HERYS MASTER</div>
     
-    <div class="engine-container" style="margin-top: 15px;">
-        <div id="main-timer-box" class="time-display">
-            <div style="font-size: 9px; color: #555; letter-spacing: 2px; margin-bottom: 5px;">PROCHAIN SIGNAL CALCULÉ</div>
-            <div id="t1">--:--:--</div>
-            <div id="count-label" style="font-size: 11px; color: var(--danger); font-weight: bold; height: 15px;"></div>
-            
-            <div class="trend-bar">
-                <span id="trend-up" style="opacity: 0.2;">📈 HAUSSE</span>
-                <span id="trend-stable" style="color: var(--blue);">● STABLE</span>
-                <span id="trend-down" style="opacity: 0.2;">📉 BAISSE</span>
-            </div>
-        </div>
-
-        <div class="res-grid">
-            <div id="c1" class="card">
-                <span style="font-size: 9px; color: #888;">SAFE</span>
-                <div id="p1" style="font-size: 20px; font-weight: bold;">--</div>
-                <div id="f1" class="fiab"></div>
-            </div>
-            <div id="c2" class="card">
-                <span style="font-size: 9px; color: #888;">RISK</span>
-                <div id="p2" style="font-size: 20px; font-weight: bold;">--</div>
-                <div id="f2" class="fiab"></div>
-            </div>
-        </div>
-
-        <div id="bank-box" style="background: rgba(0,255,136,0.05); padding: 12px; border-radius: 12px; border: 1px solid #00ff8822; margin-bottom: 15px; text-align: center;">
-            <label style="color: var(--success);">Conseil de Mise</label>
-            <div id="bet-advice" style="font-weight: bold; font-size: 14px;">SOLDE REQUIS</div>
-            <input type="number" id="balance" placeholder="Votre Solde (ex: 500)" style="margin-top: 10px; border-color: #00ff8844; text-align: center; height: 35px;">
-        </div>
-
-        <button class="btn-sync" onclick="analyze(true)">⚡ SYNC EXPLOSION DIRECTE ⚡</button>
-        
+    <div class="engine-container">
         <div class="input-group">
-            <label>Analyse manuelle (Historique)</label>
-            <input type="time" id="lastTime">
-            <input type="number" id="inputX" placeholder="Dernier Multiplicateur (ex: 1.85)" step="0.01">
-            <button class="btn-main" onclick="analyze(false)">Lancer l'Analyse</button>
+            <label>Saisie Tactique (Heure & X)</label>
+            <div style="display: flex; gap: 8px;">
+                <input type="text" id="manualTime" placeholder="12:00:00" style="flex: 1.5;">
+                <input type="number" id="inputX" placeholder="X.XX" step="0.01" style="flex: 1;">
+            </div>
+            <button class="btn-main" onclick="analyze(false)">ANALYSER LE VOL</button>
+        </div>
+
+        <button class="btn-sync" onclick="analyze(true)">⚡ SYNC EXPLOSION DIRECTE</button>
+
+        <div id="energy-container" class="energy-grid"></div>
+        <div id="cycle-status">EN ATTENTE...</div>
+
+        <div class="time-display">
+            <label>Prochaine Prédiction</label>
+            <div id="t1">--:--:--</div>
+            <div id="count-label" style="font-size: 11px; font-weight: bold; color: var(--danger); height: 15px; margin-top: 5px;"></div>
         </div>
     </div>
 
-    <div id="hist-list" style="width:100%; max-width:400px; margin-top:20px;"></div>
+    <div class="history-header">
+        <span>HISTORIQUE DES PRÉDICTIONS</span>
+        <span onclick="clearHistory()" style="cursor:pointer; color: var(--danger);">🗑️ EFFACER</span>
+    </div>
+    <div id="hist-list"></div>
 
     <script>
         let nextTime = null;
-        let historiqueX = [];
+        let historiqueX = JSON.parse(localStorage.getItem('herys_history')) || [];
+
+        window.onload = () => {
+            const now = new Date();
+            document.getElementById('manualTime').value = now.toTimeString().split(' ')[0];
+            refreshUI();
+        };
 
         function analyze(isSync) {
             const inputX = parseFloat(document.getElementById('inputX').value);
-            const timeVal = document.getElementById('lastTime').value;
-            const solde = parseFloat(document.getElementById('balance').value) || 0;
-
-            if (isNaN(inputX)) return alert("Entrez le dernier X");
+            const timeStr = document.getElementById('manualTime').value;
+            if (isNaN(inputX)) return;
 
             let dateRef = new Date();
             if (!isSync) {
-                if (!timeVal) return alert("Entrez l'heure du bet");
-                let [h, m] = timeVal.split(':').map(Number);
-                dateRef.setHours(h, m, 30, 0); 
+                let parts = timeStr.split(':');
+                dateRef.setHours(parseInt(parts[0])||0, parseInt(parts[1])||0, parseInt(parts[2])||0, 0);
             }
 
-            // Calcul du Timing
             const dureeVol = Math.log(inputX) / Math.log(1.10);
             nextTime = new Date(dateRef.getTime() + (dureeVol * 1000) + 6250);
-            
             document.getElementById('t1').innerText = nextTime.toTimeString().split(' ')[0];
-            document.getElementById('t1').style.color = isSync ? "#00ff88" : "#ffcc00";
-
-            // Analyse de Cycle
+            
             historiqueX.push(inputX);
-            if(historiqueX.length > 8) historiqueX.shift();
-            let score = historiqueX.filter(x => x < 1.8).length;
+            if(historiqueX.length > 10) historiqueX.shift();
+            localStorage.setItem('herys_history', JSON.stringify(historiqueX));
+            refreshUI();
+        }
+
+        function refreshUI() {
+            const container = document.getElementById('energy-container');
+            const status = document.getElementById('cycle-status');
+            const hist = document.getElementById('hist-list');
             
-            // UI & Tendance
-            let color = score >= 3 ? "#ff00ff" : "#00d4ff";
-            let fSafe = score >= 3 ? "95%" : "88%";
-            let fRisk = score >= 3 ? "75%" : "60%";
-            
-            updateUI(color, score >= 3 ? "1.50X+" : "1.20X", score >= 3 ? "2.10X+" : "1.50X", fSafe, fRisk);
-            updateTrend(historiqueX);
-            
-            // Bankroll
-            if (solde > 0) {
-                let mise = score >= 3 ? solde * 0.05 : solde * 0.02;
-                document.getElementById('bet-advice').innerText = "MISEZ : " + mise.toFixed(2) + " (MAX)";
+            container.innerHTML = "";
+            hist.innerHTML = "";
+
+            historiqueX.forEach(val => {
+                const bar = document.createElement('div');
+                bar.className = 'energy-bar';
+                let color = getPalierColor(val);
+                bar.style.backgroundColor = color;
+                bar.style.boxShadow = `0 0 10px ${color}44`;
+                const heightPercent = Math.min((val / 10) * 100, 100);
+                bar.style.height = `${Math.max(heightPercent, 10)}%`; 
+                container.appendChild(bar);
+            });
+
+            if(historiqueX.length > 0) {
+                const last = historiqueX[historiqueX.length - 1];
+                status.innerHTML = `<span style="color:${getPalierColor(last)}">PRÉDICTION : CYCLE ${last < 2 ? 'RÉCUPÉRATION' : 'PROFIT'}</span>`;
             }
 
-            // Historique
-            const item = document.createElement('div');
-            item.className = 'history-item';
-            item.innerHTML = `<span>[${nextTime.toLocaleTimeString()}]</span> <span>X: ${inputX.toFixed(2)}</span> <span style="color:${color}">●</span>`;
-            document.getElementById('hist-list').prepend(item);
+            [...historiqueX].reverse().forEach(x => {
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                let color = getPalierColor(x);
+                item.innerHTML = `
+                    <span style="color:#666; font-size:10px;">SIGNAL</span> 
+                    <span class="badge-x" style="background:${color}15; color:${color}; border: 1px solid ${color}">
+                        ${x.toFixed(2)}x
+                    </span>
+                `;
+                hist.appendChild(item);
+            });
         }
 
-        function updateUI(c, v1, v2, f1, f2) {
-            document.getElementById('c1').style.borderColor = c;
-            document.getElementById('c2').style.borderColor = c;
-            document.getElementById('p1').innerText = v1; document.getElementById('p1').style.color = c;
-            document.getElementById('p2').innerText = v2; document.getElementById('p2').style.color = c;
-            document.getElementById('f1').innerText = "FIAB: " + f1;
-            document.getElementById('f2').innerText = "FIAB: " + f2;
+        function getPalierColor(val) {
+            if (val < 2) return 'var(--lvl-bleu)';
+            if (val < 5) return 'var(--lvl-violet)';
+            if (val < 10) return 'var(--lvl-rose)';
+            return 'var(--lvl-vert)';
         }
 
-        function updateTrend(list) {
-            const avg = list.reduce((a,b) => a+b, 0) / list.length;
-            document.getElementById('trend-up').style.opacity = avg > 2 ? "1" : "0.2";
-            document.getElementById('trend-down').style.opacity = avg < 1.4 ? "1" : "0.2";
-            document.getElementById('trend-stable').style.opacity = (avg >= 1.4 && avg <= 2) ? "1" : "0.2";
+        function clearHistory() {
+            if(confirm("Effacer l'historique ?")) {
+                historiqueX = [];
+                localStorage.removeItem('herys_history');
+                refreshUI();
+            }
         }
 
         setInterval(() => {
             if (!nextTime) return;
             let diff = Math.floor((nextTime - new Date()) / 1000);
-            let label = document.getElementById('count-label');
-            let box = document.getElementById('main-timer-box');
-
+            const label = document.getElementById('count-label');
             if (diff > 0) {
                 label.innerText = `DÉCOLLAGE DANS ${diff}S`;
-                if (diff <= 10) box.classList.add('urgent');
-                else box.classList.remove('urgent');
             } else if (diff > -5) {
                 label.innerText = "VOL EN COURS...";
-                box.classList.remove('urgent');
             } else {
                 label.innerText = "";
-                box.classList.remove('urgent');
                 nextTime = null;
             }
         }, 1000);
