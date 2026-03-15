@@ -3,236 +3,254 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>HERYS ELITE V12.5 - CORE DECODER</title>
+    <title>HERYS ELITE V25 - MASTER SEQUENCE</title>
     <style>
-        :root {
-            --neon: #00f2ff;
-            --rose: #ff00ff;
-            --vert: #00ff88;
-            --violet: #9d4cff;
-            --bleu: #00d4ff;
-            --bg: #050505;
-            --panel: #0d0d0d;
+        :root { 
+            --neon: #00f2ff; 
+            --rose: #ff00ff; 
+            --vert: #00ff88; 
+            --violet: #9d4cff; 
+            --orange: #ff9500; 
+            --bg: #050505; 
+            --card: #0a0a0a;
+        }
+        
+        body { 
+            background: var(--bg); 
+            color: white; 
+            font-family: 'Courier New', monospace; 
+            margin: 0; 
+            padding: 10px; 
+            overflow-x: hidden;
         }
 
-        body {
-            background: var(--bg);
-            color: white;
-            font-family: 'Courier New', monospace;
-            margin: 0;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .container { width: 100%; max-width: 420px; margin: auto; }
+        
+        /* Zone de Scan */
+        .scanner-area { 
+            background: #000; 
+            border: 1px solid #1a1a1a; 
+            padding: 20px; 
+            border-radius: 8px; 
+            text-align: center; 
+            border-bottom: 3px solid var(--neon);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        .container { width: 100%; max-width: 400px; }
+        #status-display { font-size: 50px; height: 60px; display: flex; align-items: center; justify-content: center; }
+        .icon-check { color: var(--vert); text-shadow: 0 0 25px var(--vert); }
+        .icon-cross { color: #ff3333; text-shadow: 0 0 25px #ff3333; }
+        
+        #p-val { font-size: 24px; font-weight: bold; letter-spacing: 2px; transition: 0.3s; }
 
-        .terminal-header {
-            text-align: center;
-            padding: 15px;
-            border: 1px solid #222;
-            border-radius: 15px 15px 0 0;
-            background: var(--panel);
+        textarea, input { 
+            width: 100%; 
+            background: var(--card); 
+            border: 1px solid #222; 
+            color: var(--neon); 
+            padding: 15px; 
+            box-sizing: border-box; 
+            outline: none; 
+            margin-bottom: 10px; 
+            border-radius: 4px; 
+            text-align: center; 
+            font-weight: bold;
+            font-size: 16px;
         }
 
-        .scanner-area {
-            background: #000;
-            border: 1px solid #333;
-            padding: 20px;
-            position: relative;
-            overflow: hidden;
-            border-radius: 0 0 15px 15px;
+        .btn-analyze { 
+            width: 100%; 
+            padding: 18px; 
+            border: 2px solid var(--neon); 
+            background: transparent; 
+            color: var(--neon); 
+            cursor: pointer; 
+            font-weight: bold; 
+            text-transform: uppercase; 
+            letter-spacing: 2px;
+            transition: 0.2s;
         }
+        .btn-analyze:active { background: var(--neon); color: #000; }
 
-        .scan-line {
-            width: 100%;
-            height: 2px;
-            background: var(--neon);
-            position: absolute;
-            top: 0;
-            left: 0;
-            box-shadow: 0 0 15px var(--neon);
-            animation: moveScan 4s linear infinite;
-        }
-
-        @keyframes moveScan { 0% { top: 0; } 100% { top: 100%; } }
-
-        .input-box { margin-bottom: 15px; }
-        label { font-size: 9px; color: #555; display: block; margin-bottom: 5px; letter-spacing: 1px; }
-
-        input, textarea {
-            width: 100%;
-            background: #080808;
-            border: 1px solid #333;
-            color: var(--neon);
-            padding: 12px;
-            border-radius: 5px;
-            box-sizing: border-box;
-            outline: none;
-            font-size: 14px;
-        }
-
-        .btn-analyze {
-            width: 100%;
-            padding: 18px;
-            border: none;
-            background: linear-gradient(45deg, #4400aa, #0077ff);
-            color: white;
-            font-weight: 900;
-            border-radius: 10px;
-            cursor: pointer;
+        /* Timeline */
+        .timeline-header { 
+            margin-top: 25px; 
+            font-size: 11px; 
+            color: var(--neon); 
             text-transform: uppercase;
-            box-shadow: 0 0 20px rgba(0, 119, 255, 0.3);
-            margin-bottom: 10px;
+            letter-spacing: 1px;
+            padding-left: 5px; 
+            border-left: 3px solid var(--neon); 
         }
 
-        .prediction-matrix {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 15px;
+        .timeline-scroll { 
+            height: 280px; 
+            overflow-y: auto; 
+            margin-top: 10px; 
+            background: #080808; 
+            border-radius: 4px; 
+            border: 1px solid #111; 
         }
 
-        .pred-card {
-            background: var(--panel);
-            padding: 15px;
-            border-radius: 12px;
-            text-align: center;
-            border: 1px solid #222;
+        .time-row { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 12px; 
+            border-bottom: 1px solid #111; 
+            font-size: 13px; 
         }
 
-        .val { display: block; font-size: 24px; font-weight: 900; margin-top: 5px; }
+        .t-round { color: #444; font-size: 10px; width: 50px; }
+        .t-clock { color: #888; width: 70px; }
+        .t-signal { font-weight: 900; flex-grow: 1; text-align: right; }
 
-        .status-badge {
-            margin-top: 15px;
-            padding: 10px;
-            background: #111;
-            border-radius: 8px;
+        /* Historique */
+        .history-container { 
+            display: flex; 
+            gap: 8px; 
+            margin-top: 20px; 
+            overflow-x: auto; 
+            padding: 15px 5px; 
+            flex-direction: row-reverse; 
+        }
+        .dot { 
+            min-width: 45px; 
+            height: 22px; 
+            font-size: 10px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            border-radius: 3px; 
+            color: #000; 
+            font-weight: bold; 
+        }
+        
+        .btn-reset {
+            width: 100%;
+            background: none;
+            border: none;
+            color: #333;
             font-size: 10px;
-            border-left: 4px solid var(--neon);
-        }
-
-        .history-strip {
-            display: flex;
-            justify-content: center;
-            gap: 5px;
             margin-top: 20px;
+            cursor: pointer;
+            text-decoration: underline;
         }
-
-        .dot { width: 30px; height: 18px; border-radius: 3px; font-size: 8px; font-weight: bold; display: flex; align-items: center; justify-content: center; color: black; }
-
-        #debug { font-size: 8px; color: #00ff88; margin-top: 10px; font-family: monospace; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="terminal-header">
-            <h2 style="color: var(--neon); margin: 0; font-size: 18px;">HERYS ELITE V12.5</h2>
-            <div style="font-size: 8px; color: #555;">SYSTEM: SEED DECODER & WHALE TRACKER</div>
-        </div>
-
-        <div class="scanner-area">
-            <div class="scan-line"></div>
-            
-            <div class="input-box">
-                <label>SHA512 HASH (PROVABLY FAIR)</label>
-                <textarea id="hashInput" rows="2" placeholder="Collez le hash complet du serveur..."></textarea>
-            </div>
-
-            <div class="input-box">
-                <label>SCORE DU ROUND PRÉCÉDENT</label>
-                <input type="number" id="lastScore" placeholder="ex: 129.01" step="0.01">
-            </div>
-
-            <button class="btn-analyze" onclick="processCore()">Exécuter l'Analyse</button>
-            
-            <div id="debug">> SYSTEM_IDLE: WAITING_FOR_DATA...</div>
-        </div>
-
-        <div class="status-badge" id="sequence-info">
-            SÉQUENCE : ANALYSE DES FLUX NÉCESSAIRE
-        </div>
-
-        <div class="prediction-matrix">
-            <div class="pred-card">
-                <label style="color: white;">CIBLE SAFE</label>
-                <span id="safe-val" class="val" style="color: var(--neon);">--</span>
-            </div>
-            <div class="pred-card">
-                <label style="color: var(--rose);">CIBLE ROSE (5x+)</label>
-                <span id="whale-val" class="val" style="color: var(--rose);">--</span>
-            </div>
-        </div>
-
-        <div id="history" class="history-strip"></div>
+<div class="container">
+    <div class="scanner-area">
+        <div id="status-display">⚡</div>
+        <div style="font-size: 10px; color: #444; margin-bottom: 5px;">POWER_CORE</div>
+        <div id="p-val" style="color: white; margin-bottom: 15px;">00000</div>
+        
+        <textarea id="hashInput" maxlength="4" placeholder="4 CHARS DU HASH"></textarea>
+        <input type="number" id="lastScore" step="0.01" placeholder="SCORE DU ROUND">
+        <button class="btn-analyze" onclick="processCore()">DECODE SEQUENCE</button>
     </div>
 
-    <script>
-        let logs = [];
+    <div class="timeline-header">Sequence Master (Next 50 Rounds)</div>
+    <div class="timeline-scroll" id="timeline">
+        <div style="color:#222; text-align:center; margin-top:100px;">EN ATTENTE DE DONNÉES...</div>
+    </div>
 
-        function processCore() {
-            const hash = document.getElementById('hashInput').value.trim();
-            const last = parseFloat(document.getElementById('lastScore').value);
-            const debug = document.getElementById('debug');
-            const seqInfo = document.getElementById('sequence-info');
+    <div class="history-container" id="history"></div>
+    <button class="btn-reset" onclick="clearSession()">[ RESET_MASTER_DATABASE ]</button>
+</div>
 
-            if(!hash || isNaN(last)) {
-                alert("Veuillez remplir le Hash et le Score.");
-                return;
-            }
+<script>
+    let logs = JSON.parse(localStorage.getItem('herys_v25_logs')) || [];
+    let lastTarget = 1.50;
 
-            logs.unshift(last);
-            if(logs.length > 6) logs.pop();
+    // Focus auto vers score après 4 chars de Hash
+    document.getElementById('hashInput').addEventListener('input', function() {
+        if(this.value.length === 4) document.getElementById('lastScore').focus();
+    });
 
-            // --- LOGIQUE DE DÉCODAGE DES CODES CACHÉS ---
-            // On analyse le poids hexadécimal du premier segment du hash
-            const hexFrag = hash.substring(0, 4);
-            const weight = parseInt(hexFrag, 16);
-            const firstChar = hash.charAt(0).toLowerCase();
-            const isHot = "abcdef".includes(firstChar);
+    function processCore() {
+        let h = document.getElementById('hashInput').value.trim();
+        const s = parseFloat(document.getElementById('lastScore').value);
+        if(h.length < 4 || isNaN(s)) return;
 
-            debug.innerHTML = `> HASH_FRAGMENT: ${hexFrag} | WEIGHT: ${weight}<br>> DECODING_SUCCESSFUL...`;
+        const weight = parseInt(h, 16);
+        const pVal = document.getElementById('p-val');
+        pVal.innerText = weight;
 
-            // Calcul des Probabilités (Calibré sur tes paliers : Rose = 5x+)
-            let pSafe, pWhale;
-            
-            if (isHot || weight > 32000) {
-                // Séquence CHAUDE : Rupture de cycle détectée
-                seqInfo.innerText = "SÉQUENCE : CHAUDE (HAUTE PROBABILITÉ ROSE)";
-                seqInfo.style.borderLeftColor = "var(--rose)";
-                pSafe = (2.10 + (weight/50000)).toFixed(2);
-                pWhale = (5.50 + (weight/2000)).toFixed(2);
-            } else {
-                // Séquence FROIDE : Distribution standard ou récupération
-                seqInfo.innerText = "SÉQUENCE : FROIDE (ACCUMULATION / BLEU)";
-                seqInfo.style.borderLeftColor = "var(--bleu)";
-                pSafe = (1.32 + (weight/60000)).toFixed(2);
-                pWhale = (2.50 + (weight/10000)).toFixed(2);
-            }
-
-            // Affichage
-            document.getElementById('safe-val').innerText = pSafe + "X";
-            document.getElementById('whale-val').innerText = pWhale + "X";
-
-            // Auto-Copy de la cible Safe
-            navigator.clipboard.writeText(pSafe);
-            
-            updateHistoryUI();
-            document.getElementById('lastScore').value = "";
+        // --- Logique Haptique et Couleur Power ---
+        if (weight > 40000) { 
+            pVal.style.color = "var(--vert)";
+            if (window.navigator.vibrate) window.navigator.vibrate([100, 50, 100]); 
+        } else if (weight > 20000) { 
+            pVal.style.color = "var(--orange)";
+        } else { 
+            pVal.style.color = "var(--rose)";
+            if (weight < 10000 && window.navigator.vibrate) window.navigator.vibrate(400);
         }
 
-        function updateHistoryUI() {
-            const hist = document.getElementById('history');
-            hist.innerHTML = logs.map(s => {
-                let color = "var(--bleu)";
-                if(s >= 50) color = "var(--vert)";
-                else if(s >= 5) color = "var(--rose)";
-                else if(s >= 2) color = "var(--violet)";
-                return `<div class="dot" style="background:${color}">${s.toFixed(1)}</div>`;
-            }).join('');
+        // Signe de validation
+        document.getElementById('status-display').innerHTML = (s >= lastTarget) ? '<span class="icon-check">✓</span>' : '<span class="icon-cross">✕</span>';
+
+        // --- Génération Timeline 50 Tours ---
+        const now = new Date();
+        const timeline = document.getElementById('timeline');
+        timeline.innerHTML = ""; 
+
+        for(let i = 1; i <= 50; i++) {
+            let futureWeight = (weight + (i * 1337)) % 65535;
+            let timeGap = i * 22; // Moyenne 22s par round
+            let futureClock = new Date(now.getTime() + timeGap * 1000).toTimeString().split(' ')[0];
+            
+            let sig = { name: "NEUTRE", col: "#222", mult: "1.0x" };
+
+            if (futureWeight > 60000) { 
+                sig = { name: "VERT 🟢", col: "var(--vert)", mult: "50x+" }; 
+            } else if (futureWeight > 42000) { 
+                sig = { name: "ROSE 🌸", col: "var(--rose)", mult: "5x+" }; 
+            } else if (futureWeight > 22000) { 
+                sig = { name: "VIOLET 🟣", col: "var(--violet)", mult: "2x+" }; 
+            }
+
+            if(sig.name !== "NEUTRE") {
+                timeline.innerHTML += `
+                    <div class="time-row">
+                        <span class="t-round">R+${i}</span>
+                        <span class="t-clock">${futureClock}</span>
+                        <span class="t-signal" style="color:${sig.col}">${sig.name} (${sig.mult})</span>
+                    </div>
+                `;
+            }
         }
-    </script>
+
+        // Historique
+        logs.unshift({ score: s, ts: Date.now() });
+        if(logs.length > 20) logs.pop();
+        localStorage.setItem('herys_v25_logs', JSON.stringify(logs));
+        updateUI();
+        
+        // Reset inputs
+        document.getElementById('lastScore').value = "";
+        document.getElementById('hashInput').value = "";
+        document.getElementById('hashInput').focus();
+    }
+
+    function updateUI() {
+        const hist = document.getElementById('history');
+        hist.innerHTML = logs.map((entry) => {
+            let c = entry.score >= 50 ? "var(--vert)" : (entry.score >= 5 ? "var(--rose)" : (entry.score >= 2 ? "var(--violet)" : "var(--neon)"));
+            return `<div class="dot" style="background:${c}">${entry.score.toFixed(2)}</div>`;
+        }).join('');
+    }
+
+    function clearSession() {
+        if(confirm("Réinitialiser toutes les données ?")) {
+            logs = [];
+            localStorage.removeItem('herys_v25_logs');
+            location.reload();
+        }
+    }
+    updateUI();
+</script>
 </body>
 </html>
