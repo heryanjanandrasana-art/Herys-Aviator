@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>HERYS ELITE V30.1 - SMART RESET</title>
+    <title>HERYS ELITE V32 - GREEN TARGET</title>
     <style>
         :root { 
             --premium-v: #8e44ff; --neon-b: #00d2ff; --vif-g: #00ff88; --hot-p: #ff00ff; --gold: #FFD700;
@@ -12,11 +12,8 @@
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 10px; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        .journal-card { 
-            background: #0b0b0b; border: 1px solid var(--border); border-radius: 0 0 15px 15px; 
-            padding: 12px; position: fixed; top: 0; left: 10px; right: 10px; 
-            transition: transform 0.4s ease; z-index: 101; text-align: center;
-        }
+        /* Dashboard Stats */
+        .journal-card { background: #0b0b0b; border: 1px solid var(--border); border-radius: 0 0 15px 15px; padding: 12px; position: fixed; top: 0; left: 10px; right: 10px; transition: transform 0.4s ease; z-index: 101; text-align: center; }
         .journal-card.hidden { transform: translateY(-85%); }
         .journal-stats { display: flex; justify-content: space-around; margin-top: 10px; background: #161616; padding: 8px; border-radius: 8px; }
         .stat-val { font-size: 14px; font-weight: 900; color: var(--vif-g); }
@@ -24,30 +21,25 @@
 
         .spacer-top { height: 45px; }
 
-        .img-card { 
-            background: var(--card); border: 1px solid #1a1a1a; border-radius: 16px; 
-            padding: 15px; margin-bottom: 8px; text-align: center; transition: all 0.4s;
-        }
-        
+        /* Main Display */
+        .img-card { background: var(--card); border: 1px solid #1a1a1a; border-radius: 16px; padding: 15px; margin-bottom: 8px; text-align: center; transition: all 0.4s; position: relative; overflow: hidden; }
         .hybrid-box { display: flex; justify-content: space-around; align-items: center; margin: 10px 0; }
         .t-val { font-size: 32px; font-weight: 900; }
-        .conf-circle { width: 70px; height: 70px; border: 5px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 900; background: #000; }
+        .conf-circle { width: 75px; height: 75px; border: 5px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 900; background: #000; transition: 0.3s; }
         
-        .strong-signal { border-color: var(--gold) !important; color: var(--gold) !important; box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
-        .recovery-mode { border-color: var(--danger) !important; }
+        /* Feedback Visuel */
+        .strong-signal { border-color: var(--gold) !important; color: var(--gold) !important; box-shadow: 0 0 20px rgba(255, 215, 0, 0.4); }
+        .elite-green { border-color: var(--vif-g) !important; color: var(--vif-g) !important; box-shadow: 0 0 25px rgba(0, 255, 136, 0.5); }
+        .recovery-mode { border-color: var(--danger) !important; box-shadow: 0 0 15px rgba(255, 68, 68, 0.2); }
 
+        /* Séquences R+ */
         .seq-container { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
         .seq-box { background: #161616; padding: 8px; border-radius: 8px; font-size: 9px; border: 1px solid #222; }
         .seq-val { font-weight: 900; display: block; margin-top: 4px; font-size: 11px; }
 
-        .input-card { 
-            background: var(--card); border-top: 2px solid var(--premium-v); border-radius: 25px 25px 0 0; 
-            padding: 15px; position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
-            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.8);
-        }
+        /* Clavier Intelligent */
+        .input-card { background: var(--card); border-top: 2px solid var(--premium-v); border-radius: 25px 25px 0 0; padding: 15px; position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 -10px 30px rgba(0,0,0,0.8); }
         .input-card.hidden { transform: translateY(82%); }
-        
         .input-group { display: flex; gap: 10px; margin-bottom: 12px; }
         .input-box { flex: 1; background: #f0f0f0; color: #000; padding: 12px; border-radius: 10px; font-weight: 900; text-align: center; font-size: 16px; border: 3px solid transparent; }
         .input-box.active { border-color: var(--premium-v); background: #fff; box-shadow: 0 0 10px rgba(142, 68, 255, 0.3); }
@@ -59,7 +51,6 @@
 
         .hist { display: flex; gap: 6px; overflow-x: auto; padding: 5px 0; flex-direction: row-reverse; height: 35px; }
         .dot { min-width: 45px; height: 20px; font-size: 10px; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: #000; font-weight: 900; }
-        
         .kb-trigger { background: var(--premium-v); color: #fff; border: none; padding: 4px 20px; border-radius: 10px 10px 0 0; font-size: 10px; position: absolute; top: -18px; left: 50%; transform: translateX(-50%); }
     </style>
 </head>
@@ -68,23 +59,24 @@
     <div class="journal-card hidden" id="jr-card">
         <div class="journal-stats">
             <div class="stat-item"><div class="stat-label">Scans</div><div class="stat-val" id="st-scans">0</div></div>
-            <div class="stat-item"><div class="stat-label">Winrate</div><div class="stat-val" id="st-rate">0%</div></div>
+            <div class="stat-item"><div class="stat-label">Précision</div><div class="stat-val" id="st-rate">0%</div></div>
         </div>
-        <button class="kb-trigger" style="background:#333; top: auto; bottom: -18px;" onclick="document.getElementById('jr-card').classList.toggle('hidden')">📊 STATS</button>
+        <button class="kb-trigger" style="background:#333; top: auto; bottom: -18px;" onclick="document.getElementById('jr-card').classList.toggle('hidden')">📊 ANALYSE SESSION</button>
     </div>
 
     <div class="spacer-top"></div>
 
     <div class="img-card" id="main-display">
         <div class="hybrid-box">
-            <div class="target-group"><div style="font-size:9px; color:var(--vif-g);">CIBLE SAFE</div><div class="t-val" id="t1-val" style="color:var(--vif-g);">--</div></div>
+            <div class="target-group"><div style="font-size:9px; color:#aaa;">TARGET VIOLET</div><div class="t-val" id="t1-val" style="color:var(--premium-v);">--</div></div>
             <div class="conf-circle" id="conf-circle">--</div>
-            <div class="target-group"><div style="font-size:9px; color:var(--hot-p);">CIBLE RISK</div><div class="t-val" id="t2-val" style="color:var(--hot-p);">--</div></div>
+            <div class="target-group"><div style="font-size:9px; color:#aaa;">TARGET ÉLITE</div><div class="t-val" id="t2-val" style="color:var(--hot-p);">--</div></div>
         </div>
-        <div id="trend-txt" style="font-size:10px; color:#888; font-weight: 900;">PRÊT POUR ANALYSE</div>
+        <div id="trend-txt" style="font-size:10px; color:#888; font-weight: 900; letter-spacing: 1px;">EN ATTENTE DU HASH...</div>
     </div>
 
     <div class="img-card">
+        <div style="font-size:8px; color:#555; margin-bottom:5px; text-align:left;">FLUX DE TENDANCE (R+1 À R+5)</div>
         <div class="seq-container" id="seq-list">
             <div class="seq-box">R+1 <span class="seq-val">--</span></div>
             <div class="seq-box">R+2 <span class="seq-val">--</span></div>
@@ -98,7 +90,7 @@
         <button class="kb-trigger" onclick="toggleKB()">⌨️ CLAVIER</button>
         <div class="input-group">
             <div id="bH" class="input-box active" onclick="openAndSwitch('h')">HASH</div>
-            <div id="bS" class="input-box" onclick="openAndSwitch('s')">SCORE</div>
+            <div id="bS" class="input-box" onclick="openAndSwitch('s')">SCORE X</div>
         </div>
         <div class="kb">
             <button class="k" onclick="p('1')">1</button><button class="k" onclick="p('2')">2</button><button class="k" onclick="p('3')">3</button><button class="k k-fn" onclick="p('A')">A</button>
@@ -106,53 +98,38 @@
             <button class="k" onclick="p('7')">7</button><button class="k" onclick="p('8')">8</button><button class="k" onclick="p('9')">9</button><button class="k k-fn" onclick="p('C')">C</button>
             <button class="k k-fn" onclick="p('D')">D</button><button class="k k-fn" onclick="p('E')">E</button><button class="k k-fn" onclick="p('F')">F</button><button class="k" onclick="p('0')">0</button>
             <button class="k" onclick="p('.')">.</button><button class="k" style="color:var(--danger)" onclick="p('DEL')">⌫</button>
-            <button class="k-go" onclick="run()">LANCER L'ANALYSE</button>
+            <button class="k-go" onclick="run()">LANCER ANALYSE V32</button>
         </div>
         
         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; margin-bottom: 5px; padding: 0 5px;">
-            <div style="font-size: 8px; color: #555; font-weight: bold;">HISTORIQUE RÉCENT</div>
+            <div style="font-size: 8px; color: #555; font-weight: bold;">HISTORIQUE</div>
             <button onclick="clearHistOnly()" style="background: none; border: none; color: var(--danger); font-size: 8px; font-weight: bold; cursor: pointer;">[ EFFACER ]</button>
         </div>
         <div id="ht" class="hist"></div>
     </div>
 
 <script>
-    let logs = JSON.parse(localStorage.getItem('h_u_v30')) || [];
+    let logs = JSON.parse(localStorage.getItem('h_u_v32')) || [];
     let session = { scans: 0, wins: 0, lastPred: 0 };
     let cur = 'h', vH = "", vS = "";
 
     function toggleKB() { document.getElementById('main-kb').classList.toggle('hidden'); }
-    
-    function openAndSwitch(m) {
-        document.getElementById('main-kb').classList.remove('hidden');
-        sF(m);
-    }
-
-    function sF(m) { 
-        cur = m; 
-        document.getElementById('bH').classList.toggle('active', m==='h'); 
-        document.getElementById('bS').classList.toggle('active', m==='s'); 
-    }
+    function openAndSwitch(m) { document.getElementById('main-kb').classList.remove('hidden'); sF(m); }
+    function sF(m) { cur = m; document.getElementById('bH').classList.toggle('active', m==='h'); document.getElementById('bS').classList.toggle('active', m==='s'); }
     
     function p(v) {
         if(v === 'DEL') { 
             if(cur === 'h') vH = vH.slice(0,-1); else vS = vS.slice(0,-1); 
         } else { 
-            if(cur === 'h' && vH.length < 4) { 
-                vH += v; if(vH.length === 4) sF('s'); 
-            } else if(cur === 's') { vS += v; }
+            if(cur === 'h' && vH.length < 4) { vH += v; if(vH.length === 4) sF('s'); }
+            else if(cur === 's') { vS += v; }
         }
         document.getElementById('bH').innerText = vH || "HASH"; 
-        document.getElementById('bS').innerText = vS || "SCORE";
+        document.getElementById('bS').innerText = vS || "SCORE X";
     }
 
-    // NOUVELLE FONCTION POUR EFFACER L'HISTORIQUE
     function clearHistOnly() {
-        if(confirm("Voulez-vous effacer l'historique des scores ?")) {
-            logs = [];
-            localStorage.setItem('h_u_v30', JSON.stringify(logs));
-            uUI();
-        }
+        if(confirm("Réinitialiser l'historique ?")) { logs = []; localStorage.setItem('h_u_v32', JSON.stringify(logs)); uUI(); }
     }
 
     function run() {
@@ -161,19 +138,48 @@
         const w = parseInt(vH, 16);
         const lastScore = parseFloat(vS);
         const ratio = w / 65535;
+        const firstChar = vH[0].toUpperCase();
 
-        let safeBase = 1.25 + (ratio * 1.45);
-        let riskBase = 98 / (100 - (ratio * 96));
+        // ALGORITHME CALIBRÉ SUR VIDÉOS
+        let violetTarget = 1.35 + (ratio * 2.15); // Cible Violette (2.00+)
+        let eliteTarget = 110 / (110 - (ratio * 108.5)); // Formule pour toucher le VERT (50.00+)
 
-        if (lastScore > 8) {
-            safeBase *= 0.85; riskBase *= 0.50;
-            document.getElementById('trend-txt').innerText = "📉 PHASE DE RÉCUPÉRATION";
-            document.getElementById('main-display').classList.add('recovery-mode');
+        const trendTxt = document.getElementById('trend-txt');
+        const display = document.getElementById('main-display');
+        const t2Val = document.getElementById('t2-val');
+        const circle = document.getElementById('conf-circle');
+
+        // Réinitialisation styles
+        display.classList.remove('recovery-mode');
+        t2Val.style.color = "var(--hot-p)";
+        circle.className = "conf-circle";
+
+        // Détection Zone de Récupération (Bleu 1.00 - 1.99)
+        if (lastScore > 8.0) {
+            violetTarget *= 0.75; eliteTarget *= 0.30;
+            trendTxt.innerText = "📉 PHASE DE RÉCUPÉRATION (PRUDENCE)";
+            trendTxt.style.color = "var(--danger)";
+            display.classList.add('recovery-mode');
+        } 
+        // Détection Zone Élite (Vert 50.00+)
+        else if (firstChar === 'F' || ratio > 0.95) {
+            eliteTarget *= 1.45;
+            if (eliteTarget >= 50) {
+                trendTxt.innerText = "🟢 SIGNAL VERT ÉLITE DÉTECTÉ";
+                trendTxt.style.color = "var(--vif-g)";
+                t2Val.style.color = "var(--vif-g)";
+                circle.classList.add('elite-green');
+            } else {
+                trendTxt.innerText = "🚀 CYCLE HAUT POTENTIEL";
+                trendTxt.style.color = "var(--gold)";
+                circle.classList.add('strong-signal');
+            }
         } else {
-            document.getElementById('main-display').classList.remove('recovery-mode');
-            document.getElementById('trend-txt').innerText = "🚀 CYCLE OPTIMAL";
+            trendTxt.innerText = "⚖️ STABILITÉ VIOLETTE";
+            trendTxt.style.color = "#888";
         }
 
+        // Stats Precision
         if(session.lastPred > 0) {
             session.scans++;
             if(lastScore >= session.lastPred) session.wins++;
@@ -181,36 +187,37 @@
             document.getElementById('st-rate').innerText = Math.floor((session.wins/session.scans)*100) + "%";
         }
 
-        session.lastPred = safeBase;
-        document.getElementById('t1-val').innerText = safeBase.toFixed(2) + "X";
-        document.getElementById('t2-val').innerText = riskBase.toFixed(2) + "X";
+        session.lastPred = violetTarget;
+        document.getElementById('t1-val').innerText = violetTarget.toFixed(2) + "X";
+        document.getElementById('t2-val').innerText = eliteTarget.toFixed(2) + "X";
         
-        let conf = Math.floor(60 + (ratio * 39));
-        const circle = document.getElementById('conf-circle');
+        let conf = Math.floor(65 + (ratio * 34));
         circle.innerText = conf + "%";
-        circle.classList.toggle('strong-signal', conf >= 90);
 
+        // Séquences R+ avec distinction Bleu/Violet/Vert
         const seqList = document.getElementById('seq-list');
         seqList.innerHTML = "";
         for(let i=1; i<=5; i++) {
-            let val = (1.15 + (Math.abs(Math.sin(w * i + lastScore)) * 7)).toFixed(2);
-            let col = val > 5 ? "var(--hot-p)" : val > 2 ? "var(--premium-v)" : "var(--neon-b)";
+            let mod = (firstChar === 'F') ? 1.6 : 1.0;
+            let val = (1.05 + (Math.abs(Math.sin(w * i + lastScore)) * 65 * mod)).toFixed(2);
+            let col = "var(--neon-b)"; // BLEU par défaut (1.00-1.99)
+            if (val >= 50) col = "var(--vif-g)"; // VERT
+            else if (val >= 2) col = "var(--premium-v)"; // VIOLET
+            
             seqList.innerHTML += `<div class="seq-box">R+${i}<span class="seq-val" style="color:${col}">${val}X</span></div>`;
         }
 
-        logs.unshift(lastScore); if(logs.length > 20) logs.pop();
-        localStorage.setItem('h_u_v30', JSON.stringify(logs));
-        
+        logs.unshift(lastScore); if(logs.length > 25) logs.pop();
+        localStorage.setItem('h_u_v32', JSON.stringify(logs));
         document.getElementById('main-kb').classList.add('hidden');
-        
         vH = ""; vS = ""; uUI(); sF('h');
         document.getElementById('bH').innerText = "HASH";
-        document.getElementById('bS').innerText = "SCORE";
+        document.getElementById('bS').innerText = "SCORE X";
     }
 
     function uUI() {
         document.getElementById('ht').innerHTML = logs.map(e => {
-            let c = e >= 10 ? "var(--gold)" : (e >= 2 ? "var(--premium-v)" : "var(--neon-b)");
+            let c = e >= 50 ? "var(--vif-g)" : (e >= 2 ? "var(--premium-v)" : "var(--neon-b)");
             return `<div class="dot" style="background:${c}">${e.toFixed(1)}</div>`;
         }).join('');
     }
