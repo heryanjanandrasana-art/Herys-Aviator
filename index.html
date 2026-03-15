@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>HERYS ELITE V35 - FINAL LOCK</title>
+    <title>HERYS ELITE V35.2 - FINAL</title>
     <style>
         :root { 
             --premium-v: #8e44ff; --neon-b: #00d2ff; --vif-g: #00ff88; --hot-p: #ff00ff; --gold: #FFD700;
@@ -29,7 +29,20 @@
         .seq-box { background: #161616; padding: 8px; border-radius: 8px; font-size: 9px; border: 1px solid #222; text-align: center; }
         .seq-val { font-weight: 900; display: block; margin-top: 4px; font-size: 11px; }
 
-        .input-card { background: var(--card); border-top: 2px solid var(--premium-v); border-radius: 20px 20px 0 0; padding: 12px; position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; }
+        .input-card { 
+            background: var(--card); 
+            border-top: 2px solid var(--premium-v); 
+            border-radius: 20px 20px 0 0; 
+            padding: 12px; 
+            position: fixed; 
+            bottom: 0; left: 0; right: 0; 
+            z-index: 100; 
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.8);
+        }
+        .input-card.hidden { transform: translateY(calc(100% - 45px)); }
+        .kb-trigger { width: 40px; height: 4px; background: #333; border-radius: 2px; margin: 0 auto 10px; }
+        
         .kb { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: 8px; }
         .k { background: #222; color: #fff; border: none; padding: 12px 0; border-radius: 8px; font-weight: bold; font-size: 16px; }
         .k-go { background: linear-gradient(45deg, var(--premium-v), var(--hot-p)); color: #fff; grid-column: span 3; font-weight: 900; font-size: 12px; border-radius: 8px; }
@@ -46,16 +59,16 @@
     <div class="header-card">
         <div class="stat-box"><span class="stat-l">Shield</span><span class="stat-v" id="shield-status">ACTIF</span></div>
         <div class="stat-box"><span class="stat-l">Signal</span><span class="stat-v" id="sig-power">--</span></div>
-        <div class="stat-box"><span class="stat-l">Target</span><span class="stat-v" style="color:var(--neon-b)">V35 LOCK</span></div>
+        <div class="stat-box"><span class="stat-l">Mode</span><span class="stat-v" style="color:var(--neon-b)">AUTO-FLUID</span></div>
     </div>
 
-    <div class="img-card" id="main-display">
+    <div class="img-card">
         <div class="hybrid-box">
             <div class="target-group"><div style="font-size:9px; color:#aaa;">VIOLET</div><div class="t-val" id="t1-val" style="color:var(--premium-v);">--</div></div>
             <div class="conf-circle" id="conf-circle">--</div>
             <div class="target-group"><div style="font-size:9px; color:#aaa;">ÉLITE VERT</div><div class="t-val" id="t2-val" style="color:var(--hot-p);">--</div></div>
         </div>
-        <div id="trend-txt" style="font-size:10px; color:var(--gold); font-weight: 900; height: 15px;">PRÊT POUR L'ANALYSE</div>
+        <div id="trend-txt" style="font-size:10px; color:var(--gold); font-weight: 900; height: 15px;">PRÊT</div>
     </div>
 
     <div class="seq-container" id="seq-list">
@@ -66,10 +79,11 @@
         <div class="seq-box">R+5 <span class="seq-val">--</span></div>
     </div>
 
-    <div class="input-card">
+    <div class="input-card" id="kb-panel">
+        <div class="kb-trigger" onclick="toggleKB()"></div>
         <div style="display: flex; gap: 8px;">
-            <div id="bH" class="input-box active-in">HASH</div>
-            <div id="bS" class="input-box">LAST X</div>
+            <div id="bH" class="input-box active-in" onclick="showKB('h')">HASH</div>
+            <div id="bS" class="input-box" onclick="showKB('s')">LAST X</div>
         </div>
         <div class="kb">
             <button class="k" onclick="p('1')">1</button><button class="k" onclick="p('2')">2</button><button class="k" onclick="p('3')">3</button><button class="k" onclick="p('A')" style="color:var(--neon-b)">A</button>
@@ -77,7 +91,7 @@
             <button class="k" onclick="p('7')">7</button><button class="k" onclick="p('8')">8</button><button class="k" onclick="p('9')">9</button><button class="k" onclick="p('C')" style="color:var(--neon-b)">C</button>
             <button class="k" onclick="p('D')" style="color:var(--neon-b)">D</button><button class="k" onclick="p('E')" style="color:var(--neon-b)">E</button><button class="k" onclick="p('F')" style="color:var(--neon-b)">F</button><button class="k" onclick="p('0')">0</button>
             <button class="k" onclick="p('.')">.</button><button class="k" onclick="p('DEL')" style="color:var(--danger)">⌫</button>
-            <button class="k-go" onclick="run()">SCANNER LE FLUX</button>
+            <button class="k-go" onclick="run()">ANALYSER</button>
         </div>
         <div id="ht" class="hist" style="margin-top:8px;"></div>
     </div>
@@ -95,22 +109,21 @@
         osc.start(); setTimeout(() => osc.stop(), dur);
     }
 
+    function toggleKB() { document.getElementById('kb-panel').classList.toggle('hidden'); }
+    function showKB(mode) { document.getElementById('kb-panel').classList.remove('hidden'); cur = mode; updateInputUI(); }
+
     function p(v) {
         if(v === 'DEL') { 
             if(cur === 'h') vH = vH.slice(0,-1); else vS = vS.slice(0,-1); 
         } else { 
             if(cur === 'h') {
-                if(vH.length < 4) {
-                    vH += v;
-                    if(vH.length === 4) { 
-                        cur = 's'; 
-                        playBeep(600, 50); 
-                    }
-                }
-            } else if(cur === 's') {
-                vS += v;
-            }
+                if(vH.length < 4) { vH += v; if(vH.length === 4) { cur = 's'; playBeep(600, 50); } }
+            } else if(cur === 's') { vS += v; }
         }
+        updateInputUI();
+    }
+
+    function updateInputUI() {
         document.getElementById('bH').innerText = vH || "HASH";
         document.getElementById('bS').innerText = vS || "LAST X";
         document.getElementById('bH').classList.toggle('active-in', cur === 'h');
@@ -119,6 +132,7 @@
 
     function run() {
         if(vH.length < 4 || vS === "") return;
+        document.getElementById('kb-panel').classList.add('hidden');
         const w = parseInt(vH, 16);
         const last = parseFloat(vS);
         const ratio = w / 65535;
@@ -145,11 +159,11 @@
         if(eTarget >= 50) {
             circle.className = "conf-circle elite-green";
             playBeep(1200, 150); setTimeout(()=>playBeep(1500, 200), 200);
-            document.getElementById('trend-txt').innerText = "🟢 SIGNAL VERT DÉTECTÉ";
+            document.getElementById('trend-txt').innerText = "🟢 SIGNAL VERT";
         } else {
             circle.className = "conf-circle";
             playBeep(440, 80);
-            document.getElementById('trend-txt').innerText = "📡 FLUX ANALYSÉ";
+            document.getElementById('trend-txt').innerText = "📡 FLUX OK";
         }
 
         document.getElementById('sig-power').innerText = (ratio * 100).toFixed(0) + "%";
@@ -165,8 +179,8 @@
         }
 
         logs.unshift(last); uUI();
-        vH = ""; vS = ""; cur = 'h';
-        document.getElementById('bH').innerText = "HASH"; document.getElementById('bS').innerText = "LAST X";
+        vH = ""; vS = ""; cur = 'h'; 
+        setTimeout(() => { updateInputUI(); }, 500);
     }
 
     function uUI() {
