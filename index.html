@@ -3,136 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>HERYS V27 - PRO CLEAN</title>
+    <title>HERYS ULTIMATE ELITE V29</title>
     <style>
-        :root { --neon: #00f2ff; --rose: #ff00ff; --vert: #00ff88; --violet: #9d4cff; --orange: #ff9500; }
-        body { background: #000; color: #fff; font-family: Arial, sans-serif; margin: 0; padding: 10px; }
-        .container { width: 100%; max-width: 420px; margin: auto; }
+        :root { 
+            --premium-v: #8e44ff; --neon-b: #00d2ff; --vif-g: #00ff88; --hot-p: #ff00ff;
+            --bg: #050505; --card: #121212; --border: #222;
+        }
+
+        body { 
+            background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; 
+            margin: 0; padding: 5px; height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+        }
         
-        /* Zone Haute */
-        .scanner-area { background: #111; border: 2px solid #333; padding: 15px; border-radius: 12px; text-align: center; }
-        #p-val { font-size: 35px; font-weight: 900; margin: 5px 0; }
+        /* HEADER STYLE IMAGE 3 */
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 12px; margin-bottom: 6px; }
+        .flex-row { display: flex; justify-content: space-between; align-items: center; }
+        .label { font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 1px; }
+        
+        #p-val { font-size: 26px; font-weight: 900; color: var(--premium-v); text-shadow: 0 0 15px rgba(142,68,255,0.5); }
 
-        /* Saisie Ultra-Lisible */
-        textarea, input { 
-            width: 100%; background: #fff !important; border: 3px solid var(--neon); 
-            color: #000 !important; padding: 12px; margin-bottom: 10px; 
-            border-radius: 8px; font-size: 20px; font-weight: bold; text-align: center; box-sizing: border-box;
-        }
+        /* ANALYSEUR DE FLUX (GRAPHIQUE) */
+        .flux-container { display: flex; align-items: flex-end; gap: 4px; height: 40px; margin: 10px 0; justify-content: center; }
+        .bar { width: 8px; border-radius: 2px; background: #222; transition: height 0.3s; }
 
-        .btn-analyze { 
-            width: 100%; padding: 18px; background: var(--neon); color: #000; 
-            font-size: 18px; font-weight: 900; border: none; border-radius: 8px; text-transform: uppercase;
+        /* INPUTS */
+        .input-group { display: flex; gap: 5px; margin-top: 10px; }
+        .box { 
+            flex: 1; background: #fff; color: #000; padding: 12px; border-radius: 8px; 
+            font-weight: 900; font-size: 16px; text-align: center; border: 3px solid transparent;
         }
+        .active { border-color: var(--premium-v); box-shadow: 0 0 12px rgba(142,68,255,0.4); }
 
-        /* Liste des 15 Prédictions */
-        .timeline-header { 
-            margin-top: 20px; background: #222; color: var(--neon); 
-            padding: 8px; font-weight: bold; text-align: center; border-radius: 8px 8px 0 0; border: 1px solid #333;
-        }
-        .timeline-scroll { 
-            height: 240px; overflow-y: auto; background: #0a0a0a; 
-            border: 2px solid #333; border-radius: 0 0 8px 8px; 
-        }
-        .time-row { display: flex; justify-content: space-between; padding: 12px 10px; border-bottom: 1px solid #222; }
-        .t-round { color: #ffff00; font-weight: bold; }
-        .t-clock { color: #fff; }
-        .t-signal { font-weight: 900; }
+        /* TIMELINE & OBJECTIFS */
+        .scroll-area { flex-grow: 1; overflow-y: auto; background: #080808; border: 1px solid #1a1a1a; border-radius: 12px; margin: 5px 0; }
+        .row { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #151515; font-size: 13px; }
+        .target-box { display: flex; gap: 5px; margin-bottom: 5px; }
+        .target { flex: 1; background: #1a1a1a; padding: 8px; border-radius: 8px; text-align: center; border-bottom: 2px solid #333; }
 
-        /* Historique avec bouton Effacer */
-        .hist-top { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding: 0 5px; }
-        .btn-clear { background: #ff4444; color: #fff; border: none; padding: 5px 10px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; }
-        .history-container { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; flex-direction: row-reverse; }
-        .dot { min-width: 50px; height: 30px; font-size: 12px; display: flex; align-items: center; justify-content: center; border-radius: 6px; color: #000; font-weight: 900; }
+        /* CLAVIER TACTIQUE MINI */
+        .kb { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; background: var(--card); padding: 8px; border-radius: 16px; border: 1px solid var(--border); }
+        .k { background: #222; color: #fff; border: 1px solid #333; padding: 12px 0; border-radius: 8px; font-size: 15px; font-weight: bold; }
+        .k:active { background: var(--premium-v); transform: scale(0.95); }
+        .k-go { background: var(--premium-v); color: #fff; grid-column: span 2; font-weight: 900; }
+
+        .hist { display: flex; gap: 5px; overflow-x: auto; padding: 5px; flex-direction: row-reverse; height: 25px; }
+        .dot { min-width: 40px; height: 20px; font-size: 10px; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #000; font-weight: 900; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="scanner-area">
-        <div id="status-display" style="font-size: 40px;">⚡</div>
-        <div id="p-val">00000</div>
-        <textarea id="hashInput" maxlength="4" placeholder="4 CHARS HASH"></textarea>
-        <input type="number" id="lastScore" step="0.01" placeholder="SCORE">
-        <button class="btn-analyze" onclick="processCore()">ANALYSER (15 R)</button>
+    <div class="card">
+        <div class="flex-row">
+            <span class="label">Scanner Status: <span style="color:var(--vif-g)">Online</span></span>
+            <span class="label">V29 Ultimate</span>
+        </div>
+        <div style="text-align:center; margin: 5px 0;">
+            <div class="label">Server Energy</div>
+            <div id="p-val">00000</div>
+        </div>
+        
+        <div class="flux-container" id="flux">
+            <div class="bar" style="height:20%"></div><div class="bar" style="height:40%"></div><div class="bar" style="height:15%"></div><div class="bar" style="height:80%"></div><div class="bar" style="height:30%"></div><div class="bar" style="height:60%"></div><div class="bar" style="height:90%"></div>
+        </div>
+
+        <div class="input-group">
+            <div id="bH" class="box active" onclick="sF('h')">HASH</div>
+            <div id="bS" class="box" onclick="sF('s')">SCORE</div>
+        </div>
     </div>
 
-    <div class="timeline-header">SÉQUENCE OPTIMALE (15 ROUNDS)</div>
-    <div class="timeline-scroll" id="timeline"></div>
-
-    <div class="hist-top">
-        <span style="font-size: 12px; color: #888;">HISTORIQUE RÉCENT</span>
-        <button class="btn-clear" onclick="clearLogs()">🗑️ EFFACER</button>
+    <div class="target-box">
+        <div class="target"><div class="label" style="color:var(--vif-g)">Objectif Safe</div><div id="t1" style="font-weight:900">--</div></div>
+        <div class="target"><div class="label" style="color:var(--hot-p)">Objectif Risk</div><div id="t2" style="font-weight:900">--</div></div>
     </div>
-    <div id="history" class="history-container"></div>
-</div>
+
+    <div class="scroll-area" id="tl"></div>
+
+    <div class="kb">
+        <button class="k" onclick="p('1')">1</button><button class="k" onclick="p('2')">2</button><button class="k" onclick="p('3')">3</button><button class="k" onclick="p('A')">A</button>
+        <button class="k" onclick="p('4')">4</button><button class="k" onclick="p('5')">5</button><button class="k" onclick="p('6')">6</button><button class="k" onclick="p('B')">B</button>
+        <button class="k" onclick="p('7')">7</button><button class="k" onclick="p('8')">8</button><button class="k" onclick="p('9')">9</button><button class="k" onclick="p('C')">C</button>
+        <button class="k" onclick="p('0')">0</button><button class="k" onclick="p('.')">.</button><button class="k" style="color:red" onclick="p('D')">⌫</button><button class="k-go" onclick="run()">SCANNER SEQUENCE</button>
+    </div>
+
+    <div id="ht" class="hist"></div>
 
 <script>
-    let logs = JSON.parse(localStorage.getItem('herys_v27_logs')) || [];
+    let logs = JSON.parse(localStorage.getItem('h_u_v29')) || [];
+    let cur = 'h'; let vH = ""; let vS = "";
 
-    function processCore() {
-        let h = document.getElementById('hashInput').value.trim();
-        const s = parseFloat(document.getElementById('lastScore').value);
-        if(h.length < 4 || isNaN(s)) return;
+    function sF(m) { cur = m; document.getElementById('bH').classList.toggle('active', m==='h'); document.getElementById('bS').classList.toggle('active', m==='s'); }
 
-        const weight = parseInt(h, 16);
-        const pVal = document.getElementById('p-val');
-        pVal.innerText = weight;
-        pVal.style.color = weight > 40000 ? "var(--vert)" : (weight > 20000 ? "var(--orange)" : "#ff4444");
-
-        document.getElementById('status-display').innerHTML = (s >= 1.5) ? '✅' : '❌';
-
-        const now = new Date();
-        const timeline = document.getElementById('timeline');
-        timeline.innerHTML = ""; 
-
-        // Limité à 15 rounds pour la précision
-        for(let i = 1; i <= 15; i++) {
-            let futureWeight = (weight + (i * 1337)) % 65535;
-            let futureClock = new Date(now.getTime() + (i * 22) * 1000).toTimeString().split(' ')[0];
-            
-            let sig = null;
-            if (futureWeight > 60000) sig = { n: "VERT 🟢", c: "var(--vert)" };
-            else if (futureWeight > 42000) sig = { n: "ROSE 🌸", c: "var(--rose)" };
-            else if (futureWeight > 22000) sig = { n: "VIOLET 🟣", c: "var(--violet)" };
-
-            if(sig) {
-                timeline.innerHTML += `
-                    <div class="time-row">
-                        <span class="t-round">R+${i}</span>
-                        <span class="t-clock">${futureClock}</span>
-                        <span class="t-signal" style="color:${sig.c}">${sig.n}</span>
-                    </div>`;
-            }
-        }
-
-        logs.unshift({ score: s });
-        if(logs.length > 20) logs.pop();
-        localStorage.setItem('herys_v27_logs', JSON.stringify(logs));
-        updateUI();
-        
-        document.getElementById('lastScore').value = "";
-        document.getElementById('hashInput').value = "";
-        document.getElementById('hashInput').focus();
+    function p(v) {
+        if(v === 'D') { if(cur === 'h') vH = vH.slice(0,-1); else vS = vS.slice(0,-1); }
+        else { if(cur === 'h' && vH.length < 4) { vH += v; if(vH.length === 4) sF('s'); } else if(cur === 's') vS += v; }
+        document.getElementById('bH').innerText = vH || "HASH"; document.getElementById('bS').innerText = vS || "SCORE";
     }
 
-    function updateUI() {
-        const hist = document.getElementById('history');
-        hist.innerHTML = logs.map((entry) => {
-            let c = entry.score >= 5 ? "var(--rose)" : (entry.score >= 2 ? "var(--violet)" : "var(--neon)");
-            return `<div class="dot" style="background:${c}">${entry.score.toFixed(2)}</div>`;
+    function run() {
+        if(vH.length < 4 || vS === "") return;
+        const w = parseInt(vH, 16); const s = parseFloat(vS);
+        
+        // Power & Feedback
+        document.getElementById('p-val').innerText = w;
+        if(window.navigator.vibrate) window.navigator.vibrate(w > 40000 ? [100,50,100] : 50);
+
+        // Objectifs Brillants
+        document.getElementById('t1').innerText = (1.5 + (w/65535)*2).toFixed(2) + "X";
+        document.getElementById('t2').innerText = (5 + (w/65535)*50).toFixed(2) + "X";
+
+        // Flux Animation
+        const bars = document.querySelectorAll('.bar');
+        bars.forEach(b => b.style.height = Math.random()*100 + "%");
+
+        // Timeline
+        const tl = document.getElementById('tl'); tl.innerHTML = "";
+        const now = new Date();
+        for(let i=1; i<=15; i++) {
+            let fW = (w + (i*1337)) % 65535;
+            let fC = new Date(now.getTime() + (i*22)*1000).toTimeString().split(' ')[0];
+            let sig = fW > 60000 ? ["VERT 🟢","var(--vif-g)"] : fW > 42000 ? ["ROSE 🌸","var(--hot-p)"] : fW > 22000 ? ["VIOLET 🟣","var(--premium-v)"] : null;
+            if(sig) tl.innerHTML += `<div class="row"><span style="color:#ff0">R+${i}</span><span style="color:#888">${fC}</span><span style="font-weight:900;color:${sig[1]}">${sig[0]}</span></div>`;
+        }
+
+        logs.unshift(s); if(logs.length > 10) logs.pop();
+        localStorage.setItem('h_u_v29', JSON.stringify(logs));
+        vH = ""; vS = ""; document.getElementById('bH').innerText = "HASH"; document.getElementById('bS').innerText = "SCORE";
+        sF('h'); uUI();
+    }
+
+    function uUI() {
+        document.getElementById('ht').innerHTML = logs.map(e => {
+            let c = e >= 5 ? "var(--hot-p)" : (e >= 2 ? "var(--premium-v)" : "var(--neon-b)");
+            return `<div class="dot" style="background:${c}">${e.toFixed(1)}</div>`;
         }).join('');
     }
-
-    function clearLogs() {
-        if(confirm("Effacer l'historique ?")) {
-            logs = [];
-            localStorage.removeItem('herys_v27_logs');
-            updateUI();
-            document.getElementById('timeline').innerHTML = "";
-        }
-    }
-    updateUI();
+    uUI();
 </script>
 </body>
 </html>
