@@ -3,184 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>HERYS MASTER ELITE - V5.5 AUTO</title>
+    <title>HERYS ELITE V7.0 - PROBABILITY ENGINE</title>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
     <style>
         :root {
-            --royal: #7300ff; 
-            --lvl-bleu: #00d4ff;
-            --lvl-violet: #a335ee;
-            --lvl-rose: #ff00ff;
-            --lvl-vert: #00ff88;
-            --bg: #050505;
-            --card-bg: #121212;
-            --danger: #ff2a2a;
+            --royal: #7300ff; --lvl-bleu: #00d4ff; --lvl-vert: #00ff88;
+            --lvl-rose: #ff00ff; --bg: #050505; --card-bg: #121212; --danger: #ff2a2a;
         }
+        body { background-color: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; }
+        .engine-container { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 12px; }
+        .glass-card { background: var(--card-bg); padding: 18px; border-radius: 20px; border: 1px solid #222; }
         
-        body {
-            background-color: var(--bg); color: white;
-            font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 15px;
-            display: flex; flex-direction: column; align-items: center;
-        }
+        input { background: #000; border: 1px solid #333; color: white; padding: 12px; border-radius: 12px; font-size: 16px; width: 100%; text-align: center; box-sizing: border-box; }
+        .btn-scan { width: 100%; background: rgba(0,212,255,0.1); color: var(--lvl-bleu); border: 1px dashed var(--lvl-bleu); padding: 10px; border-radius: 12px; font-weight: 800; cursor: pointer; margin: 10px 0; }
+        .btn-main { width: 100%; background: linear-gradient(45deg, var(--royal), #9d4cff); color: white; border: none; padding: 16px; border-radius: 12px; font-weight: 900; cursor: pointer; text-transform: uppercase; }
+        
+        /* Zone de Probabilité */
+        .prob-badge { text-align: center; font-size: 10px; font-weight: 900; padding: 5px; border-radius: 5px; margin-bottom: 10px; display: none; }
+        .high-prob { display: block; background: var(--lvl-vert); color: black; animation: flash 1s infinite; }
+        @keyframes flash { 50% { opacity: 0.5; } }
 
-        .header-title { font-weight: 900; color: var(--royal); font-size: 26px; text-transform: uppercase; letter-spacing: 2px; }
-        .header-sub { font-size: 10px; opacity: 0.6; margin-bottom: 20px; letter-spacing: 1px; }
-
-        .engine-container { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 15px; }
-
-        .glass-card {
-            background: var(--card-bg); padding: 18px; border-radius: 20px; 
-            border: 1px solid #222; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-        }
-
-        label { font-size: 10px; color: #666; text-transform: uppercase; margin-bottom: 8px; display: block; font-weight: 800; }
-
-        .input-row { display: flex; gap: 10px; margin-bottom: 15px; }
-        input {
-            background: #000; border: 1px solid #333; color: white; 
-            padding: 15px; border-radius: 12px; font-size: 18px; width: 100%;
-            text-align: center; font-weight: bold; transition: 0.3s;
-        }
-        input:focus { border-color: var(--royal); outline: none; box-shadow: 0 0 10px var(--royal); }
-
-        .btn-main {
-            width: 100%; background: linear-gradient(45deg, var(--royal), #9d4cff); color: white; border: none;
-            padding: 16px; border-radius: 12px; font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 14px;
-        }
-
-        .winrate-display { 
-            text-align: center; margin-top: 15px; padding: 10px; 
-            background: rgba(255,255,255,0.03); border-radius: 10px;
-            font-size: 11px; font-weight: 800; color: #888; 
-        }
-
-        .energy-grid { height: 60px; display: flex; align-items: flex-end; gap: 5px; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 12px; border: 1px inset #222; }
-        .energy-bar { flex: 1; border-radius: 3px; transition: height 0.6s ease; }
-
-        #flux-indicator { text-align: center; font-size: 11px; margin-top: 10px; font-weight: 900; padding: 8px; border-radius: 8px; text-transform: uppercase; }
-
-        .prediction-display { background: radial-gradient(circle at center, #1a1a1a 0%, #0a0a0a 100%); padding: 25px; border-radius: 25px; border: 2px solid #222; text-align: center; }
-        .timer-val { font-size: 34px; font-weight: 900; letter-spacing: 2px; }
+        .prediction-display { background: #000; padding: 20px; border-radius: 25px; border: 2px solid #222; text-align: center; transition: 0.3s; }
+        .timer-val { font-size: 32px; font-weight: 900; }
+        .winrate-box { display: flex; justify-content: space-between; margin-top: 10px; font-size: 11px; color: #888; }
+        #scan-loader { display: none; font-size: 10px; color: var(--lvl-bleu); text-align: center; margin: 5px 0; }
     </style>
 </head>
 <body>
 
-    <div class="header-title">HERYS MASTER ELITE</div>
-    <div class="header-sub">ENGINE V5.5 • AUTO-VALIDATION</div>
-    
+    <div style="font-weight: 900; color: var(--royal); font-size: 22px;">HERYS ELITE V7.0</div>
+    <div style="font-size: 9px; opacity: 0.5; margin-bottom: 15px;">MOTEUR DE PROBABILITÉ AVANCÉ</div>
+
     <div class="engine-container">
         <div class="glass-card">
-            <label>Données de Session</label>
-            <div class="input-row">
-                <input type="number" id="inputX" placeholder="Score X.XX" step="0.01">
-                <input type="text" id="inputHash" placeholder="Combined Hash" style="font-size: 13px;">
-            </div>
-            <button class="btn-main" onclick="analyze()">DÉCHIFFRER LE SIGNAL</button>
+            <div id="prob-indicator" class="prob-badge">HAUTE PROBABILITÉ DÉTECTÉE</div>
             
-            <div class="winrate-display">
-                PRÉCISION AUTO : <span id="stat-winrate" style="color:var(--lvl-vert)">0%</span>
-                <br><small id="stat-rounds" style="opacity:0.5; font-weight:normal">0 rounds analysés</small>
-            </div>
-        </div>
+            <label style="font-size: 10px; color: #666; font-weight: 800;">SCORE PRÉCÉDENT</label>
+            <input type="number" id="inputX" placeholder="Ex: 1.56" step="0.01">
+            
+            <button class="btn-scan" onclick="document.getElementById('fileInput').click()">📸 SCANNER LE HASH</button>
+            <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="scanImage(this)">
+            <div id="scan-loader">⏳ IA EN COURS...</div>
 
-        <div class="glass-card">
-            <label>Scanner de Flux</label>
-            <div id="energy-container" class="energy-grid"></div>
-            <div id="flux-indicator">EN ATTENTE...</div>
+            <input type="text" id="inputHash" placeholder="Hash s'affichera ici..." style="font-size: 11px; margin-bottom: 10px;">
+            <button class="btn-main" onclick="analyze()">ANALYSER LE SIGNAL</button>
+            
+            <div class="winrate-box">
+                <div>PRÉCISION : <span id="stat-winrate" style="color:var(--lvl-vert)">0%</span></div>
+                <div style="cursor:pointer; text-decoration: underline;" onclick="localStorage.clear(); location.reload();">RESET</div>
+            </div>
         </div>
 
         <div id="pred-box" class="prediction-display">
-            <label id="power-label">PRÉDICTION POUR PROCHAIN VOL</label>
             <div style="display: flex; justify-content: space-around;">
-                <div><div style="font-size: 10px; color: var(--lvl-vert);">SAFE (AUTO-LOG)</div><div id="t1" class="timer-val">--:--</div></div>
-                <div><div style="font-size: 10px; color: var(--lvl-rose);">RISK</div><div id="t2" class="timer-val">--:--</div></div>
+                <div><div style="font-size: 10px; color: var(--lvl-vert);">OBJECTIF SAFE</div><div id="t1" class="timer-val">--:--</div></div>
+                <div><div style="font-size: 10px; color: var(--lvl-rose);">OBJECTIF RISK</div><div id="t2" class="timer-val">--:--</div></div>
             </div>
-            <div id="count-label" style="font-size: 12px; margin-top: 15px; font-weight: bold; color: #888;">READY</div>
+            <div id="conf-label" style="font-size: 11px; margin-top: 15px; font-weight: 800; color: #444;">EN ATTENTE DE SCAN</div>
         </div>
     </div>
 
     <script>
-        let lastPowerScore = 0;
-        let currentPrediction = null; 
+        let currentPrediction = null;
         let totalSignals = parseInt(localStorage.getItem('h_total')) || 0;
         let winSignals = parseInt(localStorage.getItem('h_win')) || 0;
-        let historiqueX = JSON.parse(localStorage.getItem('herys_v5_data')) || [];
+
+        async function scanImage(input) {
+            const loader = document.getElementById('scan-loader');
+            if (input.files && input.files[0]) {
+                loader.style.display = 'block';
+                try {
+                    const result = await Tesseract.recognize(input.files[0], 'eng');
+                    const hash = result.data.text.match(/[a-fA-F0-9]{32,}/g);
+                    if (hash) { document.getElementById('inputHash').value = hash[0]; loader.innerText = "✅ SCAN OK"; }
+                } catch (e) { alert("Erreur de lecture"); }
+                setTimeout(() => loader.style.display = 'none', 2000);
+            }
+        }
 
         function analyze() {
             const valX = parseFloat(document.getElementById('inputX').value);
-            const rawHash = document.getElementById('inputHash').value.trim();
-            const fullHash = rawHash.match(/[a-fA-F0-9]{32,}/g)?.[0] || "";
+            const hash = document.getElementById('inputHash').value.trim();
+            if (isNaN(valX) || hash.length < 8) return;
 
-            if (isNaN(valX) || fullHash.length < 8) return alert("Hash ou Score invalide !");
-
-            // --- 1. AUTO-VALIDATION DU SIGNAL PRÉCÉDENT ---
-            if (currentPrediction !== null) {
+            // Auto-Validation
+            if (currentPrediction) {
                 totalSignals++;
-                if (valX >= currentPrediction) {
-                    winSignals++;
-                }
-                updateWinrateUI();
+                if (valX >= currentPrediction) winSignals++;
+                document.getElementById('stat-winrate').innerText = Math.round((winSignals/totalSignals)*100) + "%";
+                localStorage.setItem('h_total', totalSignals); localStorage.setItem('h_win', winSignals);
             }
 
-            // --- 2. CALCUL DU NOUVEAU SIGNAL ---
-            const powerScore = (parseInt(fullHash.substring(0, 8), 16) / 0xffffffff) * 100;
-            const trend = lastPowerScore > 0 ? powerScore - lastPowerScore : 0;
-            lastPowerScore = powerScore;
+            // MOTEUR DE PROBABILITÉ V7.0
+            const power = (parseInt(hash.substring(0, 8), 16) / 0xffffffff) * 100;
+            const probIndicator = document.getElementById('prob-indicator');
+            const predBox = document.getElementById('pred-box');
+            
+            // Logique de détection de "Haute Probabilité"
+            const isHighProb = (power > 70 && valX < 2.0) || (power > 85);
+            
+            let targetS = isHighProb ? "1.65" : "1.25";
+            let targetR = isHighProb ? "6.00" : "2.00";
+            
+            // Sécurité après gros score
+            if (valX > 15) { targetS = "1.10"; targetR = "1.30"; }
 
-            let targetS = "1.30", targetR = "2.00";
-            const flux = document.getElementById('flux-indicator');
-
-            if (powerScore > 75) {
-                targetS = trend > 0 ? "1.85" : "1.60";
-                targetR = trend > 5 ? "8.00" : "4.00";
-                flux.innerText = "🔥 SIGNAL ULTRA : HAUTE PRESSION";
-                flux.style.color = "var(--lvl-vert)";
-            } else if (powerScore < 25) {
-                targetS = "1.10"; targetR = "1.25";
-                flux.innerText = "🚨 DANGER : ASPIRATION";
-                flux.style.color = "var(--danger)";
-            } else {
-                targetS = "1.35";
-                flux.innerText = "⚖️ FLUX STABLE"; flux.style.color = "white";
-            }
-
-            // Mémorisation pour le prochain tour
+            // UI Update
             currentPrediction = parseFloat(targetS);
-
-            // --- 3. MISE À JOUR UI ---
             document.getElementById('t1').innerText = targetS + "X";
             document.getElementById('t2').innerText = targetR + "X";
-            document.getElementById('count-label').innerText = `POWER: ${powerScore.toFixed(1)}% | TREND: ${trend > 0 ? '+' : ''}${trend.toFixed(1)}%`;
+            document.getElementById('conf-label').innerText = `INDICE DE CONFIANCE : ${Math.round(power)}%`;
             
-            historiqueX.push(valX);
-            if(historiqueX.length > 10) historiqueX.shift();
-            
-            localStorage.setItem('herys_v5_data', JSON.stringify(historiqueX));
-            localStorage.setItem('h_total', totalSignals);
-            localStorage.setItem('h_win', winSignals);
-            
-            refreshUI();
+            if (isHighProb) {
+                probIndicator.className = "prob-badge high-prob";
+                predBox.style.borderColor = "var(--lvl-vert)";
+            } else {
+                probIndicator.className = "prob-badge";
+                predBox.style.borderColor = "#222";
+            }
         }
-
-        function updateWinrateUI() {
-            const wr = totalSignals > 0 ? Math.round((winSignals / totalSignals) * 100) : 0;
-            document.getElementById('stat-winrate').innerText = wr + "%";
-            document.getElementById('stat-rounds').innerText = totalSignals + " rounds analysés";
-            document.getElementById('stat-winrate').style.color = wr > 75 ? 'var(--lvl-vert)' : 'var(--danger)';
-        }
-
-        function refreshUI() {
-            const container = document.getElementById('energy-container');
-            container.innerHTML = "";
-            historiqueX.forEach(v => {
-                const bar = document.createElement('div');
-                bar.className = 'energy-bar';
-                bar.style.height = `${Math.min(v * 6, 100)}%`;
-                bar.style.backgroundColor = v < 2 ? 'var(--lvl-bleu)' : 'var(--lvl-rose)';
-                container.appendChild(bar);
-            });
-        }
-
-        window.onload = () => { refreshUI(); updateWinrateUI(); };
     </script>
 </body>
 </html>
