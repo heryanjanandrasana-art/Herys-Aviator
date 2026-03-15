@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>HERYS MASTER ELITE - V4.0 BRIGHT</title>
+    <title>HERYS MASTER ELITE - V5.5 AUTO</title>
     <style>
         :root {
             --royal: #7300ff; 
@@ -22,10 +22,7 @@
             display: flex; flex-direction: column; align-items: center;
         }
 
-        .header-title {
-            font-weight: 900; color: var(--royal); font-size: 26px; 
-            margin-bottom: 2px; text-transform: uppercase; letter-spacing: 2px;
-        }
+        .header-title { font-weight: 900; color: var(--royal); font-size: 26px; text-transform: uppercase; letter-spacing: 2px; }
         .header-sub { font-size: 10px; opacity: 0.6; margin-bottom: 20px; letter-spacing: 1px; }
 
         .engine-container { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 15px; }
@@ -43,222 +40,147 @@
             padding: 15px; border-radius: 12px; font-size: 18px; width: 100%;
             text-align: center; font-weight: bold; transition: 0.3s;
         }
-        input::placeholder { font-size: 12px; opacity: 0.5; }
         input:focus { border-color: var(--royal); outline: none; box-shadow: 0 0 10px var(--royal); }
 
         .btn-main {
             width: 100%; background: linear-gradient(45deg, var(--royal), #9d4cff); color: white; border: none;
-            padding: 16px; border-radius: 12px; font-weight: 900; cursor: pointer; text-transform: uppercase;
-            font-size: 14px; box-shadow: 0 4px 15px rgba(115, 0, 255, 0.3);
+            padding: 16px; border-radius: 12px; font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 14px;
         }
 
-        .energy-grid {
-            height: 60px; display: flex; align-items: flex-end; gap: 5px;
-            background: rgba(0,0,0,0.5); padding: 10px; border-radius: 12px; border: 1px inset #222;
+        .winrate-display { 
+            text-align: center; margin-top: 15px; padding: 10px; 
+            background: rgba(255,255,255,0.03); border-radius: 10px;
+            font-size: 11px; font-weight: 800; color: #888; 
         }
+
+        .energy-grid { height: 60px; display: flex; align-items: flex-end; gap: 5px; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 12px; border: 1px inset #222; }
         .energy-bar { flex: 1; border-radius: 3px; transition: height 0.6s ease; }
 
-        #flux-indicator {
-            text-align: center; font-size: 11px; margin-top: 10px; font-weight: 900;
-            padding: 8px; border-radius: 8px; text-transform: uppercase; background: rgba(255,255,255,0.02);
-        }
+        #flux-indicator { text-align: center; font-size: 11px; margin-top: 10px; font-weight: 900; padding: 8px; border-radius: 8px; text-transform: uppercase; }
 
-        .prediction-display {
-            background: radial-gradient(circle at center, #1a1a1a 0%, #0a0a0a 100%);
-            padding: 25px; border-radius: 25px; border: 2px solid #222; text-align: center;
-        }
+        .prediction-display { background: radial-gradient(circle at center, #1a1a1a 0%, #0a0a0a 100%); padding: 25px; border-radius: 25px; border: 2px solid #222; text-align: center; }
         .timer-val { font-size: 34px; font-weight: 900; letter-spacing: 2px; }
-        
-        .trends { display: flex; justify-content: center; gap: 20px; margin-top: 15px; font-size: 11px; font-weight: bold; }
-        .active-up { color: var(--lvl-vert); text-shadow: 0 0 10px var(--lvl-vert); }
-        .active-down { color: var(--danger); text-shadow: 0 0 10px var(--danger); }
-
-        .res-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .card { background: var(--card-bg); border: 1px solid #222; padding: 15px; border-radius: 18px; text-align: center; }
-        .fiab-bar-bg { width: 100%; height: 6px; background: #000; border-radius: 10px; margin-top: 10px; }
-        .fiab-fill { height: 100%; width: 0%; border-radius: 10px; transition: width 1s ease-in-out; }
-
-        .urgent { animation: pulse-red 0.8s infinite; }
-        @keyframes pulse-red {
-            0% { border-color: #222; }
-            50% { border-color: var(--danger); box-shadow: 0 0 15px rgba(255, 0, 0, 0.3); }
-            100% { border-color: #222; }
-        }
-
-        #hist-list { max-height: 150px; overflow-y: auto; margin-top: 10px; }
-        .history-item {
-            background: rgba(255,255,255,0.03); margin-bottom: 5px; padding: 10px;
-            border-radius: 10px; display: flex; justify-content: space-between; font-size: 12px;
-        }
     </style>
 </head>
 <body>
 
     <div class="header-title">HERYS MASTER ELITE</div>
-    <div class="header-sub">ENGINE V4.0 • HASH-BASED PREDICTION</div>
+    <div class="header-sub">ENGINE V5.5 • AUTO-VALIDATION</div>
     
     <div class="engine-container">
         <div class="glass-card">
-            <label>1. Dernier Multiplicateur</label>
+            <label>Données de Session</label>
             <div class="input-row">
-                <input type="number" id="inputX" placeholder="Ex: 1.56" step="0.01">
-            </div>
-            <label>2. Combined Hash (Provably Fair)</label>
-            <div class="input-row">
-                <input type="text" id="inputHash" placeholder="Colle le Combined Hash ici..." style="font-size: 13px;">
+                <input type="number" id="inputX" placeholder="Score X.XX" step="0.01">
+                <input type="text" id="inputHash" placeholder="Combined Hash" style="font-size: 13px;">
             </div>
             <button class="btn-main" onclick="analyze()">DÉCHIFFRER LE SIGNAL</button>
+            
+            <div class="winrate-display">
+                PRÉCISION AUTO : <span id="stat-winrate" style="color:var(--lvl-vert)">0%</span>
+                <br><small id="stat-rounds" style="opacity:0.5; font-weight:normal">0 rounds analysés</small>
+            </div>
         </div>
 
         <div class="glass-card">
-            <label>Analyseur de Flux de Session</label>
+            <label>Scanner de Flux</label>
             <div id="energy-container" class="energy-grid"></div>
-            <div id="flux-indicator">SCANNER EN ATTENTE...</div>
+            <div id="flux-indicator">EN ATTENTE...</div>
         </div>
 
         <div id="pred-box" class="prediction-display">
-            <label id="power-label">POTENTIEL DU PROCHAIN VOL</label>
+            <label id="power-label">PRÉDICTION POUR PROCHAIN VOL</label>
             <div style="display: flex; justify-content: space-around;">
-                <div>
-                    <div style="font-size: 10px; color: var(--lvl-vert);">SAFE (T1)</div>
-                    <div id="t1" class="timer-val" style="color: white;">--:--</div>
-                </div>
-                <div>
-                    <div style="font-size: 10px; color: var(--lvl-rose);">RISK (T2)</div>
-                    <div id="t2" class="timer-val" style="color: white;">--:--</div>
-                </div>
+                <div><div style="font-size: 10px; color: var(--lvl-vert);">SAFE (AUTO-LOG)</div><div id="t1" class="timer-val">--:--</div></div>
+                <div><div style="font-size: 10px; color: var(--lvl-rose);">RISK</div><div id="t2" class="timer-val">--:--</div></div>
             </div>
-            <div class="trends">
-                <span id="trend-up">📈 FORCE</span>
-                <span id="trend-down">📉 FAIBLESSE</span>
-            </div>
-            <div id="count-label" style="font-size: 12px; margin-top: 15px; font-weight: bold; color: #888;">SCANNER PRÊT</div>
-        </div>
-
-        <div class="res-grid">
-            <div class="card">
-                <label style="color:var(--lvl-vert)">OBJECTIF SAFE</label>
-                <div id="val-safe" style="font-size: 20px; font-weight: 900;">--</div>
-                <div class="fiab-bar-bg"><div id="bar-safe" class="fiab-fill" style="background:var(--lvl-vert)"></div></div>
-            </div>
-            <div class="card">
-                <label style="color:var(--lvl-rose)">OBJECTIF RISK</label>
-                <div id="val-risk" style="font-size: 20px; font-weight: 900;">--</div>
-                <div class="fiab-bar-bg"><div id="bar-risk" class="fiab-fill" style="background:var(--lvl-rose)"></div></div>
-            </div>
+            <div id="count-label" style="font-size: 12px; margin-top: 15px; font-weight: bold; color: #888;">READY</div>
         </div>
     </div>
 
     <script>
-        let nextTime1 = null;
-        let historiqueX = JSON.parse(localStorage.getItem('herys_v4_data')) || [];
+        let lastPowerScore = 0;
+        let currentPrediction = null; 
+        let totalSignals = parseInt(localStorage.getItem('h_total')) || 0;
+        let winSignals = parseInt(localStorage.getItem('h_win')) || 0;
+        let historiqueX = JSON.parse(localStorage.getItem('herys_v5_data')) || [];
 
         function analyze() {
             const valX = parseFloat(document.getElementById('inputX').value);
-            let fullHash = document.getElementById('inputHash').value.trim();
-            
-            if (isNaN(valX) || fullHash.length < 8) {
-                alert("Veuillez entrer le score ET le Hash combiné !");
-                return;
+            const rawHash = document.getElementById('inputHash').value.trim();
+            const fullHash = rawHash.match(/[a-fA-F0-9]{32,}/g)?.[0] || "";
+
+            if (isNaN(valX) || fullHash.length < 8) return alert("Hash ou Score invalide !");
+
+            // --- 1. AUTO-VALIDATION DU SIGNAL PRÉCÉDENT ---
+            if (currentPrediction !== null) {
+                totalSignals++;
+                if (valX >= currentPrediction) {
+                    winSignals++;
+                }
+                updateWinrateUI();
             }
 
-            // --- MOTEUR DE PUISSANCE HASH ---
-            const prefix = fullHash.substring(0, 8);
-            const valDecimal = parseInt(prefix, 16);
-            const powerScore = (valDecimal / 0xffffffff) * 100;
+            // --- 2. CALCUL DU NOUVEAU SIGNAL ---
+            const powerScore = (parseInt(fullHash.substring(0, 8), 16) / 0xffffffff) * 100;
+            const trend = lastPowerScore > 0 ? powerScore - lastPowerScore : 0;
+            lastPowerScore = powerScore;
 
-            const now = new Date();
-            let safeConf = 0;
-            let riskConf = 0;
-            let targetSafe = "--";
-            let targetRisk = "--";
+            let targetS = "1.30", targetR = "2.00";
+            const flux = document.getElementById('flux-indicator');
 
-            // LOGIQUE DE DÉCISION BASÉE SUR TES 13 VIDÉOS
-            if (powerScore > 70) {
-                safeConf = 98; riskConf = 82;
-                targetSafe = "1.85"; targetRisk = "4.50";
-                document.getElementById('flux-indicator').innerText = "💎 SIGNAL BRILLANT : LARGAGE DE GAIN";
-                document.getElementById('flux-indicator').style.color = "var(--lvl-vert)";
-            } else if (powerScore > 35) {
-                safeConf = 85; riskConf = 55;
-                targetSafe = "1.35"; targetRisk = "2.10";
-                document.getElementById('flux-indicator').innerText = "✅ FLUX STABLE : SCALPING RECOMMANDÉ";
-                document.getElementById('flux-indicator').style.color = "white";
+            if (powerScore > 75) {
+                targetS = trend > 0 ? "1.85" : "1.60";
+                targetR = trend > 5 ? "8.00" : "4.00";
+                flux.innerText = "🔥 SIGNAL ULTRA : HAUTE PRESSION";
+                flux.style.color = "var(--lvl-vert)";
+            } else if (powerScore < 25) {
+                targetS = "1.10"; targetR = "1.25";
+                flux.innerText = "🚨 DANGER : ASPIRATION";
+                flux.style.color = "var(--danger)";
             } else {
-                safeConf = 35; riskConf = 10;
-                targetSafe = "1.10"; targetRisk = "1.40";
-                document.getElementById('flux-indicator').innerText = "🚨 DANGER : ASPIRATION DU SERVEUR";
-                document.getElementById('flux-indicator').style.color = "var(--danger)";
+                targetS = "1.35";
+                flux.innerText = "⚖️ FLUX STABLE"; flux.style.color = "white";
             }
 
-            // Filtre Anti-Aspiration (après gros gain)
-            if (valX > 50 || historiqueX.slice(-3).every(x => x < 1.25)) {
-                if(powerScore < 80) safeConf -= 40;
-            }
+            // Mémorisation pour le prochain tour
+            currentPrediction = parseFloat(targetS);
 
-            // Sync Temporelle (Moyenne observée)
-            nextTime1 = new Date(now.getTime() + 61000);
-            let nextTime2 = new Date(now.getTime() + 122000);
-
-            // Mise à jour UI
-            document.getElementById('t1').innerText = nextTime1.toTimeString().split(' ')[0].substring(0,5);
-            document.getElementById('t2').innerText = nextTime2.toTimeString().split(' ')[0].substring(0,5);
-            document.getElementById('val-safe').innerText = targetSafe + "X";
-            document.getElementById('val-risk').innerText = targetRisk + "X";
-            document.getElementById('bar-safe').style.width = safeConf + "%";
-            document.getElementById('bar-risk').style.width = riskConf + "%";
-            document.getElementById('count-label').innerText = `PUISSANCE DU HASH : ${powerScore.toFixed(1)}%`;
+            // --- 3. MISE À JOUR UI ---
+            document.getElementById('t1').innerText = targetS + "X";
+            document.getElementById('t2').innerText = targetR + "X";
+            document.getElementById('count-label').innerText = `POWER: ${powerScore.toFixed(1)}% | TREND: ${trend > 0 ? '+' : ''}${trend.toFixed(1)}%`;
             
-            // Tendances
-            document.getElementById('trend-up').className = powerScore > 50 ? 'active-up' : '';
-            document.getElementById('trend-down').className = powerScore <= 50 ? 'active-down' : '';
-
-            // Historique
             historiqueX.push(valX);
             if(historiqueX.length > 10) historiqueX.shift();
-            localStorage.setItem('herys_v4_data', JSON.stringify(historiqueX));
+            
+            localStorage.setItem('herys_v5_data', JSON.stringify(historiqueX));
+            localStorage.setItem('h_total', totalSignals);
+            localStorage.setItem('h_win', winSignals);
+            
             refreshUI();
+        }
+
+        function updateWinrateUI() {
+            const wr = totalSignals > 0 ? Math.round((winSignals / totalSignals) * 100) : 0;
+            document.getElementById('stat-winrate').innerText = wr + "%";
+            document.getElementById('stat-rounds').innerText = totalSignals + " rounds analysés";
+            document.getElementById('stat-winrate').style.color = wr > 75 ? 'var(--lvl-vert)' : 'var(--danger)';
         }
 
         function refreshUI() {
             const container = document.getElementById('energy-container');
-            const hist = document.getElementById('hist-list');
-            container.innerHTML = ""; hist.innerHTML = "";
-
+            container.innerHTML = "";
             historiqueX.forEach(v => {
                 const bar = document.createElement('div');
                 bar.className = 'energy-bar';
                 bar.style.height = `${Math.min(v * 6, 100)}%`;
-                bar.style.backgroundColor = v < 2 ? 'var(--lvl-bleu)' : (v < 10 ? 'var(--lvl-violet)' : 'var(--lvl-vert)');
+                bar.style.backgroundColor = v < 2 ? 'var(--lvl-bleu)' : 'var(--lvl-rose)';
                 container.appendChild(bar);
-            });
-
-            [...historiqueX].reverse().forEach(x => {
-                hist.innerHTML += `<div class="history-item"><span>Round ID</span> <b style="color:${x < 2 ? '#00d4ff' : '#ff00ff'}">${x.toFixed(2)}x</b></div>`;
             });
         }
 
-        setInterval(() => {
-            if (!nextTime1) return;
-            let diff = Math.floor((nextTime1 - new Date()) / 1000);
-            const label = document.getElementById('count-label');
-            const box = document.getElementById('pred-box');
-
-            if (diff > 0) {
-                if (diff <= 10) {
-                    box.classList.add('urgent');
-                    label.style.color = "var(--danger)";
-                }
-            } else if (diff > -15) {
-                label.innerText = "🚀 ENTRÉE CONSEILLÉE 🚀";
-                label.style.color = "var(--lvl-vert)";
-            } else {
-                box.classList.remove('urgent');
-                nextTime1 = null;
-            }
-        }, 1000);
-
-        window.onload = refreshUI;
+        window.onload = () => { refreshUI(); updateWinrateUI(); };
     </script>
 </body>
 </html>
