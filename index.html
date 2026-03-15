@@ -3,171 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>HERYS ELITE V25 - MASTER SEQUENCE</title>
+    <title>HERYS V26 - ULTRA-CONTRASTE</title>
     <style>
         :root { 
-            --neon: #00f2ff; 
-            --rose: #ff00ff; 
-            --vert: #00ff88; 
-            --violet: #9d4cff; 
-            --orange: #ff9500; 
-            --bg: #050505; 
-            --card: #0a0a0a;
+            --neon: #00f2ff; --rose: #ff00ff; --vert: #00ff88; --violet: #9d4cff; --orange: #ff9500;
         }
         
         body { 
-            background: var(--bg); 
-            color: white; 
-            font-family: 'Courier New', monospace; 
-            margin: 0; 
-            padding: 10px; 
-            overflow-x: hidden;
+            background: #000000; 
+            color: #ffffff; 
+            font-family: Arial, sans-serif; 
+            margin: 0; padding: 10px; 
         }
 
         .container { width: 100%; max-width: 420px; margin: auto; }
         
-        /* Zone de Scan */
         .scanner-area { 
-            background: #000; 
-            border: 1px solid #1a1a1a; 
+            background: #111; 
+            border: 3px solid #333; 
             padding: 20px; 
-            border-radius: 8px; 
+            border-radius: 15px; 
             text-align: center; 
-            border-bottom: 3px solid var(--neon);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        #status-display { font-size: 50px; height: 60px; display: flex; align-items: center; justify-content: center; }
-        .icon-check { color: var(--vert); text-shadow: 0 0 25px var(--vert); }
-        .icon-cross { color: #ff3333; text-shadow: 0 0 25px #ff3333; }
-        
-        #p-val { font-size: 24px; font-weight: bold; letter-spacing: 2px; transition: 0.3s; }
+        /* POWER CORE EN GRANDE TAILLE */
+        #p-val { font-size: 40px; font-weight: 900; color: #fff; margin: 10px 0; text-shadow: 2px 2px #000; }
 
+        /* CHAMPS DE SAISIE ULTRA VISIBLES */
         textarea, input { 
             width: 100%; 
-            background: var(--card); 
-            border: 1px solid #222; 
-            color: var(--neon); 
+            background: #ffffff !important; /* Fond Blanc */
+            border: 4px solid var(--neon); 
+            color: #000000 !important; /* Texte Noir */
             padding: 15px; 
-            box-sizing: border-box; 
-            outline: none; 
-            margin-bottom: 10px; 
-            border-radius: 4px; 
-            text-align: center; 
+            margin-bottom: 12px; 
+            border-radius: 10px; 
+            font-size: 22px; 
             font-weight: bold;
-            font-size: 16px;
+            text-align: center;
         }
 
         .btn-analyze { 
             width: 100%; 
-            padding: 18px; 
-            border: 2px solid var(--neon); 
-            background: transparent; 
-            color: var(--neon); 
-            cursor: pointer; 
-            font-weight: bold; 
-            text-transform: uppercase; 
-            letter-spacing: 2px;
-            transition: 0.2s;
+            padding: 20px; 
+            background: var(--neon); 
+            color: #000; 
+            font-size: 20px;
+            font-weight: 900; 
+            border: none;
+            border-radius: 10px;
+            text-transform: uppercase;
         }
-        .btn-analyze:active { background: var(--neon); color: #000; }
 
-        /* Timeline */
+        /* TIMELINE CONTRASTÉE */
         .timeline-header { 
             margin-top: 25px; 
-            font-size: 11px; 
-            color: var(--neon); 
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            padding-left: 5px; 
-            border-left: 3px solid var(--neon); 
+            background: var(--neon);
+            color: #000;
+            padding: 8px;
+            font-weight: bold;
+            font-size: 14px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
         }
 
         .timeline-scroll { 
-            height: 280px; 
+            height: 300px; 
             overflow-y: auto; 
-            margin-top: 10px; 
-            background: #080808; 
-            border-radius: 4px; 
-            border: 1px solid #111; 
+            background: #0a0a0a; 
+            border: 3px solid #333;
+            border-radius: 0 0 10px 10px; 
         }
 
         .time-row { 
             display: flex; 
             justify-content: space-between; 
-            align-items: center; 
-            padding: 12px; 
-            border-bottom: 1px solid #111; 
-            font-size: 13px; 
+            padding: 15px 10px; 
+            border-bottom: 2px solid #222; 
         }
 
-        .t-round { color: #444; font-size: 10px; width: 50px; }
-        .t-clock { color: #888; width: 70px; }
-        .t-signal { font-weight: 900; flex-grow: 1; text-align: right; }
+        .t-round { color: #ffff00; font-weight: bold; width: 60px; } /* Jaune */
+        .t-clock { color: #ffffff; font-weight: bold; width: 90px; } /* Blanc */
+        .t-signal { font-weight: 900; font-size: 16px; text-align: right; }
 
-        /* Historique */
-        .history-container { 
-            display: flex; 
-            gap: 8px; 
-            margin-top: 20px; 
-            overflow-x: auto; 
-            padding: 15px 5px; 
-            flex-direction: row-reverse; 
-        }
-        .dot { 
-            min-width: 45px; 
-            height: 22px; 
-            font-size: 10px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            border-radius: 3px; 
-            color: #000; 
-            font-weight: bold; 
-        }
-        
-        .btn-reset {
-            width: 100%;
-            background: none;
-            border: none;
-            color: #333;
-            font-size: 10px;
-            margin-top: 20px;
-            cursor: pointer;
-            text-decoration: underline;
-        }
+        .history-container { display: flex; gap: 10px; margin-top: 20px; overflow-x: auto; padding: 10px 0; flex-direction: row-reverse; }
+        .dot { min-width: 55px; height: 35px; font-size: 14px; display: flex; align-items: center; justify-content: center; border-radius: 8px; color: #000; font-weight: 900; border: 2px solid #fff; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="scanner-area">
-        <div id="status-display">⚡</div>
-        <div style="font-size: 10px; color: #444; margin-bottom: 5px;">POWER_CORE</div>
-        <div id="p-val" style="color: white; margin-bottom: 15px;">00000</div>
+        <div id="status-display" style="font-size: 50px;">⚡</div>
+        <div style="color: #aaa; font-size: 12px;">SERVER POWER</div>
+        <div id="p-val">00000</div>
         
-        <textarea id="hashInput" maxlength="4" placeholder="4 CHARS DU HASH"></textarea>
-        <input type="number" id="lastScore" step="0.01" placeholder="SCORE DU ROUND">
+        <textarea id="hashInput" maxlength="4" placeholder="HEX HASH"></textarea>
+        <input type="number" id="lastScore" step="0.01" placeholder="SCORE">
         <button class="btn-analyze" onclick="processCore()">DECODE SEQUENCE</button>
     </div>
 
-    <div class="timeline-header">Sequence Master (Next 50 Rounds)</div>
-    <div class="timeline-scroll" id="timeline">
-        <div style="color:#222; text-align:center; margin-top:100px;">EN ATTENTE DE DONNÉES...</div>
-    </div>
+    <div class="timeline-header">SEQUENCE PREDICTIONS</div>
+    <div class="timeline-scroll" id="timeline"></div>
 
-    <div class="history-container" id="history"></div>
-    <button class="btn-reset" onclick="clearSession()">[ RESET_MASTER_DATABASE ]</button>
+    <div id="history" class="history-container"></div>
 </div>
 
 <script>
-    let logs = JSON.parse(localStorage.getItem('herys_v25_logs')) || [];
-    let lastTarget = 1.50;
-
-    // Focus auto vers score après 4 chars de Hash
-    document.getElementById('hashInput').addEventListener('input', function() {
-        if(this.value.length === 4) document.getElementById('lastScore').focus();
-    });
+    let logs = JSON.parse(localStorage.getItem('herys_v26_logs')) || [];
 
     function processCore() {
         let h = document.getElementById('hashInput').value.trim();
@@ -177,59 +120,42 @@
         const weight = parseInt(h, 16);
         const pVal = document.getElementById('p-val');
         pVal.innerText = weight;
+        
+        // Couleurs Power
+        if (weight > 40000) pVal.style.color = "var(--vert)";
+        else if (weight > 20000) pVal.style.color = "var(--orange)";
+        else pVal.style.color = "#ff4444";
 
-        // --- Logique Haptique et Couleur Power ---
-        if (weight > 40000) { 
-            pVal.style.color = "var(--vert)";
-            if (window.navigator.vibrate) window.navigator.vibrate([100, 50, 100]); 
-        } else if (weight > 20000) { 
-            pVal.style.color = "var(--orange)";
-        } else { 
-            pVal.style.color = "var(--rose)";
-            if (weight < 10000 && window.navigator.vibrate) window.navigator.vibrate(400);
-        }
+        document.getElementById('status-display').innerHTML = (s >= 1.5) ? '✅' : '❌';
 
-        // Signe de validation
-        document.getElementById('status-display').innerHTML = (s >= lastTarget) ? '<span class="icon-check">✓</span>' : '<span class="icon-cross">✕</span>';
-
-        // --- Génération Timeline 50 Tours ---
         const now = new Date();
         const timeline = document.getElementById('timeline');
         timeline.innerHTML = ""; 
 
         for(let i = 1; i <= 50; i++) {
             let futureWeight = (weight + (i * 1337)) % 65535;
-            let timeGap = i * 22; // Moyenne 22s par round
-            let futureClock = new Date(now.getTime() + timeGap * 1000).toTimeString().split(' ')[0];
+            let futureClock = new Date(now.getTime() + (i * 22) * 1000).toTimeString().split(' ')[0];
             
-            let sig = { name: "NEUTRE", col: "#222", mult: "1.0x" };
+            let sig = null;
+            if (futureWeight > 60000) sig = { n: "VERT 🟢", c: "var(--vert)" };
+            else if (futureWeight > 42000) sig = { n: "ROSE 🌸", c: "var(--rose)" };
+            else if (futureWeight > 22000) sig = { n: "VIOLET 🟣", c: "var(--violet)" };
 
-            if (futureWeight > 60000) { 
-                sig = { name: "VERT 🟢", col: "var(--vert)", mult: "50x+" }; 
-            } else if (futureWeight > 42000) { 
-                sig = { name: "ROSE 🌸", col: "var(--rose)", mult: "5x+" }; 
-            } else if (futureWeight > 22000) { 
-                sig = { name: "VIOLET 🟣", col: "var(--violet)", mult: "2x+" }; 
-            }
-
-            if(sig.name !== "NEUTRE") {
+            if(sig) {
                 timeline.innerHTML += `
                     <div class="time-row">
                         <span class="t-round">R+${i}</span>
                         <span class="t-clock">${futureClock}</span>
-                        <span class="t-signal" style="color:${sig.col}">${sig.name} (${sig.mult})</span>
-                    </div>
-                `;
+                        <span class="t-signal" style="color:${sig.c}">${sig.n}</span>
+                    </div>`;
             }
         }
 
-        // Historique
-        logs.unshift({ score: s, ts: Date.now() });
-        if(logs.length > 20) logs.pop();
-        localStorage.setItem('herys_v25_logs', JSON.stringify(logs));
+        logs.unshift({ score: s });
+        if(logs.length > 15) logs.pop();
+        localStorage.setItem('herys_v26_logs', JSON.stringify(logs));
         updateUI();
         
-        // Reset inputs
         document.getElementById('lastScore').value = "";
         document.getElementById('hashInput').value = "";
         document.getElementById('hashInput').focus();
@@ -238,17 +164,9 @@
     function updateUI() {
         const hist = document.getElementById('history');
         hist.innerHTML = logs.map((entry) => {
-            let c = entry.score >= 50 ? "var(--vert)" : (entry.score >= 5 ? "var(--rose)" : (entry.score >= 2 ? "var(--violet)" : "var(--neon)"));
+            let c = entry.score >= 5 ? "var(--rose)" : (entry.score >= 2 ? "var(--violet)" : "var(--neon)");
             return `<div class="dot" style="background:${c}">${entry.score.toFixed(2)}</div>`;
         }).join('');
-    }
-
-    function clearSession() {
-        if(confirm("Réinitialiser toutes les données ?")) {
-            logs = [];
-            localStorage.removeItem('herys_v25_logs');
-            location.reload();
-        }
     }
     updateUI();
 </script>
