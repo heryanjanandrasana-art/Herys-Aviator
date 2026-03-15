@@ -3,114 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>HERYS V26 - ULTRA-CONTRASTE</title>
+    <title>HERYS V27 - PRO CLEAN</title>
     <style>
-        :root { 
-            --neon: #00f2ff; --rose: #ff00ff; --vert: #00ff88; --violet: #9d4cff; --orange: #ff9500;
-        }
-        
-        body { 
-            background: #000000; 
-            color: #ffffff; 
-            font-family: Arial, sans-serif; 
-            margin: 0; padding: 10px; 
-        }
-
+        :root { --neon: #00f2ff; --rose: #ff00ff; --vert: #00ff88; --violet: #9d4cff; --orange: #ff9500; }
+        body { background: #000; color: #fff; font-family: Arial, sans-serif; margin: 0; padding: 10px; }
         .container { width: 100%; max-width: 420px; margin: auto; }
         
-        .scanner-area { 
-            background: #111; 
-            border: 3px solid #333; 
-            padding: 20px; 
-            border-radius: 15px; 
-            text-align: center; 
-        }
+        /* Zone Haute */
+        .scanner-area { background: #111; border: 2px solid #333; padding: 15px; border-radius: 12px; text-align: center; }
+        #p-val { font-size: 35px; font-weight: 900; margin: 5px 0; }
 
-        /* POWER CORE EN GRANDE TAILLE */
-        #p-val { font-size: 40px; font-weight: 900; color: #fff; margin: 10px 0; text-shadow: 2px 2px #000; }
-
-        /* CHAMPS DE SAISIE ULTRA VISIBLES */
+        /* Saisie Ultra-Lisible */
         textarea, input { 
-            width: 100%; 
-            background: #ffffff !important; /* Fond Blanc */
-            border: 4px solid var(--neon); 
-            color: #000000 !important; /* Texte Noir */
-            padding: 15px; 
-            margin-bottom: 12px; 
-            border-radius: 10px; 
-            font-size: 22px; 
-            font-weight: bold;
-            text-align: center;
+            width: 100%; background: #fff !important; border: 3px solid var(--neon); 
+            color: #000 !important; padding: 12px; margin-bottom: 10px; 
+            border-radius: 8px; font-size: 20px; font-weight: bold; text-align: center; box-sizing: border-box;
         }
 
         .btn-analyze { 
-            width: 100%; 
-            padding: 20px; 
-            background: var(--neon); 
-            color: #000; 
-            font-size: 20px;
-            font-weight: 900; 
-            border: none;
-            border-radius: 10px;
-            text-transform: uppercase;
+            width: 100%; padding: 18px; background: var(--neon); color: #000; 
+            font-size: 18px; font-weight: 900; border: none; border-radius: 8px; text-transform: uppercase;
         }
 
-        /* TIMELINE CONTRASTÉE */
+        /* Liste des 15 Prédictions */
         .timeline-header { 
-            margin-top: 25px; 
-            background: var(--neon);
-            color: #000;
-            padding: 8px;
-            font-weight: bold;
-            font-size: 14px;
-            text-align: center;
-            border-radius: 5px 5px 0 0;
+            margin-top: 20px; background: #222; color: var(--neon); 
+            padding: 8px; font-weight: bold; text-align: center; border-radius: 8px 8px 0 0; border: 1px solid #333;
         }
-
         .timeline-scroll { 
-            height: 300px; 
-            overflow-y: auto; 
-            background: #0a0a0a; 
-            border: 3px solid #333;
-            border-radius: 0 0 10px 10px; 
+            height: 240px; overflow-y: auto; background: #0a0a0a; 
+            border: 2px solid #333; border-radius: 0 0 8px 8px; 
         }
+        .time-row { display: flex; justify-content: space-between; padding: 12px 10px; border-bottom: 1px solid #222; }
+        .t-round { color: #ffff00; font-weight: bold; }
+        .t-clock { color: #fff; }
+        .t-signal { font-weight: 900; }
 
-        .time-row { 
-            display: flex; 
-            justify-content: space-between; 
-            padding: 15px 10px; 
-            border-bottom: 2px solid #222; 
-        }
-
-        .t-round { color: #ffff00; font-weight: bold; width: 60px; } /* Jaune */
-        .t-clock { color: #ffffff; font-weight: bold; width: 90px; } /* Blanc */
-        .t-signal { font-weight: 900; font-size: 16px; text-align: right; }
-
-        .history-container { display: flex; gap: 10px; margin-top: 20px; overflow-x: auto; padding: 10px 0; flex-direction: row-reverse; }
-        .dot { min-width: 55px; height: 35px; font-size: 14px; display: flex; align-items: center; justify-content: center; border-radius: 8px; color: #000; font-weight: 900; border: 2px solid #fff; }
+        /* Historique avec bouton Effacer */
+        .hist-top { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding: 0 5px; }
+        .btn-clear { background: #ff4444; color: #fff; border: none; padding: 5px 10px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; }
+        .history-container { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; flex-direction: row-reverse; }
+        .dot { min-width: 50px; height: 30px; font-size: 12px; display: flex; align-items: center; justify-content: center; border-radius: 6px; color: #000; font-weight: 900; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="scanner-area">
-        <div id="status-display" style="font-size: 50px;">⚡</div>
-        <div style="color: #aaa; font-size: 12px;">SERVER POWER</div>
+        <div id="status-display" style="font-size: 40px;">⚡</div>
         <div id="p-val">00000</div>
-        
-        <textarea id="hashInput" maxlength="4" placeholder="HEX HASH"></textarea>
+        <textarea id="hashInput" maxlength="4" placeholder="4 CHARS HASH"></textarea>
         <input type="number" id="lastScore" step="0.01" placeholder="SCORE">
-        <button class="btn-analyze" onclick="processCore()">DECODE SEQUENCE</button>
+        <button class="btn-analyze" onclick="processCore()">ANALYSER (15 R)</button>
     </div>
 
-    <div class="timeline-header">SEQUENCE PREDICTIONS</div>
+    <div class="timeline-header">SÉQUENCE OPTIMALE (15 ROUNDS)</div>
     <div class="timeline-scroll" id="timeline"></div>
 
+    <div class="hist-top">
+        <span style="font-size: 12px; color: #888;">HISTORIQUE RÉCENT</span>
+        <button class="btn-clear" onclick="clearLogs()">🗑️ EFFACER</button>
+    </div>
     <div id="history" class="history-container"></div>
 </div>
 
 <script>
-    let logs = JSON.parse(localStorage.getItem('herys_v26_logs')) || [];
+    let logs = JSON.parse(localStorage.getItem('herys_v27_logs')) || [];
 
     function processCore() {
         let h = document.getElementById('hashInput').value.trim();
@@ -120,11 +78,7 @@
         const weight = parseInt(h, 16);
         const pVal = document.getElementById('p-val');
         pVal.innerText = weight;
-        
-        // Couleurs Power
-        if (weight > 40000) pVal.style.color = "var(--vert)";
-        else if (weight > 20000) pVal.style.color = "var(--orange)";
-        else pVal.style.color = "#ff4444";
+        pVal.style.color = weight > 40000 ? "var(--vert)" : (weight > 20000 ? "var(--orange)" : "#ff4444");
 
         document.getElementById('status-display').innerHTML = (s >= 1.5) ? '✅' : '❌';
 
@@ -132,7 +86,8 @@
         const timeline = document.getElementById('timeline');
         timeline.innerHTML = ""; 
 
-        for(let i = 1; i <= 50; i++) {
+        // Limité à 15 rounds pour la précision
+        for(let i = 1; i <= 15; i++) {
             let futureWeight = (weight + (i * 1337)) % 65535;
             let futureClock = new Date(now.getTime() + (i * 22) * 1000).toTimeString().split(' ')[0];
             
@@ -152,8 +107,8 @@
         }
 
         logs.unshift({ score: s });
-        if(logs.length > 15) logs.pop();
-        localStorage.setItem('herys_v26_logs', JSON.stringify(logs));
+        if(logs.length > 20) logs.pop();
+        localStorage.setItem('herys_v27_logs', JSON.stringify(logs));
         updateUI();
         
         document.getElementById('lastScore').value = "";
@@ -167,6 +122,15 @@
             let c = entry.score >= 5 ? "var(--rose)" : (entry.score >= 2 ? "var(--violet)" : "var(--neon)");
             return `<div class="dot" style="background:${c}">${entry.score.toFixed(2)}</div>`;
         }).join('');
+    }
+
+    function clearLogs() {
+        if(confirm("Effacer l'historique ?")) {
+            logs = [];
+            localStorage.removeItem('herys_v27_logs');
+            updateUI();
+            document.getElementById('timeline').innerHTML = "";
+        }
     }
     updateUI();
 </script>
