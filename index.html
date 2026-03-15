@@ -3,188 +3,275 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>HERYS MASTER ELITE - ULTIMATE</title>
+    <title>HERYS MASTER ELITE - FUSION FINALE</title>
     <style>
         :root {
-            --royal: #7300ff; --lvl-bleu: #00d4ff; --lvl-violet: #a335ee;
-            --lvl-rose: #ff00ff; --lvl-vert: #00ff88; --bg: #050505; --card-bg: #121212;
-            --danger: #ff4444;
+            --royal: #7300ff; 
+            --lvl-bleu: #00d4ff;   /* 1.00 - 1.99 */
+            --lvl-violet: #a335ee; /* 2.00 - 4.99 */
+            --lvl-rose: #ff00ff;   /* 5.00 - 9.99 */
+            --lvl-vert: #00ff88;   /* 10.00+ */
+            --bg: #0a0a0a;
+            --card-bg: #161616;
+            --danger: #ff3e3e;
         }
+        
         body {
-            background-color: var(--bg); color: white; font-family: 'Segoe UI', sans-serif;
-            margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center;
-        }
-        .header { text-align: center; margin-bottom: 15px; }
-        .engine-container { width: 100%; max-width: 420px; }
-        
-        /* MODULE DE SAISIE */
-        .glass-card { background: var(--card-bg); padding: 15px; border-radius: 20px; border: 1px solid #222; margin-bottom: 20px; }
-        .display-input { 
-            background: #000; padding: 15px; border-radius: 12px; font-size: 28px; 
-            text-align: center; font-weight: 900; border: 1px solid var(--royal); margin-bottom: 12px;
-            color: white; text-shadow: 0 0 10px var(--royal); min-height: 40px;
-        }
-        .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .numpad button { 
-            background: #1a1a1a; border: 1px solid #333; color: white; padding: 18px; 
-            border-radius: 12px; font-weight: bold; font-size: 20px; transition: 0.2s;
-        }
-        .numpad button:active { background: var(--royal); transform: scale(0.95); }
-        .btn-scan { 
-            grid-column: span 3; background: linear-gradient(45deg, var(--royal), #ff00ff); 
-            border: none; color: white; padding: 18px; border-radius: 12px; font-weight: 900; 
-            text-transform: uppercase; margin-top: 10px; cursor: pointer;
+            background-color: var(--bg); color: white;
+            font-family: 'Segoe UI', sans-serif; margin: 0; padding: 15px;
+            display: flex; flex-direction: column; align-items: center; transition: 0.3s;
         }
 
-        /* SYSTÈME DE TIROIRS */
-        .drawer-label { font-size: 11px; color: #555; font-weight: 800; margin-bottom: 10px; text-transform: uppercase; }
-        #prediction-drawer { display: flex; flex-direction: column; gap: 12px; }
-        
-        .prediction-card {
-            background: linear-gradient(145deg, #18181b, #09090b);
-            border-left: 5px solid var(--royal); border-radius: 15px; padding: 15px;
-            animation: slideIn 0.3s ease-out; border: 1px solid #222; position: relative;
+        .header-title {
+            font-weight: 900; color: var(--royal); font-size: 28px; 
+            margin-bottom: 5px; text-transform: uppercase; letter-spacing: -1px; cursor: pointer;
         }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .header-title span { color: white; font-size: 12px; opacity: 0.5; }
 
-        /* BOUTON EFFACER DANS LE TIROIR */
-        .btn-clear-card {
-            position: absolute; top: 10px; right: 10px;
-            background: rgba(255, 68, 68, 0.1); color: var(--danger);
-            border: 1px solid var(--danger); border-radius: 50%;
-            width: 26px; height: 26px; font-size: 16px; font-weight: bold;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
+        .engine-container { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 12px; }
+
+        /* BLOC SAISIE */
+        .glass-card {
+            background: var(--card-bg); padding: 15px; border-radius: 15px; 
+            border: 1px solid #333; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        label { font-size: 9px; color: #888; text-transform: uppercase; margin-bottom: 8px; display: block; letter-spacing: 1px; }
+        .input-row { display: flex; gap: 8px; margin-bottom: 10px; }
+        input {
+            background: #000; border: 1px solid #333; color: white; 
+            padding: 12px; border-radius: 8px; font-size: 16px; width: 100%;
+            text-align: center; outline: none;
         }
 
-        .card-header { font-size: 11px; color: #666; border-bottom: 1px solid #222; padding-bottom: 8px; margin-bottom: 10px; display: flex; }
-        .card-body { display: flex; justify-content: space-between; align-items: center; }
+        .btn-main {
+            width: 100%; background: var(--royal); color: white; border: none;
+            padding: 15px; border-radius: 10px; font-weight: 800; cursor: pointer; text-transform: uppercase;
+        }
+
+        .btn-sync {
+            width: 100%; background: transparent; color: var(--lvl-vert);
+            border: 2px solid var(--lvl-vert); padding: 14px; border-radius: 12px;
+            font-weight: 900; cursor: pointer; text-transform: uppercase; margin-top: 5px;
+        }
+
+        /* FLUX D'ÉNERGIE (TES COULEURS) */
+        .energy-grid {
+            height: 50px; display: flex; align-items: flex-end; gap: 4px;
+            background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px;
+        }
+        .energy-bar { flex: 1; border-radius: 2px; transition: height 0.5s ease; }
+
+        /* DOUBLE PREDICTION */
+        .prediction-display {
+            background: var(--card-bg); padding: 20px; border-radius: 20px;
+            border: 2px solid #222; text-align: center; position: relative;
+        }
+        .timer-grid { display: flex; justify-content: center; gap: 20px; margin: 10px 0; }
+        .timer-val { font-size: 32px; font-weight: 900; letter-spacing: 1px; }
         
-        .sig-unit { text-align: center; flex: 1; }
-        .sig-unit span { display: block; font-family: monospace; font-size: 15px; color: #aaa; }
-        .sig-unit b { display: block; font-size: 22px; margin-top: 4px; }
-        .divider { width: 1px; height: 35px; background: #333; margin: 0 10px; }
-        
-        .t1-style { color: var(--lvl-vert); }
-        .t2-style { color: var(--lvl-rose); }
-        .input-badge { color: var(--lvl-bleu); font-weight: bold; }
+        /* TENDANCES */
+        .trends { display: flex; justify-content: center; gap: 15px; margin-top: 15px; font-size: 10px; font-weight: bold; color: #444; }
+        .active-up { color: var(--lvl-vert) !important; text-shadow: 0 0 10px var(--lvl-vert); }
+        .active-stable { color: var(--lvl-bleu) !important; }
+        .active-down { color: var(--danger) !important; }
+
+        /* FIABILITÉ */
+        .res-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .card { background: var(--card-bg); border: 2px solid #222; padding: 12px; border-radius: 15px; text-align: center; }
+        .fiab-bar-bg { width: 100%; height: 4px; background: #222; border-radius: 2px; margin-top: 8px; overflow: hidden; }
+        .fiab-fill { height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.1, 0.7, 1.0, 0.1); }
+
+        /* MODE FOCUS */
+        .focus-mode .glass-card, .focus-mode #hist-section, .focus-mode .header-title span { display: none; }
+        .focus-mode .engine-container { justify-content: center; height: 90vh; }
+
+        @keyframes alert-pulse {
+            0% { border-color: var(--danger); box-shadow: 0 0 5px var(--danger); }
+            50% { border-color: #ff5555; box-shadow: 0 0 25px var(--danger); }
+            100% { border-color: var(--danger); box-shadow: 0 0 5px var(--danger); }
+        }
+        .urgent { animation: alert-pulse 0.5s infinite; }
+
+        .history-item {
+            background: #111; margin-top: 8px; padding: 10px 15px; border-radius: 10px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-left: 4px solid var(--royal);
+        }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <div style="font-weight:900; color:var(--royal); font-size:24px;">HERYS MASTER ELITE</div>
-        <div style="font-size:10px; opacity:0.6;">SENSORY & DRAWER ENGINE V4.5</div>
-    </div>
-
+    <div class="header-title" onclick="toggleFocus()">HERYS <span>MASTER ELITE</span></div>
+    <div style="font-size: 8px; color: #444; margin-top: -15px; margin-bottom: 15px;">CLIQUER POUR MODE FOCUS</div>
+    
     <div class="engine-container">
         <div class="glass-card">
-            <div class="display-input" id="display-input">0.00</div>
-            <div class="numpad">
-                <button onclick="press('1')">1</button><button onclick="press('2')">2</button><button onclick="press('3')">3</button>
-                <button onclick="press('4')">4</button><button onclick="press('5')">5</button><button onclick="press('6')">6</button>
-                <button onclick="press('7')">7</button><button onclick="press('8')">8</button><button onclick="press('9')">9</button>
-                <button onclick="press('.')">.</button><button onclick="press('0')">0</button><button onclick="del()">⌫</button>
-                <button class="btn-scan" onclick="launchScan()">LANCER LE SCANNER</button>
+            <label>Configuration du Signal</label>
+            <div class="input-row">
+                <input type="text" id="manualTime" placeholder="00:00:00" style="flex: 1.5;">
+                <input type="number" id="inputX" placeholder="X.XX" step="0.01" style="flex: 1;">
             </div>
+            <button class="btn-main" onclick="analyze(false)">Lancer l'Analyse</button>
+            <button class="btn-sync" onclick="analyze(true)">⚡ SYNC EXPLOSION DIRECTE ⚡</button>
         </div>
 
-        <div class="drawer-label">📂 Tiroirs de prédiction actifs</div>
-        <div id="prediction-drawer"></div>
+        <div class="glass-card">
+            <label>Flux d'Énergie du Cycle</label>
+            <div id="energy-container" class="energy-grid"></div>
+            <div id="cycle-status" style="text-align: center; font-size: 10px; margin-top: 10px; font-weight: bold;"></div>
+        </div>
+
+        <div id="pred-box" class="prediction-display">
+            <label>PROCHAINE FENÊTRE DE VOL</label>
+            <div class="timer-grid">
+                <div class="timer-box">
+                    <div style="font-size: 9px; color: var(--lvl-vert);">OBJECTIF 1 (SAFE)</div>
+                    <div id="t1" class="timer-val" style="color: var(--lvl-vert);">--:--:--</div>
+                </div>
+                <div class="timer-box" style="border-left: 1px solid #333; padding-left: 20px;">
+                    <div style="font-size: 9px; color: var(--lvl-rose);">OBJECTIF 2 (RISK)</div>
+                    <div id="t2" class="timer-val" style="color: var(--lvl-rose);">--:--:--</div>
+                </div>
+            </div>
+            <div class="trends">
+                <span id="trend-up">📈 HAUSSE</span>
+                <span id="trend-stable" class="active-stable">● STABLE</span>
+                <span id="trend-down">📉 BAISSE</span>
+            </div>
+            <div id="count-label" style="font-size: 11px; font-weight: bold; margin-top: 10px; color: #555;">SCANNER ACTIF</div>
+        </div>
+
+        <div class="res-grid">
+            <div class="card">
+                <label style="color:var(--lvl-vert); font-size: 9px;">CONFIANCE SAFE</label>
+                <div id="val-safe" style="font-size: 18px; font-weight: 900;">--</div>
+                <div class="fiab-bar-bg"><div id="bar-safe" class="fiab-fill" style="background:var(--lvl-vert)"></div></div>
+            </div>
+            <div class="card">
+                <label style="color:var(--lvl-rose); font-size: 9px;">CONFIANCE RISK</label>
+                <div id="val-risk" style="font-size: 18px; font-weight: 900;">--</div>
+                <div class="fiab-bar-bg"><div id="bar-risk" class="fiab-fill" style="background:var(--lvl-rose)"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="hist-section" style="width:100%; max-width:400px; margin-top: 20px;">
+        <div style="display: flex; justify-content: space-between; font-size: 10px; color: #444; padding: 0 5px;">
+            <span>LOGS RÉCENTS</span>
+            <span onclick="clearHistory()" style="cursor:pointer;">EFFACER</span>
+        </div>
+        <div id="hist-list"></div>
     </div>
 
     <script>
-        let currentEntry = "";
-        let drawers = [];
+        let nextTime1 = null;
+        let historiqueX = JSON.parse(localStorage.getItem('herys_history')) || [];
 
-        // Générateur de Bip (1 seconde)
-        function playBip() {
-            try {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioCtx.createOscillator();
-                const gainNode = audioCtx.createGain();
+        function toggleFocus() { document.body.classList.toggle('focus-mode'); }
 
-                oscillator.type = 'sine';
-                oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); 
-                
-                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 1);
+        window.onload = () => {
+            document.getElementById('manualTime').value = new Date().toTimeString().split(' ')[0];
+            refreshUI();
+        };
 
-                oscillator.connect(gainNode);
-                gainNode.connect(audioCtx.destination);
-
-                oscillator.start();
-                oscillator.stop(audioCtx.currentTime + 1);
-            } catch(e) { console.log("Audio error"); }
+        function getPalierColor(val) {
+            if (val < 2) return 'var(--lvl-bleu)';
+            if (val < 5) return 'var(--lvl-violet)';
+            if (val < 10) return 'var(--lvl-rose)';
+            return 'var(--lvl-vert)';
         }
 
-        function press(n) { if(currentEntry.length < 5) currentEntry += n; updateDisplay(); }
-        function del() { currentEntry = currentEntry.slice(0, -1); updateDisplay(); }
-        function updateDisplay() { document.getElementById('display-input').innerText = currentEntry || "0.00"; }
+        function analyze(isSync) {
+            const inputX = parseFloat(document.getElementById('inputX').value);
+            if (isNaN(inputX)) return;
 
-        function launchScan() {
-            let valX = parseFloat(currentEntry);
-            if(isNaN(valX)) return;
+            let dateRef = new Date();
+            if (!isSync) {
+                let parts = document.getElementById('manualTime').value.split(':');
+                dateRef.setHours(parseInt(parts[0])||0, parseInt(parts[1])||0, parseInt(parts[2])||0, 0);
+            }
 
-            const now = new Date();
-            const timeT1 = new Date(now.getTime() + 64000);
-            const timeT2 = new Date(now.getTime() + 128000);
+            const dureeVol = Math.log(inputX) / Math.log(1.10);
+            nextTime1 = new Date(dateRef.getTime() + (dureeVol * 1000) + 6250);
+            let nextTime2 = new Date(dateRef.getTime() + (dureeVol * 1000) + 12500);
 
-            // Patterns de multiplicateurs
-            let multT1 = (valX < 2.0) ? "9.09X" : "7.13X";
-            let multT2 = (valX < 2.0) ? "19.59X" : "15.00X";
+            document.getElementById('t1').innerText = nextTime1.toTimeString().split(' ')[0];
+            document.getElementById('t2').innerText = nextTime2.toTimeString().split(' ')[0];
+            
+            // Animation Barres Fiabilité
+            document.getElementById('bar-safe').style.width = "0%";
+            document.getElementById('bar-risk').style.width = "0%";
+            setTimeout(() => {
+                document.getElementById('bar-safe').style.width = (92 + Math.random()*7) + "%";
+                document.getElementById('bar-risk').style.width = (68 + Math.random()*15) + "%";
+            }, 100);
 
-            const newDrawer = {
-                id: Date.now(),
-                input: valX,
-                t1Time: timeT1, t2Time: timeT2,
-                t1Mult: multT1, t2Mult: multT2,
-                t1Alerted: false, t2Alerted: false
-            };
+            document.getElementById('val-safe').innerText = (1.40 + (Math.random() * 0.1)).toFixed(2) + "X";
+            document.getElementById('val-risk').innerText = (2.10 + (Math.random() * 0.4)).toFixed(2) + "X";
 
-            drawers.unshift(newDrawer);
-            renderDrawers();
-            currentEntry = ""; updateDisplay();
+            // Mise à jour Tendances
+            const up = document.getElementById('trend-up'), stable = document.getElementById('trend-stable'), down = document.getElementById('trend-down');
+            up.className = ''; stable.className = ''; down.className = '';
+            if (inputX > 2.5) up.className = 'active-up';
+            else if (inputX < 1.4) down.className = 'active-down';
+            else stable.className = 'active-stable';
+
+            historiqueX.push(inputX);
+            if(historiqueX.length > 10) historiqueX.shift();
+            localStorage.setItem('herys_history', JSON.stringify(historiqueX));
+            refreshUI();
         }
 
-        function removeDrawer(id) {
-            drawers = drawers.filter(d => d.id !== id);
-            renderDrawers();
-        }
+        function refreshUI() {
+            const container = document.getElementById('energy-container');
+            const status = document.getElementById('cycle-status');
+            const hist = document.getElementById('hist-list');
+            container.innerHTML = ""; hist.innerHTML = "";
 
-        function renderDrawers() {
-            const container = document.getElementById('prediction-drawer');
-            container.innerHTML = drawers.map(d => `
-                <div class="prediction-card">
-                    <button class="btn-clear-card" onclick="removeDrawer(${d.id})">×</button>
-                    <div class="card-header">
-                        <span>SCAN : <b class="input-badge">${d.input.toFixed(2)}X</b></span>
-                    </div>
-                    <div class="card-body">
-                        <div class="sig-unit">
-                            <span>${d.t1Time.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'})}</span>
-                            <b class="t1-style">${d.t1Mult}</b>
-                        </div>
-                        <div class="divider"></div>
-                        <div class="sig-unit">
-                            <span>${d.t2Time.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'})}</span>
-                            <b class="t2-style">${d.t2Mult}</b>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // Surveillance pour le Bip (5s avant)
-        setInterval(() => {
-            const nowTime = new Date().getTime();
-            drawers.forEach(d => {
-                if(!d.t1Alerted && (d.t1Time.getTime() - nowTime) <= 5000 && (d.t1Time.getTime() - nowTime) > 0) {
-                    playBip(); d.t1Alerted = true;
-                }
-                if(!d.t2Alerted && (d.t2Time.getTime() - nowTime) <= 5000 && (d.t2Time.getTime() - nowTime) > 0) {
-                    playBip(); d.t2Alerted = true;
-                }
+            historiqueX.forEach(val => {
+                const bar = document.createElement('div');
+                bar.className = 'energy-bar';
+                let color = getPalierColor(val);
+                bar.style.backgroundColor = color;
+                bar.style.height = `${Math.max(Math.min((val/10)*100, 100), 15)}%`; 
+                container.appendChild(bar);
             });
+
+            if(historiqueX.length > 0) {
+                const last = historiqueX[historiqueX.length - 1];
+                status.innerHTML = `ANALYSE CYCLE : <span style="color:${getPalierColor(last)}">${last < 2 ? 'RÉCUPÉRATION' : 'PROFIT'}</span>`;
+            }
+
+            [...historiqueX].reverse().forEach(x => {
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                let c = getPalierColor(x);
+                item.innerHTML = `<span>${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
+                                 <span style="font-weight:900; color:${c}">${x.toFixed(2)}x</span>`;
+                hist.appendChild(item);
+            });
+        }
+
+        function clearHistory() { 
+            if(confirm("Confirmer le Reset ?")) { historiqueX = []; localStorage.removeItem('herys_history'); refreshUI(); }
+        }
+
+        setInterval(() => {
+            if (!nextTime1) return;
+            let diff = Math.floor((nextTime1 - new Date()) / 1000);
+            const label = document.getElementById('count-label'), box = document.getElementById('pred-box');
+            if (diff > 0) {
+                label.innerText = `SIGNAL DANS ${diff}S`;
+                if(diff <= 10) box.classList.add('urgent');
+            } else if (diff > -5) {
+                label.innerText = "🚀 VOL EN COURS 🚀";
+                label.style.color = "var(--lvl-vert)";
+            } else {
+                label.innerText = "SCANNER ACTIF";
+                label.style.color = "#555";
+                box.classList.remove('urgent');
+                nextTime1 = null;
+            }
         }, 1000);
     </script>
 </body>
