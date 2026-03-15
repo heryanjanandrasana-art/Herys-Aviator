@@ -3,66 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>HERYS ELITE V35.5 - MASTER</title>
+    <title>HERYS ELITE V35.9 - COLOR MATCH</title>
     <style>
         :root { 
-            --premium-v: #8e44ff; --neon-b: #00d2ff; --vif-g: #00ff88; --hot-p: #ff00ff; --gold: #FFD700;
-            --bg: #050505; --card: #111111; --danger: #ff4444; --warning: #ff9900;
+            --blue: #00d2ff;     /* 1 - 1.99 */
+            --purple: #8e44ff;   /* 2 - 4.99 */
+            --rose: #ff00ff;     /* 5 - 49.99 */
+            --green: #00ff88;    /* 50+ */
+            --bg: #050505; --card: #111111; --border: #222; --danger: #ff4444; --warning: #ff9900;
         }
-        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 10px; height: 100vh; overflow: hidden; transition: background 0.3s; }
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; font-family: 'Segoe UI', sans-serif; }
+        body { background: var(--bg); color: #fff; margin: 0; padding: 10px; height: 100vh; overflow: hidden; }
         
-        /* Flash pour les gros signaux */
-        .flash-green { background: rgba(0, 255, 136, 0.2) !important; }
-
+        .flash-rose { background: rgba(255, 0, 255, 0.2) !important; }
         .header-card { background: #0b0b0b; border: 1px solid var(--border); border-radius: 12px; padding: 10px; margin-bottom: 8px; display: flex; justify-content: space-around; }
-        .stat-v { font-size: 14px; font-weight: 900; color: var(--vif-g); display: block; text-align: center;}
-        .stat-l { font-size: 8px; color: #666; text-transform: uppercase; }
+        .stat-box { text-align: center; }
+        .stat-v { font-size: 13px; font-weight: 900; color: var(--green); display: block; }
+        .stat-l { font-size: 7px; color: #666; text-transform: uppercase; }
 
         .img-card { background: var(--card); border: 1px solid #1a1a1a; border-radius: 16px; padding: 15px; margin-bottom: 8px; text-align: center; }
-        .t-val { font-size: 32px; font-weight: 900; }
-        .conf-circle { width: 80px; height: 80px; border: 6px solid #222; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 900; margin: 0 auto; transition: 0.3s; }
-        
-        .elite-mode { border-color: var(--vif-g) !important; color: var(--vif-g) !important; box-shadow: 0 0 20px var(--vif-g); }
-        .warn-mode { border-color: var(--warning) !important; color: var(--warning) !important; }
+        .t-val { font-size: 32px; font-weight: 900; line-height: 1.2; transition: 0.3s; }
+        .conf-circle { width: 85px; height: 85px; border: 6px solid #222; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 900; margin: 0 auto; }
 
         .seq-container { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-bottom: 8px; }
         .seq-box { background: #161616; padding: 8px; border-radius: 8px; font-size: 9px; border: 1px solid #222; text-align: center; }
         .seq-val { font-weight: 900; display: block; margin-top: 4px; font-size: 11px; }
 
         .input-card { 
-            background: var(--card); border-top: 3px solid var(--premium-v); border-radius: 20px 20px 0 0; padding: 12px; 
-            position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: var(--card); border-top: 3px solid var(--purple); border-radius: 24px 24px 0 0; padding: 12px; 
+            position: fixed; bottom: 0; left: 0; right: 0; transition: transform 0.4s cubic-bezier(0.1, 0.7, 0.1, 1);
         }
-        .input-card.hidden { transform: translateY(calc(100% - 50px)); }
+        .input-card.hidden { transform: translateY(calc(100% - 55px)); }
         
-        .kb { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: 8px; }
-        .k { background: #222; color: #fff; border: none; padding: 14px 0; border-radius: 8px; font-weight: bold; font-size: 16px; }
-        .k-go { background: linear-gradient(45deg, var(--premium-v), var(--hot-p)); color: #fff; grid-column: span 2; font-weight: 900; }
-        .k-danger { background: var(--danger); font-size: 10px; }
+        .kb { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-top: 10px; }
+        .k { background: #222; color: #fff; border: none; padding: 15px 0; border-radius: 10px; font-weight: bold; font-size: 16px; }
+        .k-go { background: linear-gradient(45deg, var(--purple), var(--rose)); color: #fff; grid-column: span 2; font-weight: 900; }
 
-        .hist { display: flex; gap: 6px; overflow-x: auto; padding: 5px 0; flex-direction: row-reverse; height: 35px; }
-        .dot { min-width: 45px; height: 20px; font-size: 10px; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: #000; font-weight: 900; }
+        .hist { display: flex; gap: 6px; overflow-x: auto; padding: 5px 0; flex-direction: row-reverse; height: 40px; }
+        .dot { min-width: 45px; height: 22px; font-size: 10px; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: #000; font-weight: 900; }
         
-        .input-box { flex:1; background:#1a1a1a; padding:12px; border-radius:8px; text-align:center; font-weight:900; border: 2px solid #333; }
-        .active-in { border-color: var(--premium-v) !important; background: #222; }
+        .input-box { flex:1; background:#1a1a1a; padding:12px; border-radius:10px; text-align:center; font-weight:900; border: 2px solid #333; }
+        .active-in { border-color: var(--purple) !important; background: #222; }
     </style>
 </head>
 <body id="main-body">
 
     <div class="header-card">
-        <div><span class="stat-l">Shield</span><span class="stat-v" id="shield-status">OK</span></div>
-        <div><span class="stat-l">Trend</span><span class="stat-v" id="trend-status" style="color:var(--neon-b)">STABLE</span></div>
-        <div><span class="stat-l">Engine</span><span class="stat-v" style="color:var(--gold)">V35.5</span></div>
+        <div class="stat-box"><span class="stat-l">Shield</span><span class="stat-v" id="shield-status">READY</span></div>
+        <div class="stat-box"><span class="stat-l">Rose Gap</span><span class="stat-v" id="time-val" style="color:#FFD700">00:00</span></div>
+        <div class="stat-box"><span class="stat-l">Prob. Status</span><span class="stat-v" id="prob-rose" style="color:var(--blue)">SCANNING</span></div>
     </div>
 
     <div class="img-card">
         <div style="display:flex; justify-content:space-around; align-items:center;">
-            <div><div class="stat-l">VIOLET</div><div class="t-val" id="t1-val" style="color:var(--premium-v);">--</div></div>
-            <div class="conf-circle" id="conf-circle">--</div>
-            <div><div class="stat-l">ELITE</div><div class="t-val" id="t2-val" style="color:var(--hot-p);">--</div></div>
+            <div style="flex:1"><div class="stat-l">PREDICT V</div><div class="t-val" id="t1-val" style="color:#666;">--</div></div>
+            <div style="flex:1"><div class="conf-circle" id="conf-circle">--</div></div>
+            <div style="flex:1"><div class="stat-l">PREDICT R</div><div class="t-val" id="t2-val" style="color:#666;">--</div></div>
         </div>
-        <div id="msg-txt" style="font-size:10px; color:#666; font-weight:900; margin-top:10px;">EN ATTENTE DE DONNÉES</div>
+        <div id="msg-txt" style="font-size:10px; color:#555; font-weight:900; margin-top:10px; letter-spacing:1px; text-transform:uppercase;">Waiting for Hash & Score</div>
     </div>
 
     <div class="seq-container" id="seq-list">
@@ -73,33 +71,34 @@
         <div class="seq-box">+5 <span class="seq-val">--</span></div>
     </div>
 
+    <div id="ht" class="hist"></div>
+
     <div class="input-card" id="kb-panel">
-        <div style="width:40px; height:4px; background:#333; margin:0 auto 10px; border-radius:2px;" onclick="toggleKB()"></div>
+        <div style="width:40px; height:4px; background:#444; margin:0 auto 10px; border-radius:2px;" onclick="toggleKB()"></div>
         <div style="display: flex; gap: 8px;">
             <div id="bH" class="input-box active-in" onclick="showKB('h')">HASH</div>
             <div id="bS" class="input-box" onclick="showKB('s')">LAST X</div>
         </div>
         <div class="kb">
-            <button class="k" onclick="p('1')">1</button><button class="k" onclick="p('2')">2</button><button class="k" onclick="p('3')">3</button><button class="k" onclick="p('A')" style="color:var(--neon-b)">A</button>
-            <button class="k" onclick="p('4')">4</button><button class="k" onclick="p('5')">5</button><button class="k" onclick="p('6')">6</button><button class="k" onclick="p('B')" style="color:var(--neon-b)">B</button>
-            <button class="k" onclick="p('7')">7</button><button class="k" onclick="p('8')">8</button><button class="k" onclick="p('9')">9</button><button class="k" onclick="p('C')" style="color:var(--neon-b)">C</button>
-            <button class="k-danger" onclick="fullReset()">RESET</button><button class="k" onclick="p('0')">0</button><button class="k" onclick="p('.')">.</button><button class="k" onclick="p('DEL')" style="color:var(--danger)">⌫</button>
-            <button class="k" onclick="p('D')" style="color:var(--neon-b)">D</button><button class="k" onclick="p('E')" style="color:var(--neon-b)">E</button><button class="k" onclick="p('F')" style="color:var(--neon-b)">F</button>
-            <button class="k-go" onclick="run()">SCANNER</button>
+            <button class="k" onclick="p('1')">1</button><button class="k" onclick="p('2')">2</button><button class="k" onclick="p('3')">3</button><button class="k" onclick="p('A')">A</button>
+            <button class="k" onclick="p('4')">4</button><button class="k" onclick="p('5')">5</button><button class="k" onclick="p('6')">6</button><button class="k" onclick="p('B')">B</button>
+            <button class="k" onclick="p('7')">7</button><button class="k" onclick="p('8')">8</button><button class="k" onclick="p('9')">9</button><button class="k" onclick="p('C')">C</button>
+            <button class="k" style="color:var(--danger)" onclick="fullReset()">C</button><button class="k" onclick="p('0')">0</button><button class="k" onclick="p('.')">.</button><button class="k" onclick="p('DEL')">⌫</button>
+            <button class="k" onclick="p('D')">D</button><button class="k" onclick="p('E')">E</button><button class="k" onclick="p('F')">F</button>
+            <button class="k-go" onclick="run()">ANALYSER LE TOUR</button>
         </div>
-        <div id="ht" class="hist" style="margin-top:10px;"></div>
     </div>
 
 <script>
     let logs = [];
     let cur = 'h', vH = "", vS = "";
-    let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    let lastRoseTime = null;
 
-    function playBeep(f, d) {
-        let o = audioCtx.createOscillator(); let g = audioCtx.createGain();
-        o.connect(g); g.connect(audioCtx.destination);
-        o.frequency.value = f; g.gain.value = 0.05;
-        o.start(); setTimeout(() => o.stop(), d);
+    function getTargetColor(val) {
+        if (val < 2.00) return 'var(--blue)';    // 1 - 1.99
+        if (val < 5.00) return 'var(--purple)';  // 2 - 4.99
+        if (val < 50.00) return 'var(--rose)';   // 5 - 49.99
+        return 'var(--green)';                   // 50+
     }
 
     function toggleKB() { document.getElementById('kb-panel').classList.toggle('hidden'); }
@@ -111,7 +110,7 @@
             if(cur === 'h') vH = vH.slice(0,-1); else vS = vS.slice(0,-1);
             if(vS==="" && cur==='s') cur='h';
         } else { 
-            if(cur === 'h' && vH.length < 4) { vH += v; if(vH.length === 4) { cur = 's'; playBeep(600, 50); } }
+            if(cur === 'h' && vH.length < 4) { vH += v; if(vH.length === 4) cur = 's'; }
             else if(cur === 's') vS += v;
         }
         uUI();
@@ -126,79 +125,74 @@
 
     function run() {
         if(vH.length < 4 || vS === "") return;
-        const panel = document.getElementById('kb-panel');
-        panel.classList.add('hidden'); // Cache auto au scan
-
+        document.getElementById('kb-panel').classList.add('hidden');
+        const now = Date.now();
+        const score = parseFloat(vS);
         const seed = parseInt(vH.substring(0,4), 16);
-        const last = parseFloat(vS);
-        const weight = seed / 65535;
-        
-        // Calculs de base
-        let vT = 1.3 + (weight * 2.5);
-        let eT = 110 / (110 - (weight * 108));
+        const ratio = seed / 65535;
 
-        // Analyse de tendance (Nouveau)
-        const trend = document.getElementById('trend-status');
-        if(logs.length >= 2 && logs[0] < 1.2 && logs[1] < 1.2) {
-            trend.innerText = "ASPIRATION"; trend.style.color = "var(--danger)";
-            vT *= 0.7; eT *= 0.5;
+        // Calcul Mathématique
+        let vT = 1.35 + (ratio * 2.8);
+        let eT = 110 / (110 - (ratio * 106));
+
+        // Anti-Aspiration
+        if (score < 1.15) {
+            vT *= 0.7; eT *= 0.4;
+            document.getElementById('shield-status').innerText = "CLEANING";
+            document.getElementById('shield-status').style.color = "var(--warning)";
         } else {
-            trend.innerText = "STABLE"; trend.style.color = "var(--neon-b)";
+            document.getElementById('shield-status').innerText = "ACTIVE";
+            document.getElementById('shield-status').style.color = "var(--green)";
         }
 
-        // Sécurité 1.00x
-        if(last <= 1.02) { vT = 1.15; eT = 1.50; document.getElementById('shield-status').innerText = "PROTECT"; playBeep(200, 400); }
-        else { document.getElementById('shield-status').innerText = "OK"; }
+        // Coloration des cibles principales
+        const t1 = document.getElementById('t1-val');
+        const t2 = document.getElementById('t2-val');
+        t1.innerText = vT.toFixed(2) + "X";
+        t1.style.color = getTargetColor(vT);
+        t2.innerText = eT.toFixed(2) + "X";
+        t2.style.color = getTargetColor(eT);
 
-        // Affichage
-        document.getElementById('t1-val').innerText = vT.toFixed(2) + "X";
-        document.getElementById('t2-val').innerText = eT.toFixed(2) + "X";
-        
-        const c = document.getElementById('conf-circle');
-        let conf = Math.floor(65 + weight * 34);
-        c.innerText = conf + "%";
-
-        // Feedback visuel et sonore
-        if(eT > 40) {
-            document.getElementById('main-body').classList.add('flash-green');
-            setTimeout(() => document.getElementById('main-body').classList.remove('flash-green'), 1000);
-            c.className = "conf-circle elite-mode";
-            playBeep(1000, 300);
-            document.getElementById('msg-txt').innerText = "!!! SIGNAL ÉLITE !!!";
-            document.getElementById('msg-txt').style.color = "var(--vif-g)";
-        } else {
-            c.className = "conf-circle";
-            playBeep(440, 100);
-            document.getElementById('msg-txt').innerText = "ANALYSE TERMINÉE";
-            document.getElementById('msg-txt').style.color = "#666";
+        // Flash si Rose ou Vert détecté
+        if (eT >= 5.00) {
+            document.getElementById('main-body').classList.add('flash-rose');
+            setTimeout(() => document.getElementById('main-body').classList.remove('flash-rose'), 800);
+            document.getElementById('msg-txt').innerText = eT >= 50 ? "JACKPOT SIGNAL ⚡" : "ELITE ROSE SIGNAL 🔥";
+            document.getElementById('msg-txt').style.color = getTargetColor(eT);
         }
 
-        // Séquence
+        document.getElementById('conf-circle').innerText = Math.floor(65 + ratio * 34) + "%";
+        document.getElementById('conf-circle').style.borderColor = getTargetColor(eT);
+
+        // Séquence Future
         const seq = document.getElementById('seq-list');
         seq.innerHTML = "";
         for(let i=1; i<=5; i++){
-            let val = (1.1 + (Math.abs(Math.sin(seed * i + last)) * 60));
-            if(last < 1.1) val *= 0.5;
-            let col = val >= 10 ? "var(--vif-g)" : (val >= 2 ? "var(--premium-v)" : "var(--neon-b)");
-            seq.innerHTML += `<div class="seq-box">${i==1?'NEXT':'+'+i}<span class="seq-val" style="color:${col}">${val.toFixed(2)}X</span></div>`;
+            let fVal = (1.1 + (Math.abs(Math.sin(seed * i + score)) * 60));
+            if(score < 1.15) fVal *= 0.35;
+            let fCol = getTargetColor(fVal);
+            seq.innerHTML += `<div class="seq-box">${i==1?'NEXT':'+'+i}<span class="seq-val" style="color:${fCol}">${fVal.toFixed(2)}X</span></div>`;
         }
 
-        logs.unshift(last);
-        document.getElementById('ht').innerHTML = logs.slice(0,20).map(e => {
-            let col = e >= 10 ? "var(--vif-g)" : (e >= 2 ? "var(--premium-v)" : "var(--neon-b)");
-            return `<div class="dot" style="background:${col}">${e.toFixed(1)}</div>`;
+        if(score >= 5) lastRoseTime = now; // On track à partir de 5x
+
+        logs.unshift(score);
+        document.getElementById('ht').innerHTML = logs.slice(0,15).map(e => {
+            return `<div class="dot" style="background:${getTargetColor(e)}">${e.toFixed(1)}</div>`;
         }).join('');
 
-        vH = ""; vS = ""; cur = 'h'; 
-        
-        // AUTO-REBOND du clavier après 3 secondes
-        setTimeout(() => { 
-            if(panel.classList.contains('hidden')) {
-                panel.classList.remove('hidden'); 
-                uUI();
-            }
-        }, 3500);
+        vH = ""; vS = ""; cur = 'h'; uUI();
+        setTimeout(() => { if(document.getElementById('kb-panel').classList.contains('hidden')) toggleKB(); }, 3500);
     }
+
+    setInterval(() => {
+        if(lastRoseTime) {
+            const diff = Math.floor((new Date() - lastRoseTime) / 1000);
+            const m = Math.floor(diff / 60).toString().padStart(2, '0');
+            const s = (diff % 60).toString().padStart(2, '0');
+            document.getElementById('time-val').innerText = m + ":" + s;
+        }
+    }, 1000);
 </script>
 </body>
 </html>
