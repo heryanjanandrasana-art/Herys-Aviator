@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>HERYS MASTER ELITE V36.1</title>
+    <title>HERYS MASTER ELITE V36.6</title>
     <style>
         :root { 
             --purple: #8e44ff; --rose: #ff00ff; --green: #00ff88; --danger: #ff4444; --orange: #ffaa00;
@@ -12,90 +12,87 @@
         * { box-sizing: border-box; outline: none; font-family: 'Segoe UI', sans-serif; font-weight: bold; }
         body { background: var(--bg); color: #fff; margin: 0; padding: 12px; height: 100vh; overflow: hidden; }
         
-        .main-content { height: 100%; display: flex; flex-direction: column; }
-        .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 12px; position: relative; }
-        .card-header { font-size: 8px; color: #555; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px; }
-
-        /* Input Display */
-        .input-display { background: var(--input-bg); border-radius: 12px; color: var(--purple); text-align: center; font-size: 32px; height: 60px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--purple); cursor: pointer; transition: 0.3s; }
-        .input-display.active { border-color: var(--rose); box-shadow: 0 0 20px rgba(255, 0, 255, 0.2); }
-
-        /* Keyboard Drawer */
-        .keyboard-drawer { position: fixed; bottom: 0; left: 0; right: 0; background: #0f0f0f; border-top: 2px solid var(--purple); border-radius: 25px 25px 0 0; padding: 15px; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.1, 0.7, 0.1, 1); z-index: 100; }
-        .keyboard-drawer.show { transform: translateY(0); }
-        .drawer-handle { width: 40px; height: 4px; background: #333; border-radius: 2px; margin: 0 auto 15px; }
-        .keyboard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .key { background: #1a1a1a; color: #fff; border: 1px solid #333; padding: 18px; border-radius: 12px; font-size: 20px; text-align: center; }
-        .key:active { background: var(--purple); }
-        
-        .btn-scanner { width: 100%; background: var(--purple); color: #fff; border: none; border-radius: 12px; padding: 16px; font-size: 12px; text-transform: uppercase; margin-top: 15px; transition: 0.3s; }
-
-        /* Results & Security */
-        .result-group { display: flex; gap: 10px; }
-        .result-item { flex: 1; text-align: center; background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 15px; position: relative; }
-        .t-val { font-size: 30px; color: var(--green); text-shadow: 0 0 10px rgba(0,255,136,0.3); }
-        .time-capture-display { font-size: 28px; background: #050505; border-radius: 12px; padding: 15px; text-align: center; border: 1px inset #111; color: var(--rose); }
-        .security-badge { position: absolute; top: 10px; right: 10px; font-size: 7px; padding: 2px 5px; border-radius: 4px; border: 1px solid #333; color: #555; }
-
-        /* Logs & Actions */
-        .log-journal { background: #050505; border-radius: 8px; padding: 10px; font-family: monospace; font-size: 9px; color: #444; height: 90px; overflow-y: auto; border: 1px inset #111; }
-        .btn-clean { position: absolute; top: 12px; right: 16px; font-size: 8px; color: var(--danger); border: 1px solid var(--danger); padding: 2px 6px; border-radius: 4px; cursor: pointer; text-transform: uppercase; }
-        .status-badge { font-size: 8px; color: var(--purple); border: 1px solid var(--purple); padding: 2px 6px; border-radius: 3px; }
-
-        /* Animations */
-        #btn-share { background: #0088cc; display: none; animation: pulse-blue 2s infinite; }
-        @keyframes pulse-blue {
-            0% { box-shadow: 0 0 0 0 rgba(0, 136, 204, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(0, 136, 204, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(0, 136, 204, 0); }
+        /* ÉCRAN DE VERROUILLAGE */
+        #auth-screen { 
+            position: fixed; inset: 0; background: #000; z-index: 9999; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; 
         }
-        #cooldown-timer { display: none; text-align: center; font-size: 10px; color: var(--danger); margin-top: 10px; font-weight: bold; border: 1px dashed var(--danger); padding: 5px; border-radius: 8px; }
+        .auth-card { background: var(--card); border: 1px solid var(--purple); padding: 30px; border-radius: 20px; width: 100%; max-width: 320px; box-shadow: 0 0 30px rgba(142, 68, 255, 0.2); }
+        .auth-input { 
+            background: #000; border: 1px solid #333; color: var(--purple); font-size: 28px; 
+            padding: 15px; border-radius: 12px; width: 100%; text-align: center; margin-bottom: 20px; 
+            letter-spacing: 8px; transition: 0.3s;
+        }
+        .auth-input:focus { border-color: var(--rose); box-shadow: 0 0 10px rgba(255, 0, 255, 0.2); }
+        .btn-auth { 
+            background: var(--purple); color: white; border: none; width: 100%; padding: 15px; 
+            border-radius: 12px; font-size: 13px; text-transform: uppercase; cursor: pointer; 
+        }
+
+        /* APPLICATION PRINCIPALE (Masquée par défaut) */
+        #main-app { display: none; height: 100%; flex-direction: column; }
+        
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 12px; position: relative; }
+        .card-header { font-size: 8px; color: #555; text-transform: uppercase; margin-bottom: 8px; }
+        .input-display { background: var(--input-bg); border-radius: 12px; color: var(--purple); text-align: center; font-size: 32px; height: 60px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--purple); }
+        .t-val { font-size: 30px; color: var(--green); text-shadow: 0 0 15px rgba(0,255,136,0.6); }
+        .time-capture-display { font-size: 28px; background: #050505; border-radius: 12px; padding: 15px; text-align: center; color: var(--rose); }
+        .log-journal { background: #050505; border-radius: 8px; padding: 10px; font-family: monospace; font-size: 9px; color: #444; height: 80px; overflow-y: auto; }
+        
+        .keyboard-drawer { position: fixed; bottom: 0; left: 0; right: 0; background: #0f0f0f; border-top: 2px solid var(--purple); border-radius: 25px 25px 0 0; padding: 15px; transform: translateY(100%); transition: 0.4s; z-index: 100; }
+        .keyboard-drawer.show { transform: translateY(0); }
+        .key { background: #1a1a1a; color: #fff; border: 1px solid #333; padding: 18px; border-radius: 12px; font-size: 20px; text-align: center; }
+        .btn-scanner { width: 100%; background: var(--purple); color: #fff; border: none; border-radius: 12px; padding: 16px; font-size: 12px; text-transform: uppercase; margin-top: 15px; }
     </style>
 </head>
 <body>
 
-    <div class="main-content">
+    <div id="auth-screen">
+        <div class="auth-card">
+            <div style="color:var(--purple); font-size: 9px; margin-bottom: 15px; letter-spacing: 2px;">SECURITY PROTOCOL V36.6</div>
+            <input type="password" id="pass-field" class="auth-input" placeholder="0000" maxlength="4" inputmode="numeric">
+            <button class="btn-auth" onclick="checkAuth()">ACTIVER LA LICENCE</button>
+            <div id="error-msg" style="color:var(--danger); font-size: 9px; margin-top: 15px; display: none; font-weight: bold;">ACCÈS REFUSÉ : CODE INVALIDE</div>
+        </div>
+    </div>
+
+    <div id="main-app">
         <div class="card">
-            <div class="card-header">Toucher pour entrer le crash</div>
+            <div class="card-header">Saisie du dernier crash</div>
             <div id="display" class="input-display" onclick="toggleKbd(true)">0.00</div>
         </div>
 
         <div class="card">
             <div class="card-header">Statut de Capture & SHA-512</div>
-            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-                <span id="status-tag" class="status-badge">LISTENING</span>
-                <marquee scrollamount="12" id="hash-stream" style="font-family: monospace; font-size: 10px; color: #333;">WAITING_FOR_DATA_PACKETS...</marquee>
-            </div>
+            <marquee scrollamount="12" id="hash-stream" style="font-family: monospace; font-size: 10px; color: #333;">WAITING_FOR_DATA_PACKETS...</marquee>
             <div class="time-capture-display" id="time-display">--:--.--</div>
         </div>
 
-        <div class="result-group">
-            <div class="result-item">
-                <div class="security-badge" id="sec-1">IDLE</div>
+        <div style="display:flex; gap:10px; margin-bottom:12px;">
+            <div class="card" style="flex:1; text-align:center; margin-bottom:0;">
                 <div class="card-header">Objectif Safe</div>
                 <div class="t-val" id="t1-val">--</div>
             </div>
-            <div class="result-item">
-                <div class="security-badge" id="sec-2">IDLE</div>
+            <div class="card" style="flex:1; text-align:center; margin-bottom:0;">
                 <div class="card-header">Objectif Risk</div>
                 <div class="t-val" id="t2-val">--</div>
             </div>
         </div>
 
         <div class="card" style="flex-grow: 1;">
-            <div class="card-header">Journal d'Interception (V36.1)</div>
-            <div class="btn-clean" onclick="clearHistory()">Reset Engine</div>
+            <div class="card-header">Journal d'interception</div>
             <div class="log-journal" id="log-list">
-                <div style="color:var(--green)">> SYSTEM_INIT_SUCCESS: ENGINE_READY</div>
+                <div style="color:var(--green)">> SESSION_ENCRYPTED_READY</div>
             </div>
-            <button class="btn-scanner" id="btn-share" onclick="shareSignal()">PARTAGER SUR TELEGRAM</button>
-            <div id="cooldown-timer">SYNCHRONISATION SERVEUR : <span id="seconds">15</span>s</div>
+            <div id="cooldown-timer" style="display:none; text-align:center; font-size:10px; color:var(--danger); margin-top:10px; border:1px dashed var(--danger); padding:5px; border-radius:8px;">
+                SYNC SERVEUR : <span id="seconds">8</span>s
+            </div>
         </div>
     </div>
 
     <div id="kbd" class="keyboard-drawer">
-        <div class="drawer-handle" onclick="toggleKbd(false)"></div>
-        <div class="keyboard-grid">
+        <div style="width:40px; height:4px; background:#333; margin:0 auto 15px;" onclick="toggleKbd(false)"></div>
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
             <div class="key" onclick="press('1')">1</div><div class="key" onclick="press('2')">2</div><div class="key" onclick="press('3')">3</div>
             <div class="key" onclick="press('4')">4</div><div class="key" onclick="press('5')">5</div><div class="key" onclick="press('6')">6</div>
             <div class="key" onclick="press('7')">7</div><div class="key" onclick="press('8')">8</div><div class="key" onclick="press('9')">9</div>
@@ -106,147 +103,77 @@
     </div>
 
 <script>
-    let vS = "";
-    let isLocked = false;
-    let cooldownActive = false;
-    let history = [];
+    // --- CONFIGURATION SÉCURISÉE ---
+    const MASTER_CODE = "1991"; // <--- Ton nouveau code
+    const WEBHOOK_URL = "TON_WEBHOOK_ICI"; // <--- Mets ton lien Discord ici pour l'espionnage
 
-    // --- Audio & Haptic Engine ---
+    function checkAuth() {
+        const input = document.getElementById('pass-field').value;
+        const error = document.getElementById('error-msg');
+        
+        if(input === MASTER_CODE) {
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('main-app').style.display = 'flex';
+            triggerFeedback(1000, 'sine', 0.2, 50);
+            
+            // Notification d'espionnage
+            if(WEBHOOK_URL.includes("http")) {
+                fetch(WEBHOOK_URL, {
+                    method:'POST',
+                    headers:{'Content-Type':'application/json'},
+                    body: JSON.stringify({
+                        embeds: [{
+                            title: "✅ ACCÈS AUTORISÉ (Code 1991)",
+                            color: 65408,
+                            description: "L'utilisateur a débloqué l'interface."
+                        }]
+                    })
+                }).catch(e => {});
+            }
+        } else {
+            error.style.display = 'block';
+            document.getElementById('pass-field').value = "";
+            triggerFeedback(100, 'sawtooth', 0.3, [100, 50]);
+        }
+    }
+
+    let vS = ""; let isLocked = false; let history = []; 
+
     function triggerFeedback(freq, type, dur, haptic) {
         if (haptic && "vibrate" in navigator) navigator.vibrate(haptic);
-        try {
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.type = type;
-            osc.frequency.setValueAtTime(freq, ctx.currentTime);
-            gain.gain.setValueAtTime(0.05, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + dur);
-            osc.connect(gain); gain.connect(ctx.destination);
-            osc.start(); osc.stop(ctx.currentTime + dur);
-        } catch(e) {}
+        try { const ctx = new (window.AudioContext || window.webkitAudioContext)(); const osc = ctx.createOscillator(); const gain = ctx.createGain(); osc.type = type; osc.frequency.setValueAtTime(freq, ctx.currentTime); gain.gain.setValueAtTime(0.05, ctx.currentTime); osc.connect(gain); gain.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + dur); } catch(e) {}
     }
 
-    function toggleKbd(show) {
-        if (isLocked || cooldownActive) return;
-        const kbd = document.getElementById('kbd');
-        if (show) { kbd.classList.add('show'); triggerFeedback(200, 'sine', 0.2, 10); }
-        else kbd.classList.remove('show');
-    }
-
-    function press(k) {
-        if(k === 'DEL') vS = vS.slice(0, -1);
-        else if(vS.length < 5) vS += k;
-        document.getElementById('display').innerText = vS || "0.00";
-        triggerFeedback(600, 'sine', 0.05, 15);
-    }
-
-    function addLog(m, color="var(--purple)") {
-        const l = document.getElementById('log-list');
-        l.innerHTML = `<div style="color:${color}">[${new Date().toLocaleTimeString().split(' ')[0]}] ${m}</div>` + l.innerHTML;
-    }
-
-    function clearHistory() {
-        history = [];
-        document.getElementById('log-list').innerHTML = `<div style="color:var(--danger)">> HISTORY_PURGED</div>`;
-        document.getElementById('t1-val').innerText = "--";
-        document.getElementById('t2-val').innerText = "--";
-        triggerFeedback(150, 'sawtooth', 0.2, [50, 50]);
+    function toggleKbd(show) { if (isLocked) return; const kbd = document.getElementById('kbd'); if (show) kbd.classList.add('show'); else kbd.classList.remove('show'); }
+    
+    function press(k) { 
+        if(k === 'DEL') vS = vS.slice(0, -1); 
+        else if(vS.length < 5) vS += k; 
+        document.getElementById('display').innerText = vS || "0.00"; 
+        triggerFeedback(600, 'sine', 0.05, 10);
     }
 
     function run() {
-        if(vS === "" || isLocked || cooldownActive) return;
-        let currentInput = parseFloat(vS);
+        if(vS === "" || isLocked) return;
         toggleKbd(false);
         isLocked = true;
-        
-        history.push(currentInput);
-        if(history.length > 3) history.shift();
-
-        const status = document.getElementById('status-tag');
-        const timeBox = document.getElementById('time-display');
-        
-        status.innerText = "CAPTURING"; status.style.color = "var(--rose)";
-        addLog("SEQ_ANALYZE: [" + history.join(" | ") + "]", "white");
+        const log = document.getElementById('log-list');
+        log.innerHTML = `<div style="color:white"> [${new Date().toLocaleTimeString().split(' ')[0]}] ANALYSE EN COURS...</div>` + log.innerHTML;
 
         setTimeout(() => {
-            status.innerText = "DECODING"; status.style.color = "var(--orange)";
-            triggerFeedback(400, 'square', 0.1, 20);
-
-            setTimeout(() => {
-                // Logique de prédiction réaliste
-                let rand = Math.random();
-                let base = 1.00 / Math.pow(1 - rand, 0.42); 
-                let avg = history.reduce((a, b) => a + b, 0) / history.length;
-                let boost = (avg < 1.8) ? 1.4 : (avg > 5.0) ? 0.7 : 1.0;
-
-                let safeVal = Math.max(1.12, (base * 0.82) * boost);
-                let riskVal = Math.max(safeVal + 0.2, (base * 1.3) * boost);
-
-                document.getElementById('t1-val').innerText = safeVal.toFixed(2) + "X";
-                document.getElementById('t2-val').innerText = riskVal.toFixed(2) + "X";
-                
-                updateBadges(safeVal, riskVal);
-                
-                status.innerText = "SUCCESS"; status.style.color = "var(--green)";
-                timeBox.innerText = new Date().toLocaleTimeString().split(' ')[0];
-                addLog("DECODE_SUCCESS: STRENGTH " + (Math.floor(Math.random()*10)+89) + "%", "var(--green)");
-                
-                document.getElementById('btn-share').style.display = "block";
-                triggerFeedback(1000, 'sine', 0.4, [60, 40, 60]);
-                startCooldown();
-
-                setTimeout(() => {
-                    status.innerText = "LISTENING"; status.style.color = "var(--purple)";
-                    isLocked = false; vS = ""; 
-                    document.getElementById('display').innerText = "0.00";
-                }, 3000);
-            }, 1500);
-        }, 800);
+            let base = Math.random() * 2 + 1.1;
+            document.getElementById('t1-val').innerText = base.toFixed(2) + "X";
+            document.getElementById('t2-val').innerText = (base + 1.5).toFixed(2) + "X";
+            document.getElementById('time-display').innerText = new Date().toLocaleTimeString().split(' ')[0];
+            isLocked = false;
+            vS = "";
+            document.getElementById('display').innerText = "0.00";
+        }, 1500);
     }
 
-    function updateBadges(s, r) {
-        const s1 = document.getElementById('sec-1');
-        const s2 = document.getElementById('sec-2');
-        s1.innerText = s < 1.6 ? "ULTRA_SAFE" : "MED_CONF";
-        s1.style.color = s < 1.6 ? "var(--green)" : "var(--orange)";
-        s2.innerText = r > 10 ? "HIGH_RISK" : "MED_RISK";
-        s2.style.color = r > 10 ? "var(--danger)" : "var(--orange)";
-    }
-
-    function startCooldown() {
-        cooldownActive = true;
-        let timeLeft = 15;
-        const timerDiv = document.getElementById('cooldown-timer');
-        const secondsSpan = document.getElementById('seconds');
-        const btnMain = document.getElementById('btn-main');
-
-        timerDiv.style.display = "block";
-        btnMain.style.opacity = "0.3";
-
-        let interval = setInterval(() => {
-            timeLeft--;
-            secondsSpan.innerText = timeLeft;
-            if(timeLeft <= 0) {
-                clearInterval(interval);
-                cooldownActive = false;
-                timerDiv.style.display = "none";
-                btnMain.style.opacity = "1";
-                addLog("READY_FOR_NEXT_ROUND", "var(--purple)");
-            }
-        }, 1000);
-    }
-
-    function shareSignal() {
-        const t1 = document.getElementById('t1-val').innerText;
-        const t2 = document.getElementById('t2-val').innerText;
-        const msg = `🚀 *HERYS MASTER ELITE V36.1*%0A✅ SAFE: *${t1}*%0A🔥 RISK: *${t2}*%0A🎯 SIGNAL_STRENGTH: 98%`;
-        window.open(`https://t.me/share/url?url=${msg}`, '_blank');
-    }
-
+    // Animation du SHA-512
     setInterval(() => {
-        const c = '0123456789ABCDEF';
-        let h = "";
+        const c = '0123456789ABCDEF'; let h = "";
         for(let i=0; i<32; i++) h += c.charAt(Math.floor(Math.random()*16));
         document.getElementById('hash-stream').innerText = h;
     }, 100);
