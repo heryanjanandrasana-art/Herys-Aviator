@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>HERYS MASTER ELITE V36.6</title>
+    <title>HERYS MASTER ELITE V36.7</title>
     <style>
         :root { 
             --purple: #8e44ff; --rose: #ff00ff; --green: #00ff88; --danger: #ff4444; --orange: #ffaa00;
@@ -12,33 +12,23 @@
         * { box-sizing: border-box; outline: none; font-family: 'Segoe UI', sans-serif; font-weight: bold; }
         body { background: var(--bg); color: #fff; margin: 0; padding: 12px; height: 100vh; overflow: hidden; }
         
-        /* ÉCRAN DE VERROUILLAGE */
-        #auth-screen { 
-            position: fixed; inset: 0; background: #000; z-index: 9999; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; 
-        }
-        .auth-card { background: var(--card); border: 1px solid var(--purple); padding: 30px; border-radius: 20px; width: 100%; max-width: 320px; box-shadow: 0 0 30px rgba(142, 68, 255, 0.2); }
-        .auth-input { 
-            background: #000; border: 1px solid #333; color: var(--purple); font-size: 28px; 
-            padding: 15px; border-radius: 12px; width: 100%; text-align: center; margin-bottom: 20px; 
-            letter-spacing: 8px; transition: 0.3s;
-        }
-        .auth-input:focus { border-color: var(--rose); box-shadow: 0 0 10px rgba(255, 0, 255, 0.2); }
-        .btn-auth { 
-            background: var(--purple); color: white; border: none; width: 100%; padding: 15px; 
-            border-radius: 12px; font-size: 13px; text-transform: uppercase; cursor: pointer; 
-        }
+        /* AUTH */
+        #auth-screen { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .auth-card { background: var(--card); border: 1px solid var(--purple); padding: 30px; border-radius: 20px; width: 100%; max-width: 320px; text-align: center; }
+        .auth-input { background: #000; border: 1px solid #333; color: var(--purple); font-size: 28px; padding: 15px; border-radius: 12px; width: 100%; text-align: center; margin-bottom: 20px; letter-spacing: 8px; }
+        .btn-auth { background: var(--purple); color: white; border: none; width: 100%; padding: 15px; border-radius: 12px; text-transform: uppercase; cursor: pointer; }
 
-        /* APPLICATION PRINCIPALE (Masquée par défaut) */
+        /* APP */
         #main-app { display: none; height: 100%; flex-direction: column; }
-        
         .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 12px; position: relative; }
-        .card-header { font-size: 8px; color: #555; text-transform: uppercase; margin-bottom: 8px; }
+        .card-header { font-size: 8px; color: #555; text-transform: uppercase; margin-bottom: 8px; display: flex; justify-content: space-between; }
         .input-display { background: var(--input-bg); border-radius: 12px; color: var(--purple); text-align: center; font-size: 32px; height: 60px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--purple); }
         .t-val { font-size: 30px; color: var(--green); text-shadow: 0 0 15px rgba(0,255,136,0.6); }
-        .time-capture-display { font-size: 28px; background: #050505; border-radius: 12px; padding: 15px; text-align: center; color: var(--rose); }
-        .log-journal { background: #050505; border-radius: 8px; padding: 10px; font-family: monospace; font-size: 9px; color: #444; height: 80px; overflow-y: auto; }
+        .time-capture-display { font-size: 28px; background: #050505; border-radius: 12px; padding: 15px; text-align: center; color: var(--rose); border: 1px inset #111; }
         
+        .log-journal { background: #050505; border-radius: 8px; padding: 10px; font-family: monospace; font-size: 9px; color: #444; height: 100px; overflow-y: auto; border: 1px inset #111; }
+        .btn-clear-history { font-size: 8px; color: var(--danger); border: 1px solid var(--danger); padding: 2px 6px; border-radius: 4px; cursor: pointer; text-transform: uppercase; }
+
         .keyboard-drawer { position: fixed; bottom: 0; left: 0; right: 0; background: #0f0f0f; border-top: 2px solid var(--purple); border-radius: 25px 25px 0 0; padding: 15px; transform: translateY(100%); transition: 0.4s; z-index: 100; }
         .keyboard-drawer.show { transform: translateY(0); }
         .key { background: #1a1a1a; color: #fff; border: 1px solid #333; padding: 18px; border-radius: 12px; font-size: 20px; text-align: center; }
@@ -49,22 +39,21 @@
 
     <div id="auth-screen">
         <div class="auth-card">
-            <div style="color:var(--purple); font-size: 9px; margin-bottom: 15px; letter-spacing: 2px;">SECURITY PROTOCOL V36.6</div>
+            <div style="color:var(--purple); font-size: 9px; margin-bottom: 15px; letter-spacing: 2px;">PROTECTION V36.7</div>
             <input type="password" id="pass-field" class="auth-input" placeholder="0000" maxlength="4" inputmode="numeric">
-            <button class="btn-auth" onclick="checkAuth()">ACTIVER LA LICENCE</button>
-            <div id="error-msg" style="color:var(--danger); font-size: 9px; margin-top: 15px; display: none; font-weight: bold;">ACCÈS REFUSÉ : CODE INVALIDE</div>
+            <button class="btn-auth" onclick="checkAuth()">DÉBLOQUER SYSTÈME</button>
         </div>
     </div>
 
     <div id="main-app">
         <div class="card">
-            <div class="card-header">Saisie du dernier crash</div>
+            <div class="card-header">Saisie Crash</div>
             <div id="display" class="input-display" onclick="toggleKbd(true)">0.00</div>
         </div>
 
         <div class="card">
-            <div class="card-header">Statut de Capture & SHA-512</div>
-            <marquee scrollamount="12" id="hash-stream" style="font-family: monospace; font-size: 10px; color: #333;">WAITING_FOR_DATA_PACKETS...</marquee>
+            <div class="card-header">Live Feed (SHA-512)</div>
+            <marquee id="hash-stream" style="font-family: monospace; font-size: 10px; color: #333; margin-bottom: 8px;">WAITING...</marquee>
             <div class="time-capture-display" id="time-display">--:--.--</div>
         </div>
 
@@ -80,12 +69,12 @@
         </div>
 
         <div class="card" style="flex-grow: 1;">
-            <div class="card-header">Journal d'interception</div>
-            <div class="log-journal" id="log-list">
-                <div style="color:var(--green)">> SESSION_ENCRYPTED_READY</div>
+            <div class="card-header">
+                Journal Log
+                <span class="btn-clear-history" onclick="clearFullHistory()">Effacer Historique</span>
             </div>
-            <div id="cooldown-timer" style="display:none; text-align:center; font-size:10px; color:var(--danger); margin-top:10px; border:1px dashed var(--danger); padding:5px; border-radius:8px;">
-                SYNC SERVEUR : <span id="seconds">8</span>s
+            <div class="log-journal" id="log-list">
+                <div style="color:var(--green)">> SYSTEM_READY_ACCESS_GRANTED</div>
             </div>
         </div>
     </div>
@@ -103,41 +92,27 @@
     </div>
 
 <script>
-    // --- CONFIGURATION SÉCURISÉE ---
-    const MASTER_CODE = "1991"; // <--- Ton nouveau code
-    const WEBHOOK_URL = "TON_WEBHOOK_ICI"; // <--- Mets ton lien Discord ici pour l'espionnage
+    const MASTER_CODE = "1991";
+    let vS = ""; let isLocked = false; let history = [];
 
     function checkAuth() {
-        const input = document.getElementById('pass-field').value;
-        const error = document.getElementById('error-msg');
-        
-        if(input === MASTER_CODE) {
+        if(document.getElementById('pass-field').value === MASTER_CODE) {
             document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('main-app').style.display = 'flex';
-            triggerFeedback(1000, 'sine', 0.2, 50);
-            
-            // Notification d'espionnage
-            if(WEBHOOK_URL.includes("http")) {
-                fetch(WEBHOOK_URL, {
-                    method:'POST',
-                    headers:{'Content-Type':'application/json'},
-                    body: JSON.stringify({
-                        embeds: [{
-                            title: "✅ ACCÈS AUTORISÉ (Code 1991)",
-                            color: 65408,
-                            description: "L'utilisateur a débloqué l'interface."
-                        }]
-                    })
-                }).catch(e => {});
-            }
+            triggerFeedback(800, 'sine', 0.2, 50);
         } else {
-            error.style.display = 'block';
-            document.getElementById('pass-field').value = "";
-            triggerFeedback(100, 'sawtooth', 0.3, [100, 50]);
+            alert("CODE INCORRECT");
         }
     }
 
-    let vS = ""; let isLocked = false; let history = []; 
+    function clearFullHistory() {
+        history = []; // Vide la mémoire de l'algorithme
+        document.getElementById('log-list').innerHTML = `<div style="color:var(--danger)">> HISTORIQUE_EFFACÉ_MÉMOIRE_VIDE</div>`;
+        document.getElementById('t1-val').innerText = "--";
+        document.getElementById('t2-val').innerText = "--";
+        document.getElementById('time-display').innerText = "--:--.--";
+        triggerFeedback(200, 'sawtooth', 0.3, [50, 50]);
+    }
 
     function triggerFeedback(freq, type, dur, haptic) {
         if (haptic && "vibrate" in navigator) navigator.vibrate(haptic);
@@ -145,33 +120,29 @@
     }
 
     function toggleKbd(show) { if (isLocked) return; const kbd = document.getElementById('kbd'); if (show) kbd.classList.add('show'); else kbd.classList.remove('show'); }
-    
-    function press(k) { 
-        if(k === 'DEL') vS = vS.slice(0, -1); 
-        else if(vS.length < 5) vS += k; 
-        document.getElementById('display').innerText = vS || "0.00"; 
-        triggerFeedback(600, 'sine', 0.05, 10);
-    }
+    function press(k) { if(k === 'DEL') vS = vS.slice(0, -1); else if(vS.length < 5) vS += k; document.getElementById('display').innerText = vS || "0.00"; triggerFeedback(600, 'sine', 0.05, 10); }
 
     function run() {
         if(vS === "" || isLocked) return;
         toggleKbd(false);
         isLocked = true;
+        history.push(parseFloat(vS));
+        
         const log = document.getElementById('log-list');
-        log.innerHTML = `<div style="color:white"> [${new Date().toLocaleTimeString().split(' ')[0]}] ANALYSE EN COURS...</div>` + log.innerHTML;
+        log.innerHTML = `<div style="color:white"> [${new Date().toLocaleTimeString().split(' ')[0]}] ANALYSING DATA...</div>` + log.innerHTML;
 
         setTimeout(() => {
-            let base = Math.random() * 2 + 1.1;
+            let base = Math.random() * 0.8 + 1.2;
             document.getElementById('t1-val').innerText = base.toFixed(2) + "X";
-            document.getElementById('t2-val').innerText = (base + 1.5).toFixed(2) + "X";
+            document.getElementById('t2-val').innerText = (base + 1.0 + Math.random()).toFixed(2) + "X";
             document.getElementById('time-display').innerText = new Date().toLocaleTimeString().split(' ')[0];
+            log.innerHTML = `<div style="color:var(--green)">> PACKET_DECODED: ${vS}</div>` + log.innerHTML;
             isLocked = false;
             vS = "";
             document.getElementById('display').innerText = "0.00";
-        }, 1500);
+        }, 1200);
     }
 
-    // Animation du SHA-512
     setInterval(() => {
         const c = '0123456789ABCDEF'; let h = "";
         for(let i=0; i<32; i++) h += c.charAt(Math.floor(Math.random()*16));
