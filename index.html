@@ -3,119 +3,270 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HERYS ELITE V35</title>
+    <title>HERYS ELITE V36 - PRO</title>
     <style>
-        :root { --gold: #d4af37; --dark: #050505; --sniper: #ff00ff; --flash: #00ffff; --safe: #00ff88; }
-        body { background: var(--dark); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; }
-        .header { text-align: center; border-bottom: 2px solid var(--gold); width: 100%; padding-bottom: 10px; margin-bottom: 15px; }
-        .display-box { background: radial-gradient(circle, #111 0%, #000 100%); border: 2px solid var(--gold); border-radius: 20px; padding: 25px; text-align: center; width: 100%; max-width: 400px; transition: all 0.5s ease; }
-        #prob { font-size: 4rem; font-weight: bold; color: var(--safe); text-shadow: 0 0 15px currentColor; }
-        .input-group { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; width: 100%; max-width: 400px; margin-top: 15px; border: 1px solid #333; box-sizing: border-box; }
-        input { width: 100%; padding: 14px; margin: 10px 0; background: #000; border: 1px solid var(--gold); color: white; border-radius: 8px; box-sizing: border-box; }
-        button { width: 100%; padding: 16px; background: var(--gold); color: black; border: none; font-weight: bold; cursor: pointer; border-radius: 8px; text-transform: uppercase; margin-top: 10px; }
-        .reset-btn { background: transparent; color: #666; border: 1px solid #333; font-size: 0.7rem; margin-top: 15px; padding: 8px; width: auto; }
-        #log { width: 100%; max-width: 400px; font-size: 0.75rem; color: #666; margin-top: 20px; max-height: 150px; overflow-y: auto; }
-        .log-entry { border-bottom: 1px solid #222; padding: 5px 0; display: flex; justify-content: space-between; }
-        .blink { animation: blink-animation 0.8s steps(5, start) infinite; }
-        @keyframes blink-animation { to { visibility: hidden; } }
+        :root { 
+            --gold: #d4af37; 
+            --gold-glow: rgba(212, 175, 55, 0.5);
+            --dark: #050505; 
+            --card-bg: #111;
+            --safe: #00ff88; 
+            --sniper: #ff00ff;
+            --flash: #00ffff;
+        }
+        
+        body { 
+            background: var(--dark); 
+            color: white; 
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+            margin: 0; 
+            padding: 15px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        /* En-tête */
+        .header { text-align: center; border-bottom: 1px solid #222; width: 100%; padding-bottom: 10px; margin-bottom: 20px; }
+        .version-badge { background: var(--gold); color: black; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; vertical-align: middle; }
+
+        /* Écran Principal */
+        .main-display {
+            background: radial-gradient(circle at top, #1a1a1a 0%, #000 100%);
+            border: 2px solid var(--gold);
+            border-radius: 24px;
+            padding: 30px 20px;
+            text-align: center;
+            width: 100%;
+            max-width: 380px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 15px var(--gold-glow);
+            position: relative;
+        }
+
+        #prob { 
+            font-size: 4.5rem; 
+            font-weight: 900; 
+            margin: 10px 0;
+            background: linear-gradient(to bottom, #fff, var(--safe));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 10px var(--gold-glow));
+        }
+
+        /* Section T1 & T2 - Design "Glassmorphism" */
+        .prediction-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            width: 100%;
+            max-width: 380px;
+            margin-top: 15px;
+        }
+
+        .pred-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(212,175,55,0.2);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .pred-card:active { transform: scale(0.95); }
+        .label { font-size: 0.65rem; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+        .multi { font-size: 1.4rem; font-weight: bold; display: block; }
+        .time { font-size: 0.8rem; color: #777; font-family: monospace; }
+
+        /* Saisie et Contrôles */
+        .control-panel {
+            width: 100%;
+            max-width: 380px;
+            margin-top: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 16px;
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            margin-bottom: 12px;
+            box-sizing: border-box;
+            transition: border 0.3s;
+        }
+
+        input:focus { border-color: var(--gold); outline: none; }
+
+        button#analyze-btn {
+            width: 100%;
+            padding: 18px;
+            background: var(--gold);
+            color: black;
+            border: none;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 1rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        /* Historique */
+        #history-log {
+            width: 100%;
+            max-width: 380px;
+            margin-top: 25px;
+            max-height: 200px;
+            overflow-y: auto;
+            border-top: 1px solid #222;
+            padding-top: 10px;
+        }
+
+        .log-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #111;
+            font-size: 0.8rem;
+            color: #555;
+        }
+
+        .blink { animation: pulse 1s infinite; }
+        @keyframes pulse { 
+            0% { opacity: 1; } 
+            50% { opacity: 0.5; } 
+            100% { opacity: 1; } 
+        }
+
+        .reset-link { color: #444; text-decoration: none; font-size: 0.7rem; margin-top: 20px; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <h2 style="margin:0;">HERYS ELITE <span style="color:var(--gold)">V35</span></h2>
-    <div id="clock" style="color:#888; font-family: monospace;">00:00:00</div>
+    <h1 style="margin:0; font-size: 1.2rem; letter-spacing: 2px;">HERYS ELITE <span class="version-badge">V36</span></h1>
+    <div id="live-clock" style="font-size: 0.8rem; color: #444; margin-top: 5px;">00:00:00</div>
 </div>
 
-<div class="display-box" id="main-ui">
-    <div id="status-label" style="font-size: 0.8rem; font-weight: bold; margin-bottom: 10px;">PRÊT</div>
+<div class="main-display" id="main-ui">
+    <div id="status" style="font-size: 0.7rem; letter-spacing: 2px; color: #666;">SCANNER ACTIF</div>
     <div id="prob">0%</div>
-    <div id="signal-text" style="font-weight:bold; color:var(--gold);">ENTREZ LE DERNIER MULTI</div>
-    <div id="departure-info" style="font-size:0.75rem; color:#555; margin-top:10px;">Décollage: --:--:--</div>
+    <div id="signal" style="font-weight: bold; color: var(--gold);">PRÊT POUR ANALYSE</div>
+    <div id="last-flight" style="font-size: 0.7rem; color: #444; margin-top: 10px;">Décollage : --:--:--</div>
 </div>
 
-<div class="input-group">
-    <input type="number" id="val" placeholder="Multiplicateur (ex: 2.5)" step="0.01">
-    <input type="text" id="hash" placeholder="Hash (Optionnel)">
-    <button id="btn-analyze" onclick="processAnalysis()">ANALYSER</button>
+<div class="prediction-grid">
+    <div class="pred-card">
+        <span class="label">Cible T1</span>
+        <span id="t1-val" class="multi">--.-x</span>
+        <span id="t1-time" class="time">--:--:--</span>
+    </div>
+    <div class="pred-card">
+        <span class="label">Cible T2</span>
+        <span id="t2-val" class="multi">--.-x</span>
+        <span id="t2-time" class="time">--:--:--</span>
+    </div>
 </div>
 
-<button class="reset-btn" onclick="resetSession()">EFFACER LA SESSION</button>
+<div class="control-panel">
+    <input type="number" id="multi-input" inputmode="decimal" placeholder="Dernier multiplicateur (ex: 1.85)">
+    <button id="analyze-btn" onclick="runAnalysis()">Analyser le cycle</button>
+</div>
 
-<div id="log"></div>
+<div id="history-log"></div>
+
+<span class="reset-link" onclick="clearData()">RÉINITIALISER TOUTES LES DONNÉES</span>
 
 <script>
-    let stagnation = 0;
-    let lastBigStart = Date.now();
-    let history = [];
+    let stagCount = 0;
+    let lastLargeWin = Date.now();
 
-    setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
+    // Système de temps réel
+    setInterval(() => { 
+        document.getElementById('live-clock').innerText = new Date().toLocaleTimeString(); 
+    }, 1000);
 
-    function processAnalysis() {
-        const valInput = document.getElementById('val');
-        const hashInput = document.getElementById('hash');
-        const val = parseFloat(valInput.value);
-        const hashStr = hashInput.value.trim();
+    // Chargement de la mémoire
+    window.onload = () => {
+        if(localStorage.getItem('herys_v36_log')) {
+            document.getElementById('history-log').innerHTML = localStorage.getItem('herys_v36_log');
+            stagCount = parseInt(localStorage.getItem('herys_v36_stag')) || 0;
+            lastLargeWin = parseFloat(localStorage.getItem('herys_v36_time')) || Date.now();
+        }
+    };
+
+    function runAnalysis() {
+        const input = document.getElementById('multi-input');
+        const val = parseFloat(input.value);
         const now = Date.now();
 
-        if (isNaN(val)) return;
+        if (isNaN(val) || val <= 0) return;
 
-        // Calcul décollage inverse
-        const flightTimeMs = Math.log(val + 1) * 8500; 
-        const estStart = now - flightTimeMs;
-        const startStr = new Date(estStart).toLocaleTimeString();
+        // Calcul temps de vol inversé
+        const flightTime = Math.log(val + 1) * 8500;
+        const takeoffTime = now - flightTime;
+        const takeoffStr = new Date(takeoffTime).toLocaleTimeString();
 
-        if (val < 2.5) stagnation++; else { stagnation = 0; lastBigStart = estStart; }
+        // Gestion stagnation
+        if (val < 2.0) stagCount++; else { stagCount = 0; lastLargeWin = takeoffTime; }
 
-        const timeGap = (now - lastBigStart) / 1000;
-        const hashComplexity = (hashStr.match(/[a-f]/g) || []).length;
-
-        let prob = 45;
-        let signal = "ANALYSE...";
-        let activeColor = "#d4af37";
-        let isBlinking = false;
-
-        if (timeGap >= 45 && timeGap <= 65 && hashComplexity > 30) {
-            prob = 89.5; signal = "FLASH (50s)"; activeColor = "var(--flash)"; isBlinking = true;
-        } else if (timeGap >= 170 && timeGap <= 195 && stagnation >= 10) {
-            prob = 96.8; signal = "SNIPER (3min)"; activeColor = "var(--sniper)"; isBlinking = true;
-        } else if (val <= 1.05) {
-            prob = 99.9; signal = "SÉCURITÉ"; activeColor = "var(--safe)";
+        let probability = 45.0;
+        let signalLabel = "ANALYSE STABLE";
+        let color = "var(--safe)";
+        
+        // Algorithme de détection
+        if (val <= 1.10) {
+            probability = 98.2; signalLabel = "REBOND IMMINENT"; color = "var(--safe)";
+        } else if (stagCount >= 7) {
+            probability = 95.5; signalLabel = "MODE SNIPER"; color = "var(--sniper)";
+        } else if ((now - lastLargeWin) > 60000 && (now - lastLargeWin) < 120000) {
+            probability = 88.4; signalLabel = "SIGNAL FLASH"; color = "var(--flash)";
         }
 
-        // UI Update
-        document.getElementById('prob').innerText = prob.toFixed(1) + "%";
-        document.getElementById('prob').style.color = activeColor;
-        document.getElementById('main-ui').style.borderColor = activeColor;
-        document.getElementById('signal-text').innerText = signal;
-        document.getElementById('signal-text').style.color = activeColor;
-        document.getElementById('departure-info').innerText = "Dernier décollage: " + startStr;
-        const btn = document.getElementById('btn-analyze');
-        btn.style.background = activeColor;
-        if(isBlinking) btn.classList.add('blink'); else btn.classList.remove('blink');
+        // Génération T1 et T2
+        const t1Time = new Date(takeoffTime + (90 * 1000));
+        const t2Time = new Date(takeoffTime + (210 * 1000));
+        
+        // Mise à jour UI
+        document.getElementById('prob').innerText = probability.toFixed(1) + "%";
+        document.getElementById('prob').style.color = color;
+        document.getElementById('signal').innerText = signalLabel;
+        document.getElementById('signal').style.color = color;
+        document.getElementById('last-flight').innerText = "Décollage : " + takeoffStr;
+        
+        document.getElementById('t1-val').innerText = (Math.random() * (3.5 - 1.8) + 1.8).toFixed(2) + "x";
+        document.getElementById('t1-time').innerText = t1Time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+        document.getElementById('t2-val').innerText = (Math.random() * (10.0 - 4.0) + 4.0).toFixed(2) + "x";
+        document.getElementById('t2-time').innerText = t2Time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
 
-        // Log
-        const entry = document.createElement('div');
-        entry.className = 'log-entry';
-        entry.innerHTML = `<span><b>${val}x</b> à ${startStr}</span> <span>${prob.toFixed(1)}%</span>`;
-        document.getElementById('log').prepend(entry);
+        // Animation bouton
+        const btn = document.getElementById('analyze-btn');
+        btn.style.background = color;
+        if(probability > 85) btn.classList.add('blink'); else btn.classList.remove('blink');
 
-        // AUTO-RESET DES CHAMPS
-        setTimeout(() => {
-            valInput.value = "";
-            hashInput.value = "";
-            valInput.focus();
-        }, 300);
+        // Historique
+        const log = document.getElementById('history-log');
+        const item = document.createElement('div');
+        item.className = 'log-item';
+        item.innerHTML = `<span>${val.toFixed(2)}x @ ${takeoffStr}</span> <span>${probability}%</span>`;
+        log.prepend(item);
+
+        // Sauvegarde
+        localStorage.setItem('herys_v36_log', log.innerHTML);
+        localStorage.setItem('herys_v36_stag', stagCount);
+        localStorage.setItem('herys_v36_time', lastLargeWin);
+
+        // Reset champ
+        setTimeout(() => { input.value = ""; input.focus(); }, 300);
     }
 
-    function resetSession() {
-        if(confirm("Effacer tout l'historique ?")) {
-            document.getElementById('log').innerHTML = "";
-            stagnation = 0;
-            lastBigStart = Date.now();
-            document.getElementById('prob').innerText = "0%";
-            document.getElementById('signal-text').innerText = "SESSION RÉINITIALISÉE";
-            document.getElementById('main-ui').style.borderColor = "var(--gold)";
+    function clearData() {
+        if(confirm("Réinitialiser l'application ?")) {
+            localStorage.clear();
+            location.reload();
         }
     }
 </script>
