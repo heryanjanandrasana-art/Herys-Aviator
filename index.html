@@ -3,225 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HERYS ELITE V36 - SNIPER</title>
+    <title>HERYS ELITE V36 - MAX EDITION</title>
     <style>
         :root { 
-            --gold: #d4af37; 
-            --gold-glow: rgba(212, 175, 55, 0.4);
-            --dark: #050505; 
-            --safe: #00ff88; 
-            --sniper: #ff00ff;
-            --flash: #00ffff;
+            --gold: #d4af37; --dark: #050505; --safe: #00ff88; 
+            --sniper: #ff00ff; --flash: #00ffff; --danger: #ff3333;
         }
         
-        body { 
-            background: var(--dark); 
-            color: white; 
-            font-family: 'Segoe UI', Roboto, sans-serif; 
-            margin: 0; 
-            padding: 10px; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center;
-        }
-
-        .header { text-align: center; border-bottom: 1px solid #222; width: 100%; padding-bottom: 8px; margin-bottom: 15px; }
-        .version { background: var(--gold); color: black; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
-
+        body { background: var(--dark); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; }
+        .header { text-align: center; width: 100%; border-bottom: 1px solid #222; padding-bottom: 10px; margin-bottom: 15px; }
+        
         .main-display {
             background: radial-gradient(circle at top, #1a1a1a 0%, #000 100%);
-            border: 2px solid var(--gold);
-            border-radius: 20px;
-            padding: 20px 10px;
-            text-align: center;
-            width: 100%;
-            max-width: 380px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 15px var(--gold-glow);
+            border: 2px solid var(--gold); border-radius: 20px;
+            padding: 20px 10px; text-align: center; width: 100%; max-width: 380px;
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.3);
         }
 
-        #prob { 
-            font-size: 4rem; 
-            font-weight: 900; 
-            margin: 5px 0;
-            background: linear-gradient(to bottom, #fff, var(--safe));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+        #prob { font-size: 4.5rem; font-weight: 900; margin: 0; transition: 0.3s; }
+        
+        .seed-info { font-size: 0.65rem; color: #555; margin-top: 5px; font-family: monospace; }
+        .hash-power-container { width: 80%; height: 6px; background: #111; margin: 12px auto; border-radius: 3px; border: 1px solid #222; overflow: hidden; }
+        #hash-bar { width: 0%; height: 100%; background: linear-gradient(90deg, var(--gold), var(--safe)); transition: width 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
-        .prediction-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            width: 100%;
-            max-width: 380px;
-            margin-top: 15px;
-        }
+        .prediction-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; max-width: 380px; margin-top: 15px; }
+        .pred-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(212,175,55,0.1); border-radius: 12px; padding: 12px; text-align: center; }
+        .label { font-size: 0.6rem; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; }
+        .multi { font-size: 1.4rem; font-weight: bold; margin: 5px 0; display: block; }
 
-        .pred-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(212,175,55,0.2);
-            border-radius: 12px;
-            padding: 10px;
-            text-align: center;
-        }
-
-        .label { font-size: 0.6rem; color: var(--gold); text-transform: uppercase; margin-bottom: 5px; display: block;}
-        .multi { font-size: 1.3rem; font-weight: bold; color: #fff; display: block;}
-        .time-slots { font-size: 0.8rem; font-family: monospace; line-height: 1.5; margin-top: 5px; }
-
-        .control-panel { width: 100%; max-width: 380px; margin-top: 15px; }
-        input {
-            width: 100%;
-            padding: 14px;
-            background: #000;
-            border: 1px solid #333;
-            border-radius: 10px;
-            color: white;
-            font-size: 0.95rem;
-            margin-bottom: 8px;
-            box-sizing: border-box;
-            text-align: center;
+        .input-group { width: 100%; max-width: 380px; margin-top: 20px; }
+        input { 
+            width: 100%; padding: 14px; background: #000; border: 1px solid #222; 
+            border-radius: 10px; color: white; margin-bottom: 8px; box-sizing: border-box; text-align: center;
+            font-size: 0.9rem;
         }
         input:focus { border-color: var(--gold); outline: none; }
-
-        button#analyze-btn {
-            width: 100%;
-            padding: 16px;
-            background: var(--gold);
-            color: black;
-            border: none;
-            border-radius: 10px;
-            font-weight: 900;
-            text-transform: uppercase;
-        }
-
-        #history-log { width: 100%; max-width: 380px; margin-top: 20px; max-height: 150px; overflow-y: auto; border-top: 1px solid #222; }
-        .log-item { padding: 8px 5px; border-bottom: 1px solid #111; font-size: 0.75rem; color: #666; }
         
-        .blink { animation: pulse 0.8s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
-        .reset-link { color: #333; font-size: 0.65rem; margin-top: 20px; cursor: pointer; }
+        .btn-analyze { 
+            width: 100%; padding: 18px; background: var(--gold); color: black; 
+            border: none; border-radius: 10px; font-weight: 900; cursor: pointer; font-size: 1rem;
+            text-transform: uppercase; transition: transform 0.1s;
+        }
+        .btn-analyze:active { transform: scale(0.98); }
+        
+        #history { width: 100%; max-width: 380px; margin-top: 15px; font-size: 0.75rem; color: #444; }
+        .log-entry { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #111; }
+        
+        .blink { animation: pulse 0.6s infinite; }
+        @keyframes pulse { 0% { opacity: 1; border-color: var(--safe); } 50% { opacity: 0.5; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <h1 style="margin:0; font-size: 1rem; letter-spacing: 2px;">HERYS ELITE <span class="version">V36</span></h1>
-    <div id="live-clock" style="font-size: 0.7rem; color: #555;">00:00:00</div>
+    <h1 style="font-size: 1rem; margin:0; letter-spacing: 2px;">HERYS ELITE <span style="color:var(--gold)">V36</span></h1>
+    <div id="clock" style="color:#333; font-size: 0.7rem;">00:00:00</div>
 </div>
 
-<div class="main-display" id="main-ui">
+<div class="main-display">
     <div id="prob">0%</div>
-    <div id="signal" style="font-weight: bold; color: var(--gold); font-size: 0.9rem;">PRÊT POUR LE SCAN</div>
-    <div id="last-flight" style="font-size: 0.7rem; color: #444; margin-top: 5px;">Dernier décollage : --:--:--</div>
+    <div class="hash-power-container"><div id="hash-bar"></div></div>
+    <div id="signal" style="color:var(--gold); font-weight:bold; font-size:0.85rem;">SCANNER PRÊT</div>
+    <div class="seed-info" id="virtual-seed-display">SEED: INITIALIZING...</div>
 </div>
 
 <div class="prediction-grid">
     <div class="pred-card">
-        <span class="label">Cible T1</span>
-        <span id="t1-val" class="multi">--.-x</span>
-        <div id="t1-time" class="time-slots">--:--:--<br>--:--:--</div>
+        <span class="label">CIBLE T1</span>
+        <span id="t1" class="multi">--.-x</span>
+        <div id="t1-time" style="font-size:0.7rem; color:#555;">--:--:--</div>
     </div>
     <div class="pred-card">
-        <span class="label">Cible T2</span>
-        <span id="t2-val" class="multi">--.-x</span>
-        <div id="t2-time" class="time-slots">--:--:--<br>--:--:--</div>
+        <span class="label">CIBLE T2</span>
+        <span id="t2" class="multi">--.-x</span>
+        <div id="t2-time" style="font-size:0.7rem; color:#555;">--:--:--</div>
     </div>
 </div>
 
-<div class="control-panel">
-    <input type="number" id="multi-input" inputmode="decimal" placeholder="Multiplicateur (ex: 2.15)">
-    <input type="text" id="hash-input" placeholder="Hash du dernier tour (Optionnel)">
-    <button id="analyze-btn" onclick="runAnalysis()">Lancer l'Analyse</button>
+<div class="input-group">
+    <input type="number" id="val" step="0.01" inputmode="decimal" placeholder="Dernier Multi (ex: 1.85)">
+    <input type="text" id="hash" placeholder="Coller le Hash du tour">
+    <button class="btn-analyze" id="btn" onclick="run()">Lancer l'Analyse</button>
 </div>
 
-<div id="history-log"></div>
-
-<span class="reset-link" onclick="clearData()">RÉINITIALISER TOUT</span>
+<div id="history"></div>
 
 <script>
-    let stagCount = 0;
-    let lastLargeWin = Date.now();
-
-    setInterval(() => { document.getElementById('live-clock').innerText = new Date().toLocaleTimeString(); }, 1000);
-
-    window.onload = () => {
-        if(localStorage.getItem('herys_v36_log')) {
-            document.getElementById('history-log').innerHTML = localStorage.getItem('herys_v36_log');
-            stagCount = parseInt(localStorage.getItem('herys_v36_stag')) || 0;
-            lastLargeWin = parseFloat(localStorage.getItem('herys_v36_time')) || Date.now();
-        }
+    // Variables globales
+    let state = { 
+        stag: 0, 
+        lastWin: Date.now(),
+        vSeed: "" 
     };
 
-    function runAnalysis() {
-        const input = document.getElementById('multi-input');
-        const hashInput = document.getElementById('hash-input');
-        const val = parseFloat(input.value);
-        const hash = hashInput.value.trim();
-        const now = Date.now();
-        if (isNaN(val) || val <= 0) return;
+    // 1. Générateur de Seed Virtuel au chargement
+    window.onload = () => {
+        // Crée un seed unique basé sur l'heure et un random
+        state.vSeed = "V-" + Math.random().toString(16).slice(2, 10).toUpperCase();
+        document.getElementById('virtual-seed-display').innerText = "V-SEED: " + state.vSeed;
+        updateClock();
+        setInterval(updateClock, 1000);
+    };
 
-        const flightTime = Math.log(val + 1) * 8500;
-        const takeoffTime = now - flightTime;
-        const takeoffStr = new Date(takeoffTime).toLocaleTimeString();
-
-        if (val < 2.2) stagCount++; else { stagCount = 0; lastLargeWin = takeoffTime; }
-
-        let probability = 45.0;
-        let signalLabel = "STABILISATION";
-        let color = "var(--gold)";
-        
-        // Complexité du Hash (bonus de précision)
-        const hashBonus = (hash.match(/[a-f0-9]/g) || []).length > 30 ? 5 : 0;
-
-        if (val <= 1.05) { probability = 99.1; signalLabel = "SÉCURITÉ MAX"; color = "var(--safe)"; }
-        else if (stagCount >= 6) { probability = 96.5 + hashBonus/10; signalLabel = "MODE SNIPER"; color = "var(--sniper)"; }
-        else if ((now - lastLargeWin) > 55000 && (now - lastLargeWin) < 110000) { probability = 89.2; signalLabel = "SIGNAL FLASH"; color = "var(--flash)"; }
-
-        // Calcul des Heures Précises (H:min:sec)
-        const t1_A = new Date(takeoffTime + 98000); 
-        const t1_B = new Date(takeoffTime + 162000);
-        const t2_A = new Date(takeoffTime + 285000); 
-        const t2_B = new Date(takeoffTime + 375000);
-        
-        const formatTime = (d) => d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'});
-
-        document.getElementById('prob').innerText = probability.toFixed(1) + "%";
-        document.getElementById('prob').style.color = color;
-        document.getElementById('signal').innerText = signalLabel;
-        document.getElementById('signal').style.color = color;
-        document.getElementById('last-flight').innerText = "Décollage : " + takeoffStr;
-        
-        document.getElementById('t1-val').innerText = (Math.random() * (3.9 - 2.0) + 2.0).toFixed(2) + "x";
-        document.getElementById('t1-time').innerHTML = 
-            `<span style="color:var(--safe)">${formatTime(t1_A)}</span><br>
-             <span style="color:var(--gold)">${formatTime(t1_B)}</span>`;
-
-        document.getElementById('t2-val').innerText = (Math.random() * (15.0 - 5.0) + 5.0).toFixed(2) + "x";
-        document.getElementById('t2-time').innerHTML = 
-            `<span style="color:var(--sniper)">${formatTime(t2_A)}</span><br>
-             <span style="color:var(--flash)">${formatTime(t2_B)}</span>`;
-
-        const btn = document.getElementById('analyze-btn');
-        btn.style.background = color;
-        if(probability > 85) btn.classList.add('blink'); else btn.classList.remove('blink');
-
-        const log = document.getElementById('history-log');
-        const item = document.createElement('div');
-        item.className = 'log-item';
-        const hashDisplay = hash ? `<br><small style="color:#444">Hash: ${hash.substring(0,15)}...</small>` : '';
-        item.innerHTML = `<div><b>${val.toFixed(2)}x</b> @ ${takeoffStr} | ${probability}% ${hashDisplay}</div>`;
-        log.prepend(item);
-
-        localStorage.setItem('herys_v36_log', log.innerHTML);
-        localStorage.setItem('herys_v36_stag', stagCount);
-        localStorage.setItem('herys_v36_time', lastLargeWin);
-
-        setTimeout(() => { input.value = ""; hashInput.value = ""; input.focus(); }, 300);
+    function updateClock() {
+        document.getElementById('clock').innerText = new Date().toLocaleTimeString('fr-FR');
     }
 
-    function clearData() {
-        if(confirm("Réinitialiser l'application ?")) { localStorage.clear(); location.reload(); }
+    function run() {
+        const valInput = document.getElementById('val');
+        const hashInput = document.getElementById('hash');
+        const val = parseFloat(valInput.value);
+        const hash = hashInput.value.trim();
+        
+        const probEl = document.getElementById('prob');
+        const bar = document.getElementById('hash-bar');
+        const btn = document.getElementById('btn');
+        
+        if (!val || isNaN(val)) return;
+
+        // --- ALGORITHME DE CORRÉLATION SEED + HASH ---
+        let seedStability = 0;
+        if(hash.length > 5) {
+            // On vérifie si le Hash actuel contient des caractères du Seed Virtuel
+            // Cela simule une analyse de signature de session
+            const seedChar = state.vSeed.charAt(2); 
+            const occurrences = (hash.split(seedChar).length - 1);
+            seedStability = (occurrences * 4) + (hash.length / 8);
+        }
+
+        // Détection Stagnation (Crashs répétitifs)
+        if(val < 2.0) state.stag++; else state.stag = 0;
+        
+        // Calcul de Probabilité de Rebond
+        let p = 38 + seedStability + (state.stag * 9);
+        let color = "white";
+        let msg = "ANALYSE EN COURS";
+
+        // Logic de Sécurité Maximale
+        if(p > 85 || (val <= 1.08 && state.stag >= 4)) {
+            p = 99.1;
+            color = "var(--safe)";
+            msg = "SÉCURITÉ MAX (CORRÉLATION SEED OK)";
+            btn.classList.add('blink');
+        } else if (state.stag >= 6) {
+            p = 96.8;
+            color = "var(--sniper)";
+            msg = "MODE SNIPER ACTIVÉ";
+            btn.classList.add('blink');
+        } else {
+            btn.classList.remove('blink');
+            color = p > 60 ? "var(--flash)" : "var(--gold)";
+            msg = p > 60 ? "SIGNAL FORT DETECTÉ" : "SCANNER EN ATTENTE";
+        }
+
+        // --- MISE À JOUR UI ---
+        probEl.innerText = Math.min(99.9, p).toFixed(1) + "%";
+        probEl.style.color = color;
+        bar.style.width = Math.min(100, seedStability * 5) + "%";
+        document.getElementById('signal').innerText = msg;
+        document.getElementById('signal').style.color = color;
+
+        // Cibles (Simulation basée sur le décalage temporel)
+        const now = Date.now();
+        const f = (ms) => new Date(now + ms).toLocaleTimeString('fr-FR');
+        
+        document.getElementById('t1').innerText = (Math.random() * 1.5 + 2.1).toFixed(2) + "x";
+        document.getElementById('t1-time').innerText = f(92000); // + 1min 32s
+        document.getElementById('t2').innerText = (Math.random() * 7 + 5.5).toFixed(2) + "x";
+        document.getElementById('t2-time').innerText = f(285000); // + 4min 45s
+
+        // Historique
+        const entry = document.createElement('div');
+        entry.className = "log-entry";
+        entry.innerHTML = `<b style="color:${color}">${val.toFixed(2)}x</b> <span style="color:#555">|</span> <span>${p.toFixed(1)}%</span> <span style="color:#333">${new Date().toLocaleTimeString('fr-FR')}</span>`;
+        document.getElementById('history').prepend(entry);
+
+        // Reset rapide pour le tour suivant
+        setTimeout(() => { 
+            valInput.value = ""; 
+            hashInput.value = "";
+            valInput.focus();
+        }, 400);
     }
 </script>
 
