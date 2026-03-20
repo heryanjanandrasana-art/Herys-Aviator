@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HERYS ELITE V36 - MAX EDITION</title>
+    <title>HERYS ELITE V36 - DUAL TARGET</title>
     <style>
         :root { 
             --gold: #d4af37; --dark: #050505; --safe: #00ff88; 
-            --sniper: #ff00ff; --flash: #00ffff; --danger: #ff3333;
+            --sniper: #ff00ff; --flash: #00ffff; --danger: #ff4444;
         }
         
         body { background: var(--dark); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; }
@@ -20,37 +20,31 @@
             box-shadow: 0 0 25px rgba(212, 175, 55, 0.3);
         }
 
-        #prob { font-size: 4.5rem; font-weight: 900; margin: 0; transition: 0.3s; }
-        
-        .seed-info { font-size: 0.65rem; color: #555; margin-top: 5px; font-family: monospace; }
-        .hash-power-container { width: 80%; height: 6px; background: #111; margin: 12px auto; border-radius: 3px; border: 1px solid #222; overflow: hidden; }
-        #hash-bar { width: 0%; height: 100%; background: linear-gradient(90deg, var(--gold), var(--safe)); transition: width 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        #prob { font-size: 4.5rem; font-weight: 900; margin: 0; }
+        .hash-power-container { width: 80%; height: 6px; background: #111; margin: 12px auto; border-radius: 3px; overflow: hidden; }
+        #hash-bar { width: 0%; height: 100%; background: var(--safe); transition: width 0.6s; }
 
         .prediction-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; max-width: 380px; margin-top: 15px; }
-        .pred-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(212,175,55,0.1); border-radius: 12px; padding: 12px; text-align: center; }
-        .label { font-size: 0.6rem; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; }
-        .multi { font-size: 1.4rem; font-weight: bold; margin: 5px 0; display: block; }
+        .pred-card { background: rgba(255,255,255,0.03); border: 1px solid #222; border-radius: 12px; padding: 10px; text-align: center; }
+        .label { font-size: 0.6rem; color: var(--gold); text-transform: uppercase; display: block; margin-bottom: 5px;}
+        .multi { font-size: 1.2rem; font-weight: bold; margin: 2px 0; display: block; }
+        .time-slots { font-size: 0.75rem; font-family: monospace; line-height: 1.4; color: #aaa; }
 
         .input-group { width: 100%; max-width: 380px; margin-top: 20px; }
         input { 
             width: 100%; padding: 14px; background: #000; border: 1px solid #222; 
             border-radius: 10px; color: white; margin-bottom: 8px; box-sizing: border-box; text-align: center;
-            font-size: 0.9rem;
         }
-        input:focus { border-color: var(--gold); outline: none; }
         
-        .btn-analyze { 
-            width: 100%; padding: 18px; background: var(--gold); color: black; 
-            border: none; border-radius: 10px; font-weight: 900; cursor: pointer; font-size: 1rem;
-            text-transform: uppercase; transition: transform 0.1s;
-        }
-        .btn-analyze:active { transform: scale(0.98); }
+        .btn { width: 100%; padding: 16px; border: none; border-radius: 10px; font-weight: 900; cursor: pointer; text-transform: uppercase; margin-top: 5px; }
+        .btn-analyze { background: var(--gold); color: black; font-size: 1rem; }
+        .btn-reset { background: transparent; color: var(--danger); border: 1px solid var(--danger); font-size: 0.8rem; margin-top: 15px; }
         
-        #history { width: 100%; max-width: 380px; margin-top: 15px; font-size: 0.75rem; color: #444; }
-        .log-entry { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #111; }
+        #history { width: 100%; max-width: 380px; margin-top: 20px; font-size: 0.75rem; color: #444; border-top: 1px solid #222; padding-top: 10px;}
+        .log-entry { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #111; }
         
         .blink { animation: pulse 0.6s infinite; }
-        @keyframes pulse { 0% { opacity: 1; border-color: var(--safe); } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -64,50 +58,36 @@
     <div id="prob">0%</div>
     <div class="hash-power-container"><div id="hash-bar"></div></div>
     <div id="signal" style="color:var(--gold); font-weight:bold; font-size:0.85rem;">SCANNER PRÊT</div>
-    <div class="seed-info" id="virtual-seed-display">SEED: INITIALIZING...</div>
 </div>
 
 <div class="prediction-grid">
     <div class="pred-card">
-        <span class="label">CIBLE T1</span>
-        <span id="t1" class="multi">--.-x</span>
-        <div id="t1-time" style="font-size:0.7rem; color:#555;">--:--:--</div>
+        <span class="label">CIBLES T1</span>
+        <span id="t1-v1" class="multi" style="color:var(--safe)">--.-x</span>
+        <span id="t1-v2" class="multi" style="color:var(--safe); font-size: 1rem; opacity: 0.7;">--.-x</span>
+        <div id="t1-times" class="time-slots">--:--:--<br>--:--:--</div>
     </div>
     <div class="pred-card">
-        <span class="label">CIBLE T2</span>
-        <span id="t2" class="multi">--.-x</span>
-        <div id="t2-time" style="font-size:0.7rem; color:#555;">--:--:--</div>
+        <span class="label">CIBLES T2</span>
+        <span id="t2-v1" class="multi" style="color:var(--flash)">--.-x</span>
+        <span id="t2-v2" class="multi" style="color:var(--flash); font-size: 1rem; opacity: 0.7;">--.-x</span>
+        <div id="t2-times" class="time-slots">--:--:--<br>--:--:--</div>
     </div>
 </div>
 
 <div class="input-group">
     <input type="number" id="val" step="0.01" inputmode="decimal" placeholder="Dernier Multi (ex: 1.85)">
-    <input type="text" id="hash" placeholder="Coller le Hash du tour">
-    <button class="btn-analyze" id="btn" onclick="run()">Lancer l'Analyse</button>
+    <input type="text" id="hash" placeholder="Hash du tour">
+    <button class="btn btn-analyze" id="btn" onclick="run()">Lancer l'Analyse</button>
+    <button class="btn btn-reset" onclick="resetApp()">Effacer l'Historique</button>
 </div>
 
 <div id="history"></div>
 
 <script>
-    // Variables globales
-    let state = { 
-        stag: 0, 
-        lastWin: Date.now(),
-        vSeed: "" 
-    };
+    let state = { stag: 0, vSeed: "S-" + Math.random().toString(16).slice(2,8).toUpperCase() };
 
-    // 1. Générateur de Seed Virtuel au chargement
-    window.onload = () => {
-        // Crée un seed unique basé sur l'heure et un random
-        state.vSeed = "V-" + Math.random().toString(16).slice(2, 10).toUpperCase();
-        document.getElementById('virtual-seed-display').innerText = "V-SEED: " + state.vSeed;
-        updateClock();
-        setInterval(updateClock, 1000);
-    };
-
-    function updateClock() {
-        document.getElementById('clock').innerText = new Date().toLocaleTimeString('fr-FR');
-    }
+    setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString('fr-FR'); }, 1000);
 
     function run() {
         const valInput = document.getElementById('val');
@@ -115,75 +95,54 @@
         const val = parseFloat(valInput.value);
         const hash = hashInput.value.trim();
         
-        const probEl = document.getElementById('prob');
-        const bar = document.getElementById('hash-bar');
-        const btn = document.getElementById('btn');
-        
-        if (!val || isNaN(val)) return;
+        if (!val) return;
 
-        // --- ALGORITHME DE CORRÉLATION SEED + HASH ---
-        let seedStability = 0;
-        if(hash.length > 5) {
-            // On vérifie si le Hash actuel contient des caractères du Seed Virtuel
-            // Cela simule une analyse de signature de session
-            const seedChar = state.vSeed.charAt(2); 
-            const occurrences = (hash.split(seedChar).length - 1);
-            seedStability = (occurrences * 4) + (hash.length / 8);
-        }
-
-        // Détection Stagnation (Crashs répétitifs)
+        // Analyse simplifiée du poids du hash
+        let hashPower = hash.length > 10 ? (hash.match(/[a-f0-9]/g).length / 2) + 5 : 0;
         if(val < 2.0) state.stag++; else state.stag = 0;
         
-        // Calcul de Probabilité de Rebond
-        let p = 38 + seedStability + (state.stag * 9);
-        let color = "white";
-        let msg = "ANALYSE EN COURS";
+        let p = 40 + hashPower + (state.stag * 9);
+        let color = p > 85 ? "var(--safe)" : (p > 65 ? "var(--flash)" : "var(--gold)");
 
-        // Logic de Sécurité Maximale
-        if(p > 85 || (val <= 1.08 && state.stag >= 4)) {
-            p = 99.1;
-            color = "var(--safe)";
-            msg = "SÉCURITÉ MAX (CORRÉLATION SEED OK)";
-            btn.classList.add('blink');
-        } else if (state.stag >= 6) {
-            p = 96.8;
-            color = "var(--sniper)";
-            msg = "MODE SNIPER ACTIVÉ";
-            btn.classList.add('blink');
-        } else {
-            btn.classList.remove('blink');
-            color = p > 60 ? "var(--flash)" : "var(--gold)";
-            msg = p > 60 ? "SIGNAL FORT DETECTÉ" : "SCANNER EN ATTENTE";
-        }
-
-        // --- MISE À JOUR UI ---
-        probEl.innerText = Math.min(99.9, p).toFixed(1) + "%";
-        probEl.style.color = color;
-        bar.style.width = Math.min(100, seedStability * 5) + "%";
-        document.getElementById('signal').innerText = msg;
+        // Affichage
+        document.getElementById('prob').innerText = Math.min(99.1, p).toFixed(1) + "%";
+        document.getElementById('prob').style.color = color;
+        document.getElementById('hash-bar').style.width = (hashPower * 3) + "%";
+        document.getElementById('signal').innerText = p > 85 ? "SÉCURITÉ MAXIMALE" : "ANALYSE TERMINÉE";
         document.getElementById('signal').style.color = color;
 
-        // Cibles (Simulation basée sur le décalage temporel)
+        // Génération de 2 résultats par cible
         const now = Date.now();
         const f = (ms) => new Date(now + ms).toLocaleTimeString('fr-FR');
-        
-        document.getElementById('t1').innerText = (Math.random() * 1.5 + 2.1).toFixed(2) + "x";
-        document.getElementById('t1-time').innerText = f(92000); // + 1min 32s
-        document.getElementById('t2').innerText = (Math.random() * 7 + 5.5).toFixed(2) + "x";
-        document.getElementById('t2-time').innerText = f(285000); // + 4min 45s
 
-        // Historique
+        document.getElementById('t1-v1').innerText = (Math.random() * 1 + 2.1).toFixed(2) + "x";
+        document.getElementById('t1-v2').innerText = (Math.random() * 1 + 3.2).toFixed(2) + "x";
+        document.getElementById('t1-times').innerHTML = `${f(90000)}<br>${f(150000)}`;
+
+        document.getElementById('t2-v1').innerText = (Math.random() * 5 + 5.5).toFixed(2) + "x";
+        document.getElementById('t2-v2').innerText = (Math.random() * 10 + 12.0).toFixed(2) + "x";
+        document.getElementById('t2-times').innerHTML = `${f(280000)}<br>${f(420000)}`;
+
+        // Log
         const entry = document.createElement('div');
         entry.className = "log-entry";
-        entry.innerHTML = `<b style="color:${color}">${val.toFixed(2)}x</b> <span style="color:#555">|</span> <span>${p.toFixed(1)}%</span> <span style="color:#333">${new Date().toLocaleTimeString('fr-FR')}</span>`;
+        entry.innerHTML = `<b>${val.toFixed(2)}x</b> <span>${p.toFixed(1)}%</span> <span>${new Date().toLocaleTimeString()}</span>`;
         document.getElementById('history').prepend(entry);
 
-        // Reset rapide pour le tour suivant
-        setTimeout(() => { 
-            valInput.value = ""; 
-            hashInput.value = "";
-            valInput.focus();
-        }, 400);
+        if(p > 85) document.getElementById('btn').classList.add('blink');
+        else document.getElementById('btn').classList.remove('blink');
+
+        setTimeout(() => { valInput.value = ""; hashInput.value = ""; valInput.focus(); }, 400);
+    }
+
+    function resetApp() {
+        if(confirm("Effacer tout l'historique de session ?")) {
+            document.getElementById('history').innerHTML = "";
+            document.getElementById('prob').innerText = "0%";
+            document.getElementById('prob').style.color = "white";
+            document.getElementById('hash-bar').style.width = "0%";
+            state.stag = 0;
+        }
     }
 </script>
 
