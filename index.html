@@ -3,23 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Herys Predictor v36 - Ultra Precision</title>
+    <title>Herys Sentinel v37</title>
     <style>
         :root {
-            --bg-color: #0f0f13;
-            --card-bg: #1a1a22;
-            --neon-green: #2ecc71;
-            --neon-red: #ff4b2b;
-            --neon-gold: #f1c40f;
-            --text-main: #ffffff;
-            --text-dim: #888895;
-            --input-bg: #111;
+            --bg: #0a0a0c;
+            --card: #15151e;
+            --green: #00ff88;
+            --red: #ff3e3e;
+            --gold: #ffcc00;
+            --blue: #00d4ff;
+            --text: #e0e0e0;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -27,364 +26,187 @@
             margin: 0;
         }
 
-        .container {
-            width: 360px;
-            background: var(--card-bg);
-            border-radius: 20px;
+        .app-container {
+            width: 380px;
+            background: var(--card);
+            border-radius: 24px;
             padding: 25px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.7);
-            border: 1px solid #333;
+            border: 1px solid #2d2d3a;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
         }
 
-        .header {
+        /* Barre d'état avancée */
+        .status-bar {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-
-        .logo {
-            font-weight: 900;
-            letter-spacing: 3px;
-            color: var(--neon-green);
-            text-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
-        }
-
-        .status-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        #status-led {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--text-dim);
-            transition: 0.3s;
-        }
-
-        .power-section {
-            margin-bottom: 25px;
-        }
-
-        .label-group {
-            display: flex;
-            justify-content: space-between;
-            font-size: 10px;
-            font-weight: bold;
-            margin-bottom: 8px;
-            color: var(--text-dim);
-            text-transform: uppercase;
-        }
-
-        .power-meter {
-            width: 100%;
-            height: 10px;
+            margin-bottom: 20px;
             background: #000;
-            border-radius: 5px;
-            overflow: hidden;
-            border: 1px solid #222;
-        }
-
-        #power-fill {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg, var(--neon-red), var(--neon-gold), var(--neon-green));
-            transition: width 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .targets-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .target-card {
-            background: #252530;
-            padding: 18px;
+            padding: 10px 15px;
             border-radius: 12px;
-            text-align: center;
-            border: 1px solid #3d3d4d;
-            transition: 0.3s;
         }
 
-        .target-label {
-            font-size: 9px;
-            color: var(--text-dim);
-            display: block;
-            margin-bottom: 8px;
-            letter-spacing: 1px;
-        }
+        .indicator { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: bold; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; background: #333; transition: 0.4s; }
 
-        .target-val {
-            font-size: 26px;
-            font-weight: 800;
-            color: var(--neon-green);
-        }
+        /* Jauge de Confiance */
+        .trust-section { margin-bottom: 20px; }
+        .trust-bar { height: 6px; background: #222; border-radius: 3px; overflow: hidden; margin-top: 5px; }
+        #trust-fill { width: 0%; height: 100%; background: var(--blue); transition: 1s ease; }
 
-        .mini-log-section {
-            background: rgba(0,0,0,0.4);
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-        }
+        /* Grille des Cibles */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .card { background: #1c1c27; padding: 15px; border-radius: 16px; border: 1px solid #2d2d3a; text-align: center; }
+        .val { font-size: 24px; font-weight: 900; margin: 5px 0; }
+        .sub { font-size: 10px; color: #888; }
 
-        .mini-log {
-            display: flex;
-            gap: 8px;
-            margin-top: 8px;
-            overflow-x: auto;
-            padding-bottom: 5px;
-        }
+        /* Prédictions consécutives */
+        .chain { background: #000; padding: 12px; border-radius: 12px; margin-bottom: 15px; }
+        .chain-items { display: flex; justify-content: space-between; margin-top: 8px; }
+        .item { font-size: 11px; background: #1a1a1a; padding: 4px 8px; border-radius: 4px; color: var(--green); }
 
-        .badge-multi {
-            font-size: 11px;
-            padding: 4px 8px;
-            border-radius: 5px;
-            background: #333;
-            color: #fff;
-            min-width: 45px;
-            text-align: center;
-            font-weight: bold;
-        }
-
-        .input-group {
-            margin-bottom: 15px;
-        }
-
+        /* Formulaire */
         input {
-            width: 100%;
-            padding: 12px;
-            box-sizing: border-box;
-            background: var(--input-bg);
-            border: 1px solid #444;
-            color: white;
-            border-radius: 8px;
-            font-size: 13px;
-            outline: none;
-            transition: 0.2s;
+            width: 100%; padding: 14px; margin-bottom: 10px; background: #000;
+            border: 1px solid #333; color: #fff; border-radius: 10px; box-sizing: border-box;
         }
+        .btn-go {
+            width: 100%; padding: 16px; background: var(--green); color: #000;
+            border: none; border-radius: 12px; font-weight: 900; cursor: pointer;
+            text-transform: uppercase; transition: 0.2s;
+        }
+        .btn-go:active { transform: scale(0.98); }
 
-        input:focus {
-            border-color: var(--neon-green);
-            box-shadow: 0 0 8px rgba(46, 204, 113, 0.2);
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: 15px;
-            background: var(--neon-green);
-            border: none;
-            color: #000;
-            font-weight: 900;
-            border-radius: 8px;
-            cursor: pointer;
-            text-transform: uppercase;
-            font-size: 14px;
-            letter-spacing: 1px;
-            transition: 0.3s;
-        }
-
-        .btn-primary:hover {
-            filter: brightness(1.1);
-            transform: translateY(-2px);
-        }
-
-        .btn-clear {
-            width: 100%;
-            background: none;
-            border: none;
-            color: var(--text-dim);
-            font-size: 12px;
-            margin-top: 15px;
-            cursor: pointer;
-            text-decoration: none;
-        }
-
-        .btn-clear:hover {
-            color: var(--neon-red);
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        .anim-active { animation: pulse 0.4s ease-out; }
+        .history { display: flex; gap: 6px; margin-top: 10px; overflow-x: auto; padding-bottom: 5px; }
+        .badge { font-size: 9px; padding: 3px 6px; background: #222; border-radius: 4px; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header">
-        <span class="logo">HERYS v36</span>
-        <div class="status-group">
-            <div id="status-led"></div>
-            <span id="status-text" style="font-size: 10px; color: var(--text-dim); font-weight: bold;">STANDBY</span>
+<div class="app-container">
+    <div class="status-bar">
+        <div class="indicator">
+            <div id="danger-dot" class="dot"></div> <span>SÉCURITÉ</span>
+        </div>
+        <div class="indicator">
+            <div id="jackpot-dot" class="dot"></div> <span>GOLD POT</span>
         </div>
     </div>
 
-    <div class="power-section">
-        <div class="label-group">
-            <span>Précision Algorithmique</span>
-            <span id="power-percent">0.0%</span>
+    <div class="trust-section">
+        <div style="display:flex; justify-content:space-between; font-size:10px;">
+            <span>INDICE DE CONFIANCE</span>
+            <span id="trust-pct">0%</span>
         </div>
-        <div class="power-meter">
-            <div id="power-fill"></div>
+        <div class="trust-bar"><div id="trust-fill"></div></div>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <div class="sub">T1 SAFE</div>
+            <div id="t1" class="val" style="color: var(--green);">0.00x</div>
+            <div id="t1-t" class="sub">--s</div>
+        </div>
+        <div class="card">
+            <div class="sub">T2 RISK</div>
+            <div id="t2" class="val" style="color: var(--gold);">0.00x</div>
+            <div id="t2-t" class="sub">--s</div>
         </div>
     </div>
 
-    <div class="targets-grid">
-        <div id="card-t1" class="target-card">
-            <span class="target-label">CIBLE T1 (SAFE)</span>
-            <span id="t1-val" class="target-val">0.00x</span>
-        </div>
-        <div id="card-t2" class="target-card">
-            <span class="target-label">CIBLE T2 (RISK)</span>
-            <span id="t2-val" class="target-val" style="color: var(--neon-gold);">0.00x</span>
+    <div class="chain">
+        <div class="sub" style="text-align:center">SÉQUENCE 5 TOURS</div>
+        <div class="chain-items" id="chain">
+            <div class="item">--</div><div class="item">--</div><div class="item">--</div><div class="item">--</div><div class="item">--</div>
         </div>
     </div>
 
-    <div class="mini-log-section">
-        <span class="target-label">HISTORIQUE DES SESSIONS :</span>
-        <div id="mini-log" class="mini-log"></div>
-    </div>
+    <input type="text" id="hash" placeholder="Hash SHA-256">
+    <input type="number" step="0.01" id="multi" placeholder="Dernier Multiplicateur">
 
-    <div class="input-group">
-        <input type="text" id="hash-input" placeholder="Clé Hash SHA-256 du tour">
-    </div>
-    <div class="input-group">
-        <input type="number" step="0.01" id="last-multi" placeholder="Dernier multiplicateur">
-    </div>
+    <button class="btn-go" id="btn">Analyser & Prédire</button>
 
-    <button class="btn-primary" id="btn-analyze">Lancer l'Analyse</button>
-    <button class="btn-clear" id="btn-clear">RÉINITIALISER TOUT</button>
+    <div class="history" id="log"></div>
 </div>
 
 <script>
-    // --- INITIALISATION & PERSISTENCE ---
-    let historiqueLocal = JSON.parse(localStorage.getItem('herys_history')) || [];
+    let logs = JSON.parse(localStorage.getItem('sentinel_data')) || [];
 
-    const elements = {
-        btnAnalyze: document.getElementById('btn-analyze'),
-        btnClear: document.getElementById('btn-clear'),
-        hashInput: document.getElementById('hash-input'),
-        lastMultiInput: document.getElementById('last-multi'),
-        powerFill: document.getElementById('power-fill'),
-        powerPercent: document.getElementById('power-percent'),
-        t1Display: document.getElementById('t1-val'),
-        t2Display: document.getElementById('t2-val'),
-        miniLog: document.getElementById('mini-log'),
-        statusLed: document.getElementById('status-led'),
-        statusText: document.getElementById('status-text')
+    const ui = {
+        t1: document.getElementById('t1'),
+        t2: document.getElementById('t2'),
+        t1t: document.getElementById('t1-t'),
+        t2t: document.getElementById('t2-t'),
+        trust: document.getElementById('trust-fill'),
+        trustText: document.getElementById('trust-pct'),
+        danger: document.getElementById('danger-dot'),
+        jackpot: document.getElementById('jackpot-dot'),
+        chain: document.getElementById('chain'),
+        log: document.getElementById('log'),
+        inHash: document.getElementById('hash'),
+        inMulti: document.getElementById('multi')
     };
 
-    // Charger l'historique au démarrage
-    window.onload = () => {
-        if(historiqueLocal.length > 0) {
-            refreshMiniLog();
-            elements.statusText.innerText = "SESSION RESTAURÉE";
-        }
-    };
+    function analyze() {
+        const val = parseFloat(ui.inMulti.value);
+        const hash = ui.inHash.value || "seed";
 
-    // --- LOGIQUE CORE ---
-    function engine99(historique, hash) {
-        if (historique.length === 0) return { t1: 1.25, t2: 2.10, signal: 20 };
+        if(isNaN(val)) return;
 
-        const hashScore = (parseInt(hash.substring(0, 8), 16) % 100) || 50;
-        const derniers10 = historique.slice(0, 10);
-        const sommeRTP = derniers10.reduce((a, b) => a + b, 0);
-        const moyenne = sommeRTP / derniers10.length;
+        logs.unshift(val);
+        if(logs.length > 10) logs.pop();
+        localStorage.setItem('sentinel_data', JSON.stringify(logs));
+
+        // 1. Calcul de Confiance
+        let trust = 40 + (logs.length * 5);
+        if(val > 1.1 && val < 3) trust += 10;
+        trust = Math.min(trust, 99);
+
+        // 2. Détection Danger (Anti-Bust)
+        const isDanger = (val < 1.2 || (logs[0] < 1.5 && logs[1] < 1.5));
+        ui.danger.style.background = isDanger ? "var(--red)" : "var(--green)";
+        ui.danger.style.boxShadow = isDanger ? "0 0 10px var(--red)" : "none";
+
+        // 3. Prédictions
+        let t1 = (val * 0.95);
+        let t2 = (val * 1.8);
+        if(isDanger) { t1 = 1.15; t2 = 1.40; }
+
+        // 4. Jackpot (>15x)
+        const isJackpot = (hash.length % 7 === 0 && !isDanger);
+        ui.jackpot.style.background = isJackpot ? "var(--gold)" : "#333";
+        ui.jackpot.style.boxShadow = isJackpot ? "0 0 10px var(--gold)" : "none";
+
+        // Update UI
+        ui.t1.innerText = Math.max(1.10, t1).toFixed(2) + "x";
+        ui.t2.innerText = Math.max(t1 * 1.5, t2).toFixed(2) + "x";
+        ui.t1t.innerText = "Tps: " + Math.round(t1 * 2) + "s";
+        ui.t2t.innerText = "Tps: " + Math.round(t2 * 3.2) + "s";
         
-        const variance = derniers10.reduce((a, b) => a + Math.pow(b - moyenne, 2), 0) / derniers10.length;
-        const estStable = variance < 2.8;
+        ui.trust.style.width = trust + "%";
+        ui.trustText.innerText = trust + "%";
 
-        let t1, t2, force;
-
-        if (sommeRTP > 45) { 
-            t1 = 1.12; t2 = 1.35; force = 99.9;
-        } else if (estStable) {
-            t1 = moyenne * 0.94; t2 = moyenne * 1.75; force = 94 + (hashScore / 18);
-        } else {
-            t1 = 1.30; t2 = moyenne * 1.25; force = 75 + (hashScore / 5);
+        // Chain 5
+        ui.chain.innerHTML = '';
+        for(let i=0; i<5; i++) {
+            let next = (1.1 + Math.random() * (isDanger ? 1.5 : 4)).toFixed(2);
+            ui.chain.innerHTML += `<div class="item">${next}x</div>`;
         }
 
-        return {
-            t1: Math.max(1.15, t1).toFixed(2),
-            t2: Math.max(parseFloat(t1) * 1.3, t2).toFixed(2),
-            signal: Math.min(force, 99.9).toFixed(1)
-        };
+        // Nettoyage Auto
+        ui.inHash.value = "";
+        ui.inMulti.value = "";
+        renderLogs();
     }
 
-    function refreshMiniLog() {
-        elements.miniLog.innerHTML = '';
-        historiqueLocal.forEach(v => {
-            const b = document.createElement('div');
-            b.className = 'badge-multi';
-            b.style.borderBottom = v < 2 ? "3px solid var(--neon-red)" : "3px solid var(--neon-green)";
-            b.innerText = v.toFixed(2) + "x";
-            elements.miniLog.appendChild(b);
+    function renderLogs() {
+        ui.log.innerHTML = '';
+        logs.forEach(l => {
+            ui.log.innerHTML += `<div class="badge" style="border-bottom: 2px solid ${l < 2 ? 'var(--red)' : 'var(--green)'}">${l.toFixed(2)}x</div>`;
         });
     }
 
-    function updateView(res) {
-        document.getElementById('card-t1').classList.add('anim-active');
-        document.getElementById('card-t2').classList.add('anim-active');
-        setTimeout(() => {
-            document.getElementById('card-t1').classList.remove('anim-active');
-            document.getElementById('card-t2').classList.remove('anim-active');
-        }, 400);
-
-        elements.t1Display.innerText = res.t1 + "x";
-        elements.t2Display.innerText = res.t2 + "x";
-        elements.powerPercent.innerText = res.signal + "%";
-        elements.powerFill.style.width = res.signal + "%";
-
-        elements.statusLed.style.background = "var(--neon-green)";
-        elements.statusLed.style.boxShadow = "0 0 10px var(--neon-green)";
-        elements.statusText.innerText = "PRÉDICTION OK";
-    }
-
-    // --- ÉVÉNEMENTS ---
-    elements.btnAnalyze.addEventListener('click', () => {
-        const val = parseFloat(elements.lastMultiInput.value);
-        const hash = elements.hashInput.value || "def123";
-
-        if (isNaN(val)) {
-            elements.statusText.innerText = "DATA MANQUANTE";
-            elements.statusLed.style.background = "var(--neon-red)";
-            elements.statusLed.style.boxShadow = "0 0 10px var(--neon-red)";
-            return;
-        }
-
-        // Ajouter et Sauvegarder
-        historiqueLocal.unshift(val);
-        if (historiqueLocal.length > 5) historiqueLocal.pop();
-        localStorage.setItem('herys_history', JSON.stringify(historiqueLocal));
-
-        refreshMiniLog();
-        const res = engine99(historiqueLocal, hash);
-        updateView(res);
-    });
-
-    elements.btnClear.addEventListener('click', () => {
-        if(confirm("Voulez-vous vraiment effacer l'historique de session ?")) {
-            historiqueLocal = [];
-            localStorage.removeItem('herys_history');
-            elements.hashInput.value = "";
-            elements.lastMultiInput.value = "";
-            elements.miniLog.innerHTML = '';
-            elements.t1Display.innerText = "0.00x";
-            elements.t2Display.innerText = "0.00x";
-            elements.powerFill.style.width = "0%";
-            elements.powerPercent.innerText = "0.0%";
-            elements.statusText.innerText = "STANDBY";
-            elements.statusLed.style.background = "var(--text-dim)";
-            elements.statusLed.style.boxShadow = "none";
-        }
-    });
+    document.getElementById('btn').addEventListener('click', analyze);
+    renderLogs();
 </script>
 
 </body>
