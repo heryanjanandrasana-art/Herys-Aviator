@@ -36,7 +36,6 @@
             border: 1px solid #333;
         }
 
-        /* En-tête */
         .header {
             display: flex;
             justify-content: space-between;
@@ -65,7 +64,6 @@
             transition: 0.3s;
         }
 
-        /* Jauge de Force 99.9% */
         .power-section {
             margin-bottom: 25px;
         }
@@ -96,7 +94,6 @@
             transition: width 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* Cibles T1 & T2 */
         .targets-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -127,7 +124,6 @@
             color: var(--neon-green);
         }
 
-        /* Historique Mini-Log */
         .mini-log-section {
             background: rgba(0,0,0,0.4);
             padding: 12px;
@@ -140,6 +136,7 @@
             gap: 8px;
             margin-top: 8px;
             overflow-x: auto;
+            padding-bottom: 5px;
         }
 
         .badge-multi {
@@ -148,12 +145,11 @@
             border-radius: 5px;
             background: #333;
             color: #fff;
-            min-width: 40px;
+            min-width: 45px;
             text-align: center;
             font-weight: bold;
         }
 
-        /* Formulaire */
         .input-group {
             margin-bottom: 15px;
         }
@@ -176,7 +172,6 @@
             box-shadow: 0 0 8px rgba(46, 204, 113, 0.2);
         }
 
-        /* Boutons */
         .btn-primary {
             width: 100%;
             padding: 15px;
@@ -269,22 +264,32 @@
 </div>
 
 <script>
-    let historiqueLocal = [];
+    // --- INITIALISATION & PERSISTENCE ---
+    let historiqueLocal = JSON.parse(localStorage.getItem('herys_history')) || [];
 
-    // Sélections
-    const btnAnalyze = document.getElementById('btn-analyze');
-    const btnClear = document.getElementById('btn-clear');
-    const hashInput = document.getElementById('hash-input');
-    const lastMultiInput = document.getElementById('last-multi');
-    const powerFill = document.getElementById('power-fill');
-    const powerPercent = document.getElementById('power-percent');
-    const t1Display = document.getElementById('t1-val');
-    const t2Display = document.getElementById('t2-val');
-    const miniLog = document.getElementById('mini-log');
-    const statusLed = document.getElementById('status-led');
-    const statusText = document.getElementById('status-text');
+    const elements = {
+        btnAnalyze: document.getElementById('btn-analyze'),
+        btnClear: document.getElementById('btn-clear'),
+        hashInput: document.getElementById('hash-input'),
+        lastMultiInput: document.getElementById('last-multi'),
+        powerFill: document.getElementById('power-fill'),
+        powerPercent: document.getElementById('power-percent'),
+        t1Display: document.getElementById('t1-val'),
+        t2Display: document.getElementById('t2-val'),
+        miniLog: document.getElementById('mini-log'),
+        statusLed: document.getElementById('status-led'),
+        statusText: document.getElementById('status-text')
+    };
 
-    // Algorithme Master 99.9%
+    // Charger l'historique au démarrage
+    window.onload = () => {
+        if(historiqueLocal.length > 0) {
+            refreshMiniLog();
+            elements.statusText.innerText = "SESSION RESTAURÉE";
+        }
+    };
+
+    // --- LOGIQUE CORE ---
     function engine99(historique, hash) {
         if (historique.length === 0) return { t1: 1.25, t2: 2.10, signal: 20 };
 
@@ -298,8 +303,7 @@
 
         let t1, t2, force;
 
-        // Logique de prédiction
-        if (sommeRTP > 45) { // Alerte gain trop haut
+        if (sommeRTP > 45) { 
             t1 = 1.12; t2 = 1.35; force = 99.9;
         } else if (estStable) {
             t1 = moyenne * 0.94; t2 = moyenne * 1.75; force = 94 + (hashScore / 18);
@@ -309,9 +313,20 @@
 
         return {
             t1: Math.max(1.15, t1).toFixed(2),
-            t2: Math.max(t1 * 1.3, t2).toFixed(2),
+            t2: Math.max(parseFloat(t1) * 1.3, t2).toFixed(2),
             signal: Math.min(force, 99.9).toFixed(1)
         };
+    }
+
+    function refreshMiniLog() {
+        elements.miniLog.innerHTML = '';
+        historiqueLocal.forEach(v => {
+            const b = document.createElement('div');
+            b.className = 'badge-multi';
+            b.style.borderBottom = v < 2 ? "3px solid var(--neon-red)" : "3px solid var(--neon-green)";
+            b.innerText = v.toFixed(2) + "x";
+            elements.miniLog.appendChild(b);
+        });
     }
 
     function updateView(res) {
@@ -322,54 +337,53 @@
             document.getElementById('card-t2').classList.remove('anim-active');
         }, 400);
 
-        t1Display.innerText = res.t1 + "x";
-        t2Display.innerText = res.t2 + "x";
-        powerPercent.innerText = res.signal + "%";
-        powerFill.style.width = res.signal + "%";
+        elements.t1Display.innerText = res.t1 + "x";
+        elements.t2Display.innerText = res.t2 + "x";
+        elements.powerPercent.innerText = res.signal + "%";
+        elements.powerFill.style.width = res.signal + "%";
 
-        statusLed.style.background = "var(--neon-green)";
-        statusLed.style.boxShadow = "0 0 10px var(--neon-green)";
-        statusText.innerText = "PRÉDICTION OK";
+        elements.statusLed.style.background = "var(--neon-green)";
+        elements.statusLed.style.boxShadow = "0 0 10px var(--neon-green)";
+        elements.statusText.innerText = "PRÉDICTION OK";
     }
 
-    function renderLog(val) {
-        historiqueLocal.unshift(val);
-        if (historiqueLocal.length > 5) historiqueLocal.pop();
-
-        miniLog.innerHTML = '';
-        historiqueLocal.forEach(v => {
-            const b = document.createElement('div');
-            b.className = 'badge-multi';
-            b.style.borderBottom = v < 2 ? "3px solid var(--neon-red)" : "3px solid var(--neon-green)";
-            b.innerText = v.toFixed(2) + "x";
-            miniLog.appendChild(b);
-        });
-    }
-
-    btnAnalyze.addEventListener('click', () => {
-        const val = parseFloat(lastMultiInput.value);
-        const hash = hashInput.value || "def123";
+    // --- ÉVÉNEMENTS ---
+    elements.btnAnalyze.addEventListener('click', () => {
+        const val = parseFloat(elements.lastMultiInput.value);
+        const hash = elements.hashInput.value || "def123";
 
         if (isNaN(val)) {
-            statusText.innerText = "DATA MANQUANTE";
-            statusLed.style.background = var(--neon-red);
+            elements.statusText.innerText = "DATA MANQUANTE";
+            elements.statusLed.style.background = "var(--neon-red)";
+            elements.statusLed.style.boxShadow = "0 0 10px var(--neon-red)";
             return;
         }
 
-        renderLog(val);
+        // Ajouter et Sauvegarder
+        historiqueLocal.unshift(val);
+        if (historiqueLocal.length > 5) historiqueLocal.pop();
+        localStorage.setItem('herys_history', JSON.stringify(historiqueLocal));
+
+        refreshMiniLog();
         const res = engine99(historiqueLocal, hash);
         updateView(res);
     });
 
-    btnClear.addEventListener('click', () => {
-        historiqueLocal = [];
-        miniLog.innerHTML = '';
-        t1Display.innerText = "0.00x";
-        t2Display.innerText = "0.00x";
-        powerFill.style.width = "0%";
-        powerPercent.innerText = "0.0%";
-        statusText.innerText = "SÉCURISÉ";
-        statusLed.style.background = "var(--text-dim)";
+    elements.btnClear.addEventListener('click', () => {
+        if(confirm("Voulez-vous vraiment effacer l'historique de session ?")) {
+            historiqueLocal = [];
+            localStorage.removeItem('herys_history');
+            elements.hashInput.value = "";
+            elements.lastMultiInput.value = "";
+            elements.miniLog.innerHTML = '';
+            elements.t1Display.innerText = "0.00x";
+            elements.t2Display.innerText = "0.00x";
+            elements.powerFill.style.width = "0%";
+            elements.powerPercent.innerText = "0.0%";
+            elements.statusText.innerText = "STANDBY";
+            elements.statusLed.style.background = "var(--text-dim)";
+            elements.statusLed.style.boxShadow = "none";
+        }
     });
 </script>
 
