@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Herys Sentinel v37</title>
+    <title>Herys Sentinel v40</title>
     <style>
         :root {
             --bg: #0a0a0c;
@@ -35,7 +35,6 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.8);
         }
 
-        /* Barre d'état avancée */
         .status-bar {
             display: flex;
             justify-content: space-between;
@@ -48,23 +47,19 @@
         .indicator { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: bold; }
         .dot { width: 8px; height: 8px; border-radius: 50%; background: #333; transition: 0.4s; }
 
-        /* Jauge de Confiance */
         .trust-section { margin-bottom: 20px; }
         .trust-bar { height: 6px; background: #222; border-radius: 3px; overflow: hidden; margin-top: 5px; }
         #trust-fill { width: 0%; height: 100%; background: var(--blue); transition: 1s ease; }
 
-        /* Grille des Cibles */
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
         .card { background: #1c1c27; padding: 15px; border-radius: 16px; border: 1px solid #2d2d3a; text-align: center; }
         .val { font-size: 24px; font-weight: 900; margin: 5px 0; }
         .sub { font-size: 10px; color: #888; }
 
-        /* Prédictions consécutives */
         .chain { background: #000; padding: 12px; border-radius: 12px; margin-bottom: 15px; }
         .chain-items { display: flex; justify-content: space-between; margin-top: 8px; }
         .item { font-size: 11px; background: #1a1a1a; padding: 4px 8px; border-radius: 4px; color: var(--green); }
 
-        /* Formulaire */
         input {
             width: 100%; padding: 14px; margin-bottom: 10px; background: #000;
             border: 1px solid #333; color: #fff; border-radius: 10px; box-sizing: border-box;
@@ -77,7 +72,12 @@
         .btn-go:active { transform: scale(0.98); }
 
         .history { display: flex; gap: 6px; margin-top: 10px; overflow-x: auto; padding-bottom: 5px; }
-        .badge { font-size: 9px; padding: 3px 6px; background: #222; border-radius: 4px; }
+        .badge { font-size: 9px; padding: 3px 6px; background: #222; border-radius: 4px; cursor: pointer; }
+        
+        .clear-btn {
+            background: none; border: 1px solid #333; color: #555; font-size: 8px; 
+            padding: 3px 6px; border-radius: 4px; cursor: pointer; float: right; margin-bottom: 5px;
+        }
     </style>
 </head>
 <body>
@@ -104,12 +104,12 @@
         <div class="card">
             <div class="sub">T1 SAFE</div>
             <div id="t1" class="val" style="color: var(--green);">0.00x</div>
-            <div id="t1-t" class="sub">--s</div>
+            <div id="t1-t" class="sub">--:--:--</div>
         </div>
         <div class="card">
             <div class="sub">T2 RISK</div>
             <div id="t2" class="val" style="color: var(--gold);">0.00x</div>
-            <div id="t2-t" class="sub">--s</div>
+            <div id="t2-t" class="sub">--:--:--</div>
         </div>
     </div>
 
@@ -125,7 +125,10 @@
 
     <button class="btn-go" id="btn">Analyser & Prédire</button>
 
-    <div class="history" id="log"></div>
+    <div style="margin-top: 15px;">
+        <button class="clear-btn" id="clear">RESET</button>
+        <div class="history" id="log"></div>
+    </div>
 </div>
 
 <script>
@@ -143,71 +146,92 @@
         chain: document.getElementById('chain'),
         log: document.getElementById('log'),
         inHash: document.getElementById('hash'),
-        inMulti: document.getElementById('multi')
+        inMulti: document.getElementById('multi'),
+        btn: document.getElementById('btn'),
+        clear: document.getElementById('clear')
     };
 
-    function analyze() {
-        const val = parseFloat(ui.inMulti.value);
-        const hash = ui.inHash.value || "seed";
+    // --- SON NOTIFICATION ---
+    function playBeep(isHigh) {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(isHigh ? 1000 : 600, audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
+        oscillator.start();
+        oscillator.stop(audioCtx.currentTime + 0.3);
+    }
 
+    async function analyze() {
+        const val = parseFloat(ui.inMulti.value);
         if(isNaN(val)) return;
 
+        ui.btn.innerText = "SCAN EN COURS...";
+        
         logs.unshift(val);
         if(logs.length > 10) logs.pop();
         localStorage.setItem('sentinel_data', JSON.stringify(logs));
 
-        // 1. Calcul de Confiance
-        let trust = 40 + (logs.length * 5);
-        if(val > 1.1 && val < 3) trust += 10;
-        trust = Math.min(trust, 99);
+        await new Promise(r => setTimeout(r, 600));
 
-        // 2. Détection Danger (Anti-Bust)
-        const isDanger = (val < 1.2 || (logs[0] < 1.5 && logs[1] < 1.5));
+        let trust = Math.min(40 + (logs.length * 6), 99);
+        const isDanger = (val < 1.25 || (logs[1] < 1.5));
+        
         ui.danger.style.background = isDanger ? "var(--red)" : "var(--green)";
         ui.danger.style.boxShadow = isDanger ? "0 0 10px var(--red)" : "none";
 
-        // 3. Prédictions
-        let t1 = (val * 0.95);
-        let t2 = (val * 1.8);
-        if(isDanger) { t1 = 1.15; t2 = 1.40; }
+        let t1 = isDanger ? 1.12 : (val * 0.95);
+        let t2 = isDanger ? 1.35 : (val * 1.8);
 
-        // 4. Jackpot (>15x)
-        const isJackpot = (hash.length % 7 === 0 && !isDanger);
-        ui.jackpot.style.background = isJackpot ? "var(--gold)" : "#333";
-        ui.jackpot.style.boxShadow = isJackpot ? "0 0 10px var(--gold)" : "none";
+        // --- CALCUL HEURE ---
+        const now = new Date();
+        const formatTime = (date) => date.toTimeString().split(' ')[0];
+        const timeT1 = new Date(now.getTime() + (Math.round(t1 * 1.5) * 1000));
+        const timeT2 = new Date(now.getTime() + (Math.round(t2 * 2.8) * 1000));
 
-        // Update UI
         ui.t1.innerText = Math.max(1.10, t1).toFixed(2) + "x";
-        ui.t2.innerText = Math.max(t1 * 1.5, t2).toFixed(2) + "x";
-        ui.t1t.innerText = "Tps: " + Math.round(t1 * 2) + "s";
-        ui.t2t.innerText = "Tps: " + Math.round(t2 * 3.2) + "s";
+        ui.t2.innerText = Math.max(t1 * 1.4, t2).toFixed(2) + "x";
+        ui.t1t.innerHTML = `Vers: <b style="color:#fff">${formatTime(timeT1)}</b>`;
+        ui.t2t.innerHTML = `Vers: <b style="color:#fff">${formatTime(timeT2)}</b>`;
         
         ui.trust.style.width = trust + "%";
         ui.trustText.innerText = trust + "%";
 
-        // Chain 5
-        ui.chain.innerHTML = '';
-        for(let i=0; i<5; i++) {
-            let next = (1.1 + Math.random() * (isDanger ? 1.5 : 4)).toFixed(2);
-            ui.chain.innerHTML += `<div class="item">${next}x</div>`;
-        }
+        // Alerte sonore
+        playBeep(!isDanger);
 
-        // Nettoyage Auto
-        ui.inHash.value = "";
         ui.inMulti.value = "";
+        ui.btn.innerText = "ANALYSER & PRÉDIRE";
         renderLogs();
     }
 
     function renderLogs() {
         ui.log.innerHTML = '';
         logs.forEach(l => {
-            ui.log.innerHTML += `<div class="badge" style="border-bottom: 2px solid ${l < 2 ? 'var(--red)' : 'var(--green)'}">${l.toFixed(2)}x</div>`;
+            const color = l < 2 ? 'var(--red)' : 'var(--green)';
+            ui.log.innerHTML += `<div class="badge" onclick="fillInput(${l})" style="border-bottom: 2px solid ${color}">${l.toFixed(2)}x</div>`;
         });
     }
 
-    document.getElementById('btn').addEventListener('click', analyze);
+    function fillInput(v) {
+        ui.inMulti.value = v;
+        ui.inMulti.focus();
+    }
+
+    ui.btn.addEventListener('click', analyze);
+    ui.clear.addEventListener('click', () => {
+        if(confirm("Vider l'historique ?")) {
+            logs = [];
+            localStorage.removeItem('sentinel_data');
+            renderLogs();
+        }
+    });
+
     renderLogs();
 </script>
-
 </body>
 </html>
