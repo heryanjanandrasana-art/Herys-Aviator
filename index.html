@@ -3,142 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Herys Ultimate V7.0 - History Edition</title>
+    <title>Herys Ultimate V7.0 - Pro Predictor</title>
     <style>
         body { background-color: #050507; color: white; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 15px; margin: 0; min-height: 100vh; }
         
-        .brand-name { font-size: 38px; font-weight: 900; letter-spacing: 10px; color: #f97316; text-transform: uppercase; margin: 10px 0 20px 0; text-shadow: 0 0 20px rgba(249, 115, 22, 0.4); }
+        .brand-name { font-size: 38px; font-weight: 900; letter-spacing: 10px; color: #f97316; text-transform: uppercase; margin: 10px 0 10px 0; text-shadow: 0 0 20px rgba(249, 115, 22, 0.4); }
+
+        /* SIGNAL GROS LOT */
+        #jackpotAlert {
+            display: none;
+            background: linear-gradient(45deg, #fbbf24, #f59e0b);
+            color: #000;
+            font-weight: 900;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 580px;
+            text-align: center;
+            font-size: 12px;
+            text-transform: uppercase;
+            animation: pulse-gold 1s infinite;
+            border: 2px solid #fff;
+        }
+        @keyframes pulse-gold {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.02); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
 
         .split-container { display: flex; gap: 10px; width: 100%; max-width: 600px; }
         .engine-block { flex: 1; background: #0c0c0f; border-radius: 20px; padding: 15px; border: 1px solid #1a1a20; }
         
-        .tag { font-size: 9px; color: #f97316; font-weight: bold; text-align: center; margin-bottom: 15px; letter-spacing: 2px; border-bottom: 1px solid #222; padding-bottom: 5px; }
+        .tag { font-size: 9px; color: #f97316; font-weight: bold; text-align: center; margin-bottom: 10px; letter-spacing: 2px; border-bottom: 1px solid #222; padding-bottom: 5px; }
 
-        label { font-size: 8px; color: #555; font-weight: bold; display: block; margin-bottom: 5px; text-transform: uppercase; }
-        input { width: 100%; background: #000; border: 1px solid #222; border-radius: 10px; padding: 10px; color: #f97316; font-family: monospace; font-size: 15px; outline: none; box-sizing: border-box; margin-bottom: 10px; text-align: center; }
+        label { font-size: 8px; color: #555; font-weight: bold; display: block; margin-bottom: 4px; text-transform: uppercase; }
+        input { width: 100%; background: #000; border: 1px solid #222; border-radius: 10px; padding: 12px; color: #f97316; font-family: monospace; font-size: 16px; outline: none; box-sizing: border-box; margin-bottom: 10px; text-align: center; }
 
         .res-stack { margin-top: 15px; display: none; flex-direction: column; gap: 8px; }
         .card { background: #050507; border-radius: 12px; padding: 10px; text-align: center; border: 1px solid #1a1a20; }
         .time-val { font-size: 16px; font-weight: bold; color: #fff; font-family: monospace; }
+        .pred-x { font-size: 20px; color: #f97316; font-weight: 900; }
         
-        .glow-purple { border-color: #9b59b6; box-shadow: 0 0 10px rgba(155, 89, 182, 0.15); }
-        .glow-pink { border-color: #e91e63; box-shadow: 0 0 10px rgba(233, 30, 99, 0.15); }
+        .glow-purple { border-color: #9b59b6; }
+        .glow-pink { border-color: #e91e63; }
 
-        .btn-predict { background: linear-gradient(135deg, #f97316, #ea580c); color: white; border: none; padding: 18px; border-radius: 15px; font-weight: bold; width: 100%; max-width: 400px; cursor: pointer; margin-top: 20px; text-transform: uppercase; }
+        .btn-predict { background: linear-gradient(135deg, #f97316, #ea580c); color: white; border: none; padding: 20px; border-radius: 15px; font-weight: 900; width: 100%; max-width: 400px; cursor: pointer; margin-top: 20px; text-transform: uppercase; }
         
-        #safe-A, #safe-B { font-size: 8px; text-align: center; font-weight: bold; margin-bottom: 8px; height: 10px; }
-
-        /* SECTION HISTORIQUE */
-        .history-section { width: 100%; max-width: 500px; margin-top: 30px; border-top: 1px solid #1a1a20; padding-top: 20px; }
-        .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .history-title { font-size: 12px; font-weight: bold; color: #f97316; letter-spacing: 2px; }
-        .btn-clear { background: none; border: 1px solid #333; color: #666; font-size: 9px; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
-        
-        .history-list { display: flex; flex-direction: column; gap: 8px; }
-        .history-item { background: #0c0c0f; border-radius: 10px; padding: 10px; font-size: 11px; border: 1px solid #15151a; display: flex; justify-content: space-between; align-items: center; animation: slideIn 0.3s ease-out; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .hist-tag { color: #f97316; font-weight: bold; margin-right: 5px; }
-        .hist-time { color: #888; margin-right: 10px; }
+        #historySection { width: 100%; max-width: 500px; margin-top: 25px; border-top: 1px solid #1a1a20; padding-top: 15px; }
+        .hist-item { background: #0c0c0f; border-radius: 8px; padding: 8px; font-size: 10px; margin-bottom: 5px; display: flex; justify-content: space-between; border-left: 3px solid #f97316; }
     </style>
 </head>
 <body>
 
     <div class="brand-name">HERYS</div>
 
+    <div id="jackpotAlert">🔥 SIGNAL GROS LOT DÉTECTÉ 🔥</div>
+
     <div class="split-container">
         <div class="engine-block">
             <div class="tag">ENGINE A</div>
-            <label>TIME</label><input type="time" id="timeA">
-            <label>LAST X</label><input type="number" step="0.01" id="multiA" placeholder="1.00">
-            <div id="safe-A"></div>
+            <label>HEURE</label>
+            <input type="time" id="timeA" inputmode="numeric">
+            <label>DERNIER X</label>
+            <input type="number" id="multiA" step="0.01" inputmode="decimal" placeholder="1.00">
             <div id="resStackA" class="res-stack">
                 <div class="card glow-purple"><div id="resA1" class="time-val">--:--:--</div></div>
-                <div class="card" id="cardA2"><div id="resA2" class="time-val">--:--:--</div></div>
+                <div class="card glow-pink"><div id="resA2" class="time-val">--:--:--</div></div>
+                <div class="card" style="border-color:#f97316"><div id="predXA" class="pred-x">-.--X</div></div>
             </div>
         </div>
 
         <div class="engine-block">
             <div class="tag">ENGINE B</div>
-            <label>TIME</label><input type="time" id="timeB">
-            <label>LAST X</label><input type="number" step="0.01" id="multiB" placeholder="1.00">
-            <div id="safe-B"></div>
+            <label>HEURE</label>
+            <input type="time" id="timeB" inputmode="numeric">
+            <label>DERNIER X</label>
+            <input type="number" id="multiB" step="0.01" inputmode="decimal" placeholder="1.00">
             <div id="resStackB" class="res-stack">
                 <div class="card glow-purple"><div id="resB1" class="time-val">--:--:--</div></div>
-                <div class="card" id="cardB2"><div id="resB2" class="time-val">--:--:--</div></div>
+                <div class="card glow-pink"><div id="resB2" class="time-val">--:--:--</div></div>
+                <div class="card" style="border-color:#f97316"><div id="predXB" class="pred-x">-.--X</div></div>
             </div>
         </div>
     </div>
 
-    <button id="mainBtn" class="btn-predict" onclick="runAnalysis()">ASSEMBLAGE DOUBLE</button>
+    <button class="btn-predict" onclick="runGlobal()">LANCER L'ASSEMBLAGE</button>
 
-    <div class="history-section">
-        <div class="history-header">
-            <div class="history-title">LOGS / HISTORIQUE</div>
-            <button class="btn-clear" onclick="clearHistory()">EFFACER</button>
-        </div>
-        <div id="historyList" class="history-list">
-            </div>
+    <div id="historySection">
+        <div style="font-size:10px; color:#555; margin-bottom:10px; text-align:center;">HISTORIQUE DES SESSIONS</div>
+        <div id="historyList"></div>
     </div>
 
     <script>
-        function runAnalysis() {
-            const resA = calculate('A');
-            const resB = calculate('B');
+        function runGlobal() {
+            const dataA = process('A');
+            const dataB = process('B');
             
-            if(resA || resB) {
-                addToHistory(resA, resB);
+            if(dataA || dataB) {
+                updateHistory(dataA, dataB);
+                
+                // EFFACEMENT AUTOMATIQUE APRÈS 1 SECONDE
+                setTimeout(() => {
+                    document.getElementById('timeA').value = "";
+                    document.getElementById('multiA').value = "";
+                    document.getElementById('timeB').value = "";
+                    document.getElementById('multiB').value = "";
+                    document.getElementById('jackpotAlert').style.display = 'none';
+                }, 1000);
             }
         }
 
-        function calculate(engine) {
-            const tIn = document.getElementById(`time${engine}`).value;
-            const mIn = parseFloat(document.getElementById(`multi${engine}`).value);
-            if(!tIn || isNaN(mIn)) return null;
+        function process(id) {
+            const t = document.getElementById(`time${id}`).value;
+            const x = parseFloat(document.getElementById(`multi${id}`).value);
+            if(!t || isNaN(x)) return null;
 
-            document.getElementById(`resStack${engine}`).style.display = 'flex';
-            const [h, m] = tIn.split(':').map(Number);
-            
-            let cfg = { m1: 2, s1: 15, m2: 5, s2: 30, txt: "NORMAL", col: "#22c55e" };
-            if(mIn < 1.3) cfg = { m1: 3, s1: 10, m2: 6, s2: 45, txt: "SAFE", col: "#f97316" };
-            if(mIn >= 10) cfg = { m1: 4, s1: 0, m2: 8, s2: 20, txt: "RISK", col: "#e91e63" };
+            document.getElementById(`resStack${id}`).style.display = 'flex';
+            const [h, m] = t.split(':').map(Number);
 
-            const safe = document.getElementById(`safe-${engine}`);
-            safe.innerText = cfg.txt; safe.style.color = cfg.col;
+            // LOGIQUE SIGNAL GROS LOT
+            if(x > 15) document.getElementById('jackpotAlert').style.display = 'block';
 
-            const format = (addM, baseS) => {
-                let d = new Date(); d.setHours(h); d.setMinutes(m + addM);
-                d.setSeconds(baseS + Math.floor(Math.random() * 20));
+            // ALGO
+            let minX = 1.2, maxX = 3.5, m1 = 2, m2 = 5;
+            if(x < 1.5) { m1 = 3; m2 = 7; minX = 1.1; maxX = 2.0; }
+            if(x > 8) { m1 = 4; m2 = 9; minX = 5.0; maxX = 45.0; }
+
+            const timeGen = (add) => {
+                let d = new Date(); d.setHours(h); d.setMinutes(m + add);
+                d.setSeconds(Math.floor(Math.random() * 59));
                 return d.toTimeString().split(' ')[0];
             };
 
-            const time1 = format(cfg.m1, cfg.s1);
-            const time2 = format(cfg.m2, cfg.s2);
+            const t1 = timeGen(m1);
+            const t2 = timeGen(m2);
+            const px = (Math.random() * (maxX - minX) + minX).toFixed(2);
 
-            document.getElementById(`res${engine}1`).innerText = time1;
-            document.getElementById(`res${engine}2`).innerText = time2;
+            document.getElementById(`res${id}1`).innerText = t1;
+            document.getElementById(`res${id}2`).innerText = t2;
+            document.getElementById(`predX${id}`).innerText = px + "X";
 
-            return { engine, time1, time2 };
+            return { id, t1, px };
         }
 
-        function addToHistory(a, b) {
+        function updateHistory(a, b) {
             const list = document.getElementById('historyList');
             const item = document.createElement('div');
-            item.className = 'history-item';
-            
-            let content = "";
-            if(a) content += `<span><b class="hist-tag">ENG-A:</b> ${a.time1}</span> `;
-            if(b) content += `<span><b class="hist-tag">ENG-B:</b> ${b.time1}</span>`;
-            
-            const now = new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
-            item.innerHTML = `<div>${content}</div> <div class="hist-time">${now}</div>`;
-            
-            list.prepend(item); // Ajoute en haut
-            if(list.children.length > 5) list.lastChild.remove(); // Garde les 5 derniers
-        }
-
-        function clearHistory() {
-            document.getElementById('historyList').innerHTML = "";
+            item.className = 'hist-item';
+            let txt = "";
+            if(a) txt += `E-A: ${a.t1} (${a.px}X) `;
+            if(b) txt += `| E-B: ${b.t1} (${b.px}X)`;
+            item.innerHTML = `<span>${txt}</span> <span style="color:#444">${new Date().toLocaleTimeString()}</span>`;
+            list.prepend(item);
+            if(list.children.length > 5) list.lastChild.remove();
         }
     </script>
 </body>
