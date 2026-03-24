@@ -3,113 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Herys Ultimate V7.0 - Pro Predictor</title>
+    <title>Herys Ultimate V7.0 - Ultra Fast</title>
     <style>
-        body { background-color: #050507; color: white; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 15px; margin: 0; min-height: 100vh; }
+        body { background-color: #050507; color: white; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 15px; margin: 0; }
+        .brand-name { font-size: 32px; font-weight: 900; letter-spacing: 8px; color: #f97316; text-transform: uppercase; margin: 10px 0; }
         
-        .brand-name { font-size: 38px; font-weight: 900; letter-spacing: 10px; color: #f97316; text-transform: uppercase; margin: 10px 0 10px 0; text-shadow: 0 0 20px rgba(249, 115, 22, 0.4); }
-
         /* SIGNAL GROS LOT */
-        #jackpotAlert {
-            display: none;
-            background: linear-gradient(45deg, #fbbf24, #f59e0b);
-            color: #000;
-            font-weight: 900;
-            padding: 12px;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            width: 100%;
-            max-width: 580px;
-            text-align: center;
-            font-size: 12px;
-            text-transform: uppercase;
-            animation: pulse-gold 1s infinite;
-            border: 2px solid #fff;
-        }
-        @keyframes pulse-gold {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.02); opacity: 0.8; }
-            100% { transform: scale(1); opacity: 1; }
-        }
+        #jackpotAlert { display: none; background: #fbbf24; color: #000; font-weight: 900; padding: 10px; border-radius: 10px; margin-bottom: 10px; width: 100%; max-width: 400px; text-align: center; font-size: 11px; animation: pulse 1s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
 
-        .split-container { display: flex; gap: 10px; width: 100%; max-width: 600px; }
-        .engine-block { flex: 1; background: #0c0c0f; border-radius: 20px; padding: 15px; border: 1px solid #1a1a20; }
+        .split-container { display: flex; gap: 8px; width: 100%; max-width: 500px; }
+        .engine-block { flex: 1; background: #0c0c0f; border-radius: 15px; padding: 12px; border: 1px solid #1a1a20; }
         
-        .tag { font-size: 9px; color: #f97316; font-weight: bold; text-align: center; margin-bottom: 10px; letter-spacing: 2px; border-bottom: 1px solid #222; padding-bottom: 5px; }
-
-        label { font-size: 8px; color: #555; font-weight: bold; display: block; margin-bottom: 4px; text-transform: uppercase; }
-        input { width: 100%; background: #000; border: 1px solid #222; border-radius: 10px; padding: 12px; color: #f97316; font-family: monospace; font-size: 16px; outline: none; box-sizing: border-box; margin-bottom: 10px; text-align: center; }
-
-        .res-stack { margin-top: 15px; display: none; flex-direction: column; gap: 8px; }
-        .card { background: #050507; border-radius: 12px; padding: 10px; text-align: center; border: 1px solid #1a1a20; }
-        .time-val { font-size: 16px; font-weight: bold; color: #fff; font-family: monospace; }
-        .pred-x { font-size: 20px; color: #f97316; font-weight: 900; }
+        label { font-size: 8px; color: #555; font-weight: bold; display: block; margin-bottom: 3px; }
+        input { width: 100%; background: #000; border: 1px solid #222; border-radius: 8px; padding: 12px; color: #f97316; font-family: monospace; font-size: 18px; outline: none; box-sizing: border-box; margin-bottom: 8px; text-align: center; }
         
-        .glow-purple { border-color: #9b59b6; }
-        .glow-pink { border-color: #e91e63; }
+        .res-stack { margin-top: 10px; display: none; flex-direction: column; gap: 5px; }
+        .card { background: #050507; border-radius: 8px; padding: 8px; text-align: center; border: 1px solid #1a1a20; }
+        .time-val { font-size: 15px; font-weight: bold; color: #fff; font-family: monospace; }
+        .pred-x { font-size: 18px; color: #f97316; font-weight: 900; }
 
-        .btn-predict { background: linear-gradient(135deg, #f97316, #ea580c); color: white; border: none; padding: 20px; border-radius: 15px; font-weight: 900; width: 100%; max-width: 400px; cursor: pointer; margin-top: 20px; text-transform: uppercase; }
+        .btn-predict { background: linear-gradient(135deg, #f97316, #ea580c); color: white; border: none; padding: 18px; border-radius: 12px; font-weight: 900; width: 100%; max-width: 400px; cursor: pointer; margin-top: 15px; text-transform: uppercase; }
         
-        #historySection { width: 100%; max-width: 500px; margin-top: 25px; border-top: 1px solid #1a1a20; padding-top: 15px; }
-        .hist-item { background: #0c0c0f; border-radius: 8px; padding: 8px; font-size: 10px; margin-bottom: 5px; display: flex; justify-content: space-between; border-left: 3px solid #f97316; }
+        .hist-item { background: #0c0c0f; border-radius: 6px; padding: 6px; font-size: 9px; margin-top: 4px; border-left: 2px solid #f97316; display: flex; justify-content: space-between; width: 100%; max-width: 400px;}
     </style>
 </head>
 <body>
 
     <div class="brand-name">HERYS</div>
-
-    <div id="jackpotAlert">🔥 SIGNAL GROS LOT DÉTECTÉ 🔥</div>
+    <div id="jackpotAlert">🔥 SIGNAL GROS LOT 🔥</div>
 
     <div class="split-container">
         <div class="engine-block">
-            <div class="tag">ENGINE A</div>
-            <label>HEURE</label>
-            <input type="time" id="timeA" inputmode="numeric">
+            <label>HEURE (ex: 0830)</label>
+            <input type="text" id="timeA" placeholder="00:00" inputmode="numeric" maxlength="5" onkeyup="formatTime(this, 'multiA')">
             <label>DERNIER X</label>
             <input type="number" id="multiA" step="0.01" inputmode="decimal" placeholder="1.00">
             <div id="resStackA" class="res-stack">
-                <div class="card glow-purple"><div id="resA1" class="time-val">--:--:--</div></div>
-                <div class="card glow-pink"><div id="resA2" class="time-val">--:--:--</div></div>
-                <div class="card" style="border-color:#f97316"><div id="predXA" class="pred-x">-.--X</div></div>
+                <div class="card"><div id="resA1" class="time-val">--:--</div></div>
+                <div class="card" style="border-color:#f97316"><div id="predXA" class="pred-x">--X</div></div>
             </div>
         </div>
 
         <div class="engine-block">
-            <div class="tag">ENGINE B</div>
-            <label>HEURE</label>
-            <input type="time" id="timeB" inputmode="numeric">
+            <label>HEURE (ex: 0830)</label>
+            <input type="text" id="timeB" placeholder="00:00" inputmode="numeric" maxlength="5" onkeyup="formatTime(this, 'multiB')">
             <label>DERNIER X</label>
             <input type="number" id="multiB" step="0.01" inputmode="decimal" placeholder="1.00">
             <div id="resStackB" class="res-stack">
-                <div class="card glow-purple"><div id="resB1" class="time-val">--:--:--</div></div>
-                <div class="card glow-pink"><div id="resB2" class="time-val">--:--:--</div></div>
-                <div class="card" style="border-color:#f97316"><div id="predXB" class="pred-x">-.--X</div></div>
+                <div class="card"><div id="resB1" class="time-val">--:--</div></div>
+                <div class="card" style="border-color:#f97316"><div id="predXB" class="pred-x">--X</div></div>
             </div>
         </div>
     </div>
 
-    <button class="btn-predict" onclick="runGlobal()">LANCER L'ASSEMBLAGE</button>
-
-    <div id="historySection">
-        <div style="font-size:10px; color:#555; margin-bottom:10px; text-align:center;">HISTORIQUE DES SESSIONS</div>
-        <div id="historyList"></div>
-    </div>
+    <button class="btn-predict" onclick="runGlobal()">ANALYSER</button>
+    <div id="historyList" style="margin-top:10px; width:100%; display:flex; flex-direction:column; align-items:center;"></div>
 
     <script>
+        // Masque automatique pour l'heure (ajoute ":" après 2 chiffres)
+        function formatTime(input, nextId) {
+            let val = input.value.replace(/\D/g, '');
+            if (val.length >= 2) val = val.substring(0,2) + ':' + val.substring(2,4);
+            input.value = val;
+            if (val.length === 5) document.getElementById(nextId).focus();
+        }
+
         function runGlobal() {
-            const dataA = process('A');
-            const dataB = process('B');
-            
-            if(dataA || dataB) {
-                updateHistory(dataA, dataB);
-                
-                // EFFACEMENT AUTOMATIQUE APRÈS 1 SECONDE
+            const a = process('A');
+            const b = process('B');
+            if(a || b) {
+                updateHistory(a, b);
                 setTimeout(() => {
-                    document.getElementById('timeA').value = "";
-                    document.getElementById('multiA').value = "";
-                    document.getElementById('timeB').value = "";
-                    document.getElementById('multiB').value = "";
+                    document.getElementById('timeA').value = ""; document.getElementById('multiA').value = "";
+                    document.getElementById('timeB').value = ""; document.getElementById('multiB').value = "";
                     document.getElementById('jackpotAlert').style.display = 'none';
+                    document.getElementById('timeA').focus();
                 }, 1000);
             }
         }
@@ -117,46 +86,33 @@
         function process(id) {
             const t = document.getElementById(`time${id}`).value;
             const x = parseFloat(document.getElementById(`multi${id}`).value);
-            if(!t || isNaN(x)) return null;
+            if(t.length < 5 || isNaN(x)) return null;
 
             document.getElementById(`resStack${id}`).style.display = 'flex';
             const [h, m] = t.split(':').map(Number);
-
-            // LOGIQUE SIGNAL GROS LOT
             if(x > 15) document.getElementById('jackpotAlert').style.display = 'block';
 
-            // ALGO
-            let minX = 1.2, maxX = 3.5, m1 = 2, m2 = 5;
-            if(x < 1.5) { m1 = 3; m2 = 7; minX = 1.1; maxX = 2.0; }
-            if(x > 8) { m1 = 4; m2 = 9; minX = 5.0; maxX = 45.0; }
+            let minX = 1.2, maxX = 3.0, addM = 3;
+            if(x < 1.5) { addM = 4; maxX = 1.9; }
+            if(x > 8) { addM = 6; minX = 4.0; maxX = 25.0; }
 
-            const timeGen = (add) => {
-                let d = new Date(); d.setHours(h); d.setMinutes(m + add);
-                d.setSeconds(Math.floor(Math.random() * 59));
-                return d.toTimeString().split(' ')[0];
-            };
-
-            const t1 = timeGen(m1);
-            const t2 = timeGen(m2);
+            let d = new Date(); d.setHours(h); d.setMinutes(m + addM);
+            const t1 = d.toTimeString().split(' ')[0].substring(0,5);
             const px = (Math.random() * (maxX - minX) + minX).toFixed(2);
 
             document.getElementById(`res${id}1`).innerText = t1;
-            document.getElementById(`res${id}2`).innerText = t2;
             document.getElementById(`predX${id}`).innerText = px + "X";
-
-            return { id, t1, px };
+            return { t1, px };
         }
 
         function updateHistory(a, b) {
             const list = document.getElementById('historyList');
             const item = document.createElement('div');
             item.className = 'hist-item';
-            let txt = "";
-            if(a) txt += `E-A: ${a.t1} (${a.px}X) `;
-            if(b) txt += `| E-B: ${b.t1} (${b.px}X)`;
-            item.innerHTML = `<span>${txt}</span> <span style="color:#444">${new Date().toLocaleTimeString()}</span>`;
+            let txt = (a ? `A: ${a.t1}(${a.px}X) ` : "") + (b ? `| B: ${b.t1}(${b.px}X)` : "");
+            item.innerHTML = `<span>${txt}</span> <span style="color:#444">${new Date().toLocaleTimeString().substring(0,5)}</span>`;
             list.prepend(item);
-            if(list.children.length > 5) list.lastChild.remove();
+            if(list.children.length > 3) list.lastChild.remove();
         }
     </script>
 </body>
