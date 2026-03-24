@@ -2,8 +2,8 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Herys Sentinel v40</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Herys Sentinel v43</title>
     <style>
         :root {
             --bg: #0a0a0c;
@@ -16,220 +16,168 @@
         }
 
         body {
-            background: var(--bg);
-            color: var(--text);
+            background: var(--bg); color: var(--text);
             font-family: 'Inter', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; margin: 0; overflow: hidden;
         }
 
         .app-container {
-            width: 380px;
-            background: var(--card);
-            border-radius: 24px;
-            padding: 25px;
-            border: 1px solid #2d2d3a;
+            width: 360px; background: var(--card); border-radius: 24px;
+            padding: 20px; border: 1px solid #2d2d3a;
             box-shadow: 0 20px 50px rgba(0,0,0,0.8);
         }
 
-        .status-bar {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            background: #000;
-            padding: 10px 15px;
-            border-radius: 12px;
-        }
-
-        .indicator { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: bold; }
+        /* Status & Trust */
+        .status-bar { display: flex; justify-content: space-between; margin-bottom: 15px; background: #000; padding: 10px; border-radius: 12px; }
+        .indicator { display: flex; align-items: center; gap: 6px; font-size: 9px; font-weight: bold; }
         .dot { width: 8px; height: 8px; border-radius: 50%; background: #333; transition: 0.4s; }
+        .trust-bar { height: 4px; background: #222; border-radius: 2px; overflow: hidden; margin-top: 5px; }
+        #trust-fill { width: 0%; height: 100%; background: var(--blue); transition: 1s; }
 
-        .trust-section { margin-bottom: 20px; }
-        .trust-bar { height: 6px; background: #222; border-radius: 3px; overflow: hidden; margin-top: 5px; }
-        #trust-fill { width: 0%; height: 100%; background: var(--blue); transition: 1s ease; }
+        /* Grid */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .card { background: #1c1c27; padding: 12px; border-radius: 16px; border: 1px solid #2d2d3a; text-align: center; }
+        .val { font-size: 22px; font-weight: 900; margin: 2px 0; }
+        .sub { font-size: 9px; color: #888; }
 
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-        .card { background: #1c1c27; padding: 15px; border-radius: 16px; border: 1px solid #2d2d3a; text-align: center; }
-        .val { font-size: 24px; font-weight: 900; margin: 5px 0; }
-        .sub { font-size: 10px; color: #888; }
-
-        .chain { background: #000; padding: 12px; border-radius: 12px; margin-bottom: 15px; }
-        .chain-items { display: flex; justify-content: space-between; margin-top: 8px; }
-        .item { font-size: 11px; background: #1a1a1a; padding: 4px 8px; border-radius: 4px; color: var(--green); }
-
-        input {
-            width: 100%; padding: 14px; margin-bottom: 10px; background: #000;
-            border: 1px solid #333; color: #fff; border-radius: 10px; box-sizing: border-box;
+        /* Inputs */
+        .input-row { display: flex; gap: 5px; margin-bottom: 8px; }
+        input { 
+            flex: 1; padding: 12px; background: #000; border: 1px solid #333; 
+            color: #fff; border-radius: 10px; font-size: 13px; outline: none;
         }
+        .btn-paste { background: #222; color: var(--blue); border: 1px solid var(--blue); border-radius: 10px; padding: 0 15px; cursor: pointer; font-size: 10px; font-weight: bold; }
+
+        /* Custom Keyboard */
+        .keyboard { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 15px; }
+        .key { 
+            background: #252533; color: #fff; padding: 12px; border-radius: 8px; 
+            text-align: center; font-weight: bold; cursor: pointer; user-select: none;
+        }
+        .key:active { background: var(--blue); color: #000; }
+        .key.special { background: #333; color: var(--red); }
+
         .btn-go {
-            width: 100%; padding: 16px; background: var(--green); color: #000;
-            border: none; border-radius: 12px; font-weight: 900; cursor: pointer;
-            text-transform: uppercase; transition: 0.2s;
+            width: 100%; padding: 15px; background: var(--green); color: #000;
+            border: none; border-radius: 12px; font-weight: 900; cursor: pointer; text-transform: uppercase;
         }
-        .btn-go:active { transform: scale(0.98); }
 
-        .history { display: flex; gap: 6px; margin-top: 10px; overflow-x: auto; padding-bottom: 5px; }
-        .badge { font-size: 9px; padding: 3px 6px; background: #222; border-radius: 4px; cursor: pointer; }
-        
-        .clear-btn {
-            background: none; border: 1px solid #333; color: #555; font-size: 8px; 
-            padding: 3px 6px; border-radius: 4px; cursor: pointer; float: right; margin-bottom: 5px;
-        }
+        .history { display: flex; gap: 5px; margin-top: 10px; overflow-x: auto; white-space: nowrap; }
+        .badge { font-size: 9px; padding: 4px 8px; background: #222; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
     <div class="status-bar">
-        <div class="indicator">
-            <div id="danger-dot" class="dot"></div> <span>SÉCURITÉ</span>
-        </div>
-        <div class="indicator">
-            <div id="jackpot-dot" class="dot"></div> <span>GOLD POT</span>
-        </div>
+        <div class="indicator"><div id="danger-dot" class="dot"></div> SÉCURITÉ</div>
+        <div class="indicator"><div id="jackpot-dot" class="dot"></div> GOLD POT</div>
     </div>
 
-    <div class="trust-section">
-        <div style="display:flex; justify-content:space-between; font-size:10px;">
-            <span>INDICE DE CONFIANCE</span>
-            <span id="trust-pct">0%</span>
-        </div>
+    <div style="font-size:9px; margin-bottom:10px;">
+        CONFIANCE IA: <span id="trust-pct" style="color:var(--blue)">0%</span>
         <div class="trust-bar"><div id="trust-fill"></div></div>
     </div>
 
     <div class="grid">
-        <div class="card">
-            <div class="sub">T1 SAFE</div>
-            <div id="t1" class="val" style="color: var(--green);">0.00x</div>
-            <div id="t1-t" class="sub">--:--:--</div>
-        </div>
-        <div class="card">
-            <div class="sub">T2 RISK</div>
-            <div id="t2" class="val" style="color: var(--gold);">0.00x</div>
-            <div id="t2-t" class="sub">--:--:--</div>
-        </div>
+        <div class="card"><div class="sub">T1 SAFE</div><div id="t1" class="val" style="color:var(--green)">0.00x</div><div id="t1-t" class="sub">--:--:--</div></div>
+        <div class="card"><div class="sub">T2 RISK</div><div id="t2" class="val" style="color:var(--gold)">0.00x</div><div id="t2-t" class="sub">--:--:--</div></div>
     </div>
 
-    <div class="chain">
-        <div class="sub" style="text-align:center">SÉQUENCE 5 TOURS</div>
-        <div class="chain-items" id="chain">
-            <div class="item">--</div><div class="item">--</div><div class="item">--</div><div class="item">--</div><div class="item">--</div>
-        </div>
+    <div class="input-row">
+        <input type="text" id="hash" placeholder="Hash (8 chars)" readonly>
+        <button class="btn-paste" onclick="pasteHash()">PASTE</button>
+    </div>
+    <input type="text" id="multi" placeholder="Multiplicateur" readonly style="border-color: var(--blue);">
+
+    <div class="keyboard">
+        <div class="key" onclick="press('1')">1</div><div class="key" onclick="press('2')">2</div><div class="key" onclick="press('3')">3</div>
+        <div class="key" onclick="press('4')">4</div><div class="key" onclick="press('5')">5</div><div class="key" onclick="press('6')">6</div>
+        <div class="key" onclick="press('7')">7</div><div class="key" onclick="press('8')">8</div><div class="key" onclick="press('9')">9</div>
+        <div class="key" onclick="press('.')">.</div><div class="key" onclick="press('0')">0</div><div class="key special" onclick="press('C')">⌫</div>
     </div>
 
-    <input type="text" id="hash" placeholder="Hash SHA-256">
-    <input type="number" step="0.01" id="multi" placeholder="Dernier Multiplicateur">
+    <button class="btn-go" id="btn" onclick="analyze()">Analyser & Prédire</button>
 
-    <button class="btn-go" id="btn">Analyser & Prédire</button>
-
-    <div style="margin-top: 15px;">
-        <button class="clear-btn" id="clear">RESET</button>
-        <div class="history" id="log"></div>
-    </div>
+    <div class="history" id="log"></div>
 </div>
 
 <script>
     let logs = JSON.parse(localStorage.getItem('sentinel_data')) || [];
-
     const ui = {
-        t1: document.getElementById('t1'),
-        t2: document.getElementById('t2'),
-        t1t: document.getElementById('t1-t'),
-        t2t: document.getElementById('t2-t'),
-        trust: document.getElementById('trust-fill'),
-        trustText: document.getElementById('trust-pct'),
-        danger: document.getElementById('danger-dot'),
-        jackpot: document.getElementById('jackpot-dot'),
-        chain: document.getElementById('chain'),
-        log: document.getElementById('log'),
-        inHash: document.getElementById('hash'),
-        inMulti: document.getElementById('multi'),
-        btn: document.getElementById('btn'),
-        clear: document.getElementById('clear')
+        t1: document.getElementById('t1'), t2: document.getElementById('t2'),
+        t1t: document.getElementById('t1-t'), t2t: document.getElementById('t2-t'),
+        trust: document.getElementById('trust-fill'), trustText: document.getElementById('trust-pct'),
+        danger: document.getElementById('danger-dot'), jackpot: document.getElementById('jackpot-dot'),
+        log: document.getElementById('log'), inHash: document.getElementById('hash'),
+        inMulti: document.getElementById('multi'), btn: document.getElementById('btn')
     };
 
-    // --- SON NOTIFICATION ---
     function playBeep(isHigh) {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
-        oscillator.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(isHigh ? 1000 : 600, audioCtx.currentTime);
-        gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
-        oscillator.start();
-        oscillator.stop(audioCtx.currentTime + 0.3);
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+        osc.connect(g); g.connect(ctx.destination);
+        osc.frequency.value = isHigh ? 1000 : 600;
+        g.gain.setValueAtTime(0.05, ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.3);
+        osc.start(); osc.stop(ctx.currentTime + 0.3);
+    }
+
+    async function pasteHash() {
+        try {
+            const text = await navigator.clipboard.readText();
+            ui.inHash.value = text.substring(0, 8).toUpperCase();
+        } catch (err) { alert("Autorisez l'accès au presse-papier"); }
+    }
+
+    function press(v) {
+        if(v === 'C') ui.inMulti.value = ui.inMulti.value.slice(0, -1);
+        else if(ui.inMulti.value.length < 5) ui.inMulti.value += v;
     }
 
     async function analyze() {
         const val = parseFloat(ui.inMulti.value);
         if(isNaN(val)) return;
 
-        ui.btn.innerText = "SCAN EN COURS...";
-        
-        logs.unshift(val);
-        if(logs.length > 10) logs.pop();
+        ui.btn.innerText = "CALCUL...";
+        logs.unshift(val); if(logs.length > 10) logs.pop();
         localStorage.setItem('sentinel_data', JSON.stringify(logs));
 
         await new Promise(r => setTimeout(r, 600));
 
-        let trust = Math.min(40 + (logs.length * 6), 99);
-        const isDanger = (val < 1.25 || (logs[1] < 1.5));
-        
-        ui.danger.style.background = isDanger ? "var(--red)" : "var(--green)";
-        ui.danger.style.boxShadow = isDanger ? "0 0 10px var(--red)" : "none";
+        const isDanger = (val < 1.3 || logs[1] < 1.4);
+        let t1 = isDanger ? 1.15 : (val * 0.96);
+        let t2 = isDanger ? 1.45 : (val * 1.85);
 
-        let t1 = isDanger ? 1.12 : (val * 0.95);
-        let t2 = isDanger ? 1.35 : (val * 1.8);
-
-        // --- CALCUL HEURE ---
         const now = new Date();
-        const formatTime = (date) => date.toTimeString().split(' ')[0];
-        const timeT1 = new Date(now.getTime() + (Math.round(t1 * 1.5) * 1000));
-        const timeT2 = new Date(now.getTime() + (Math.round(t2 * 2.8) * 1000));
+        const format = (d) => d.toTimeString().split(' ')[0];
+        const timeT1 = new Date(now.getTime() + (Math.round(t1 * 2) * 1000));
+        const timeT2 = new Date(now.getTime() + (Math.round(t2 * 3) * 1000));
 
         ui.t1.innerText = Math.max(1.10, t1).toFixed(2) + "x";
         ui.t2.innerText = Math.max(t1 * 1.4, t2).toFixed(2) + "x";
-        ui.t1t.innerHTML = `Vers: <b style="color:#fff">${formatTime(timeT1)}</b>`;
-        ui.t2t.innerHTML = `Vers: <b style="color:#fff">${formatTime(timeT2)}</b>`;
+        ui.t1t.innerText = format(timeT1);
+        ui.t2t.innerText = format(timeT2);
         
-        ui.trust.style.width = trust + "%";
-        ui.trustText.innerText = trust + "%";
-
-        // Alerte sonore
+        ui.trust.style.width = Math.min(45 + (logs.length * 5), 98) + "%";
+        ui.trustText.innerText = ui.trust.style.width;
+        ui.danger.style.background = isDanger ? "var(--red)" : "var(--green)";
+        
         playBeep(!isDanger);
-
+        ui.btn.innerText = "Analyser & Prédire";
         ui.inMulti.value = "";
-        ui.btn.innerText = "ANALYSER & PRÉDIRE";
         renderLogs();
     }
 
     function renderLogs() {
         ui.log.innerHTML = '';
         logs.forEach(l => {
-            const color = l < 2 ? 'var(--red)' : 'var(--green)';
-            ui.log.innerHTML += `<div class="badge" onclick="fillInput(${l})" style="border-bottom: 2px solid ${color}">${l.toFixed(2)}x</div>`;
+            const c = l < 2 ? 'var(--red)' : 'var(--green)';
+            ui.log.innerHTML += `<div class="badge" onclick="ui.inMulti.value='${l}'" style="border-bottom:2px solid ${c}">${l.toFixed(2)}x</div>`;
         });
     }
-
-    function fillInput(v) {
-        ui.inMulti.value = v;
-        ui.inMulti.focus();
-    }
-
-    ui.btn.addEventListener('click', analyze);
-    ui.clear.addEventListener('click', () => {
-        if(confirm("Vider l'historique ?")) {
-            logs = [];
-            localStorage.removeItem('sentinel_data');
-            renderLogs();
-        }
-    });
 
     renderLogs();
 </script>
