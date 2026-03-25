@@ -6,7 +6,7 @@
     <title>HERYS ELITE V38.4 - PRO PRECISION</title>
     <style>
         body { font-family: 'Courier New', monospace; background: #050505; color: #0f0; padding: 10px; margin: 0; }
-        .container { max-width: 100%; border: 1px solid #0f0; padding: 15px; box-shadow: 0 0 15px #0f0; border-radius: 8px; }
+        .container { max-width: 100%; border: 1px solid #0f0; padding: 15px; box-shadow: 0 0 15px #0f0; border-radius: 8px; transition: all 0.3s ease; }
         h2 { text-align: center; font-size: 1.1em; color: #0f0; text-shadow: 0 0 8px #0f0; margin-bottom: 20px; }
         
         label { display: block; margin-top: 10px; font-size: 0.75em; color: #bc13fe; font-weight: bold; }
@@ -16,16 +16,17 @@
         #nonceInput { text-align: center; font-weight: bold; color: #ff00ff; border: 1px solid #ff00ff; }
 
         .btn-main { cursor: pointer; font-weight: bold; background: #0f0; color: #000; border: none; height: 50px; }
-        .btn-next { background: #bc13fe; color: #fff; width: 120px; border: none; }
+        .btn-next { background: #bc13fe; color: #fff; width: 120px; border: none; cursor: pointer; }
+        .btn-reset { background: #444; color: #eee; width: 100px; border: none; cursor: pointer; }
         .btn-main:active, .btn-next:active { opacity: 0.7; transform: scale(0.95); }
 
         table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85em; background: #000; }
         th, td { border: 1px solid #222; padding: 12px; text-align: center; }
         th { background: #111; color: #bc13fe; }
 
-        .bleu { color: #3498db; } /* Crash bas */
-        .violet { color: #bc13fe; font-weight: bold; } /* Moyen */
-        .rose { color: #ff00ff; font-weight: bold; animation: glow 1s infinite alternate; } /* Gros multiplicateur */
+        .bleu { color: #3498db; }
+        .violet { color: #bc13fe; font-weight: bold; }
+        .rose { color: #ff00ff; font-weight: bold; animation: glow 1s infinite alternate; }
         
         @keyframes glow {
             from { text-shadow: 0 0 2px #ff00ff; }
@@ -41,7 +42,7 @@
     <h2>🛩️ HERYS ELITE V38.4 (PRECISION)</h2>
 
     <label>Server Seed (Hash de la vidéo) :</label>
-    <input id="serverSeed" type="text" placeholder="Coller le dernier Hash...">
+    <input id="serverSeed" type="text" placeholder="Coller le dernier Hash SHA512...">
 
     <div class="flex-row">
         <div style="flex-grow: 1;">
@@ -58,7 +59,8 @@
     
     <div class="flex-row">
         <button class="btn-next" onclick="incrementerNonce()">SUIVANT +1</button>
-        <button style="background:#333; color:#fff;" onclick="copierResultats()">📋 COPIER</button>
+        <button class="btn-reset" onclick="resetApp()">Vider</button>
+        <button style="background:#222; color:#fff; flex-grow:1; border:1px solid #444;" onclick="copierResultats()">📋 COPIER</button>
     </div>
 
     <div id="status">Prêt pour l'analyse...</div>
@@ -78,7 +80,7 @@
 <audio id="alertSound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
 
 <script>
-    // Algorithme SHA-512 High Speed
+    // Algorithme HMAC SHA-512 optimisé
     async function hmacSha512(key, message) {
         const encoder = new TextEncoder();
         const cryptoKey = await crypto.subtle.importKey(
@@ -90,17 +92,12 @@
         return Array.from(new Uint8Array(signature)).map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
-    // Calculateur de multiplicateur ultra-précis (Provably Fair Standard)
+    // Calculateur de multiplicateur (Standard Provably Fair)
     function calculateMultiplier(hash) {
         const hex13 = hash.slice(0, 13);
         const intVal = parseInt(hex13, 16);
-        
-        // Diviseur 2^52 pour une précision maximale
-        const floatVal = intVal / 4503599627370496; 
-        
-        // Application du House Edge à 2% (Standard 0.98)
+        const floatVal = intVal / Math.pow(2, 52); 
         const result = 0.98 / (1 - floatVal);
-        
         const finalMult = Math.floor(result * 100) / 100;
         return Math.max(1.00, finalMult);
     }
@@ -109,6 +106,14 @@
         const nInput = document.getElementById('nonceInput');
         nInput.value = parseInt(nInput.value) + 1;
         genererPrevisions();
+    }
+
+    function resetApp() {
+        document.getElementById('serverSeed').value = '';
+        document.getElementById('resBody').innerHTML = '';
+        document.getElementById('status').innerText = 'Champs réinitialisés.';
+        document.getElementById('mainApp').style.borderColor = "#0f0";
+        document.getElementById('mainApp').style.boxShadow = "0 0 15px #0f0";
     }
 
     async function genererPrevisions() {
@@ -127,10 +132,12 @@
         let tempHTML = "";
         let alerteRose = false;
 
-        // Analyse des 12 prochains tours
+        // Analyse des 12 tours suivants
         for (let i = 0; i < 12; i++) {
             let currentNonce = startNonce + i;
-            const hash = await hmacSha512(sSeed, `${cSeed}:${currentNonce}`);
+            
+            // On utilise le Client Seed + Nonce comme message, et le Server Seed comme Clé
+            const hash = await hmacSha512(sSeed, `${cSeed}-${currentNonce}`); 
             const mult = calculateMultiplier(hash);
 
             let colorClass = 'bleu';
@@ -145,7 +152,7 @@
                 colorClass = 'rose';
                 icon = '🔥';
                 signal = "JACKPOT";
-                if(i < 3) alerteRose = true; // Alerte si le rose est proche (dans les 3 prochains tours)
+                if(i < 3) alerteRose = true; 
             }
 
             tempHTML += `
@@ -161,11 +168,11 @@
 
         if (alerteRose) {
             statusEl.innerHTML = "<span style='color:#ff00ff'>🚨 ALERTE : ROSE IMMINENT (TOP 3) !</span>";
-            alertSnd.play().catch(e => {});
+            try { alertSnd.play(); } catch(e) {}
             document.getElementById('mainApp').style.borderColor = "#ff00ff";
             document.getElementById('mainApp').style.boxShadow = "0 0 30px #ff00ff";
         } else {
-            statusEl.innerHTML = "✅ Analyse stable. Tendance calculée.";
+            statusEl.innerHTML = "✅ Séquence synchronisée avec succès.";
             document.getElementById('mainApp').style.borderColor = "#0f0";
             document.getElementById('mainApp').style.boxShadow = "0 0 15px #0f0";
         }
@@ -173,6 +180,7 @@
 
     function copierResultats() {
         const rows = document.querySelectorAll('#resBody tr');
+        if(rows.length === 0) return;
         let texte = "Herys Elite V38.4 - Prévisions :\n";
         rows.forEach(row => {
             const cells = row.querySelectorAll('td');
