@@ -3,67 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HERYS ELITE V38.7 - ULTRA PRECISION</title>
+    <title>HERYS ELITE V38.9 - SMART SYNC</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #000; color: #0f0; padding: 10px; margin: 0; }
-        .container { max-width: 100%; border: 2px solid #0f0; padding: 15px; border-radius: 12px; box-shadow: 0 0 20px rgba(0,255,0,0.2); }
-        h2 { text-align: center; color: #0f0; text-shadow: 0 0 10px #0f0; font-size: 1.2em; }
+        body { font-family: sans-serif; background: #000; color: #0f0; padding: 10px; margin: 0; }
+        .container { border: 2px solid #0f0; padding: 12px; border-radius: 10px; box-shadow: 0 0 15px #0f0; }
+        h2 { text-align: center; font-size: 1.1em; text-shadow: 0 0 5px #0f0; }
         
-        .input-group { background: #111; padding: 10px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #333; }
-        label { display: block; font-size: 0.7em; color: #bc13fe; font-weight: bold; margin-bottom: 5px; }
+        .box { background: #111; padding: 10px; border-radius: 5px; margin-bottom: 10px; border: 1px solid #333; }
+        label { display: block; font-size: 0.65em; color: #bc13fe; font-weight: bold; margin-bottom: 2px; }
         
-        input { background: #000; color: #0f0; border: 1px solid #444; padding: 12px; width: 100%; box-sizing: border-box; border-radius: 6px; font-size: 1em; margin-bottom: 10px; outline: none; }
-        input:focus { border-color: #bc13fe; }
+        input { background: #000; color: #0f0; border: 1px solid #444; padding: 10px; width: 100%; box-sizing: border-box; border-radius: 4px; font-size: 0.9em; margin-bottom: 8px; }
 
-        .btn-main { background: #0f0; color: #000; font-weight: bold; padding: 15px; width: 100%; border: none; border-radius: 6px; cursor: pointer; font-size: 1em; margin-bottom: 10px; }
-        .btn-sub { background: #bc13fe; color: #fff; padding: 10px; border: none; border-radius: 6px; width: 48%; cursor: pointer; }
+        .btn-main { background: #0f0; color: #000; font-weight: bold; padding: 15px; width: 100%; border: none; border-radius: 5px; cursor: pointer; }
+        .btn-calib { background: #ff00ff; color: #fff; font-size: 0.8em; margin-top: 5px; border: none; padding: 10px; width: 100%; border-radius: 5px; font-weight: bold; }
         
-        .flex { display: flex; justify-content: space-between; gap: 5px; }
-
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #050505; }
-        th, td { border: 1px solid #222; padding: 12px; text-align: center; font-size: 0.85em; }
-        th { color: #bc13fe; }
-
-        .bleu { color: #3498db; }
-        .violet { color: #bc13fe; font-weight: bold; }
-        .rose { color: #ff00ff; font-weight: bold; animation: pulse 1s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        #status { font-size: 0.75em; text-align: center; margin: 10px 0; color: #ff0; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.8em; }
+        th, td { border: 1px solid #222; padding: 8px; text-align: center; }
+        .win { color: #ff00ff; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>🛩️ HERYS ELITE V38.7</h2>
+    <h2>🎯 HERYS ELITE V38.9</h2>
 
-    <div class="input-group">
+    <div class="box">
         <label>SERVER SEED :</label>
-        <input id="serverSeed" type="text" placeholder="Coller le Hash du jeu...">
+        <input id="sSeed" type="text" placeholder="Hash long...">
         
-        <label>SEED COMBINÉ (À copier dans le jeu) :</label>
-        <input id="combinedSeed" type="text" placeholder="Le seed combiné du tour...">
+        <label>CLIENT SEED :</label>
+        <input id="cSeed" type="text" placeholder="Seed combiné...">
 
-        <div class="flex">
-            <div style="width: 100%;">
-                <label>NONCE (N° DU TOUR) :</label>
-                <input id="nonceInput" type="number" placeholder="Ex: 8093500">
+        <div style="display:flex; gap:5px;">
+            <div style="flex:1">
+                <label>TOUR (NONCE) :</label>
+                <input id="nonce" type="number" value="8093500">
+            </div>
+            <div style="flex:1">
+                <label>RÉSULTAT RÉEL :</label>
+                <input id="realRes" type="number" step="0.01" placeholder="Ex: 1.21">
             </div>
         </div>
+        <button class="btn-calib" onclick="calibrate()">🛠️ AUTO-CALIBRATION</button>
     </div>
 
-    <button class="btn-main" onclick="analyser()">🚀 ANALYSER LA SÉQUENCE</button>
-    
-    <div class="flex">
-        <button class="btn-sub" onclick="suivant()">SUIVANT +1</button>
-        <button class="btn-sub" style="background:#444;" onclick="vider()">VIDER</button>
-    </div>
+    <button class="btn-main" onclick="predict()">🔮 PRÉDIRE LA SUITE</button>
 
-    <div id="status" style="text-align:center; margin-top:10px; font-size:0.8em;">Prêt.</div>
+    <div id="status">En attente de calibration...</div>
 
-    <table id="resultTable">
+    <table>
         <thead>
             <tr>
                 <th>TOUR</th>
-                <th>PRÉDIT</th>
+                <th>PRÉDICTION</th>
                 <th>SIGNAL</th>
             </tr>
         </thead>
@@ -72,63 +66,74 @@
 </div>
 
 <script>
-    async function hmacSha512(key, message) {
+    let bestConfig = { algo: "SHA-512", bits: 32, sep: ":", edge: 0.98 };
+
+    async function getHash(s, c, n, config) {
         const enc = new TextEncoder();
-        const cryptoKey = await crypto.subtle.importKey("raw", enc.encode(key), { name: "HMAC", hash: "SHA-512" }, false, ["sign"]);
-        const sig = await crypto.subtle.sign("HMAC", cryptoKey, enc.encode(message));
-        return Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, '0')).join('');
+        const msg = `${c}${config.sep}${n}`;
+        const data = enc.encode(msg);
+        const hashBuf = await crypto.subtle.digest(config.algo, data);
+        return Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
-    function calculate(hash) {
-        // CORRECTION FINALE : Lecture sur 32 bits (8 caractères) pour mobile
-        const hStr = hash.slice(0, 8); 
-        const intVal = parseInt(hStr, 16);
-        const e = Math.pow(2, 32);
-        
-        // Formule ajustée à 2.5% de house edge pour coller au 1.04x de ta vidéo
-        let res = (0.975 * e) / (e - intVal);
-        let final = Math.floor(res * 100) / 100;
-        
-        return Math.max(1.00, final);
+    function calc(hash, config) {
+        const chars = (config.bits === 32) ? 8 : 13;
+        const h = BigInt(`0x${hash.slice(0, chars)}`);
+        const e = 2n ** BigInt(config.bits);
+        let res = Number(BigInt(Math.floor(config.edge * 100)) * e / (e - h)) / 100;
+        return Math.max(1.00, Math.floor(res * 100) / 100);
     }
 
-    async function analyser() {
-        const s = document.getElementById('serverSeed').value.trim();
-        const c = document.getElementById('combinedSeed').value.trim();
-        const n = parseInt(document.getElementById('nonceInput').value);
-        const body = document.getElementById('resBody');
+    async function calibrate() {
+        const s = document.getElementById('sSeed').value.trim();
+        const c = document.getElementById('cSeed').value.trim();
+        const n = document.getElementById('nonce').value;
+        const target = parseFloat(document.getElementById('realRes').value);
+        const status = document.getElementById('status');
 
-        if(!s || !c || isNaN(n)) {
-            document.getElementById('status').innerHTML = "<span style='color:red'>Remplissez tous les champs !</span>";
-            return;
+        if(!s || !c || !target) { status.innerText = "❌ Entre les seeds + le résultat réel !"; return; }
+        
+        status.innerText = "⏳ Recherche de la formule exacte...";
+        
+        const algos = ["SHA-512", "SHA-256"];
+        const bits = [32, 52];
+        const seps = [":", "-", ""];
+        
+        for(let a of algos) {
+            for(let b of bits) {
+                for(let sp of seps) {
+                    let cfg = { algo: a, bits: b, sep: sp, edge: 0.98 };
+                    let h = await getHash(s, c, n, cfg);
+                    let res = calc(h, cfg);
+                    
+                    if(Math.abs(res - target) < 0.05) {
+                        bestConfig = cfg;
+                        status.innerHTML = `✅ CALIBRÉ ! Mode: ${a} (${b}b) / Séparateur: "${sp}"`;
+                        predict();
+                        return;
+                    }
+                }
+            }
         }
+        status.innerText = "⚠️ Aucune correspondance parfaite. Mode par défaut activé.";
+    }
 
+    async function predict() {
+        const s = document.getElementById('sSeed').value.trim();
+        const c = document.getElementById('clientSeed')?.value || document.getElementById('cSeed').value;
+        const n = parseInt(document.getElementById('nonce').value);
+        const body = document.getElementById('resBody');
+        
         let html = "";
-        for(let i=0; i<10; i++) {
+        for(let i=1; i<=8; i++) {
             let tour = n + i;
-            // Utilisation du format standard combiné:nonce
-            const hash = await hmacSha512(s, `${c}:${tour}`);
-            const val = calculate(hash);
-
-            let cls = (val < 2) ? 'bleu' : (val < 10) ? 'violet' : 'rose';
-            let sig = (val < 2) ? 'BAS' : (val < 10) ? 'SNIPER' : 'JACKPOT';
-            
-            html += `<tr><td>#${tour}</td><td class="${cls}">${val.toFixed(2)}x</td><td class="${cls}">${sig}</td></tr>`;
+            let h = await getHash(s, c, tour, bestConfig);
+            let val = calc(h, bestConfig);
+            let sig = (val < 2) ? "BAS" : (val < 10) ? "SNIPER" : "JACKPOT";
+            let cls = (val >= 10) ? "win" : "";
+            html += `<tr><td>#${tour}</td><td class="${cls}">${val.toFixed(2)}x</td><td>${sig}</td></tr>`;
         }
         body.innerHTML = html;
-        document.getElementById('status').innerText = "Analyse synchronisée.";
-    }
-
-    function suivant() {
-        let n = document.getElementById('nonceInput');
-        n.value = parseInt(n.value) + 1;
-        analyser();
-    }
-
-    function vider() {
-        document.getElementById('serverSeed').value = "";
-        document.getElementById('combinedSeed').value = "";
-        document.getElementById('resBody').innerHTML = "";
     }
 </script>
 </body>
