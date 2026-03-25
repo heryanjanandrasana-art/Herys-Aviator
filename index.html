@@ -1,166 +1,157 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-  <title>Herys Elite V38 - Simulateur de Séquence</title>
-  <style>
-    body { font-family: 'Courier New', monospace; background: #050505; color: #0f0; padding: 20px; }
-    .container { max-width: 900px; margin: auto; border: 1px solid #0f0; padding: 20px; box-shadow: 0 0 15px #0f0; }
-    input, button, label { background: #111; color: #0f0; border: 1px solid #0f0; padding: 10px; margin: 5px 0; width: calc(100% - 25px); }
-    button { cursor: pointer; font-weight: bold; transition: 0.3s; }
-    button:hover { background: #0f0; color: #000; }
-    #resultTable { width: 100%; border-collapse: collapse; margin-top: 20px; }
-    th, td { border: 1px solid #0f0; padding: 8px; text-align: center; }
-    .rose { color: #ff00ff; font-weight: bold; }
-    .violet { color: #bc13fe; }
-    .bleu { color: #3498db; }
-    .analyse_col { display: none; }
-    #modeAnalyse:checked ~ #resultTable .analyse_col { display: table-cell }
-    #modeAnalyse:checked ~ #resultTable th { display: table-cell }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HERYS ELITE V38.3 - PRO</title>
+    <style>
+        body { font-family: 'Courier New', monospace; background: #050505; color: #0f0; padding: 10px; margin: 0; }
+        .container { max-width: 100%; border: 1px solid #0f0; padding: 15px; box-shadow: 0 0 10px #0f0; }
+        h2 { text-align: center; font-size: 1.1em; color: #0f0; text-shadow: 0 0 5px #0f0; margin-bottom: 20px; }
+        
+        label { display: block; margin-top: 10px; font-size: 0.75em; color: #bc13fe; font-weight: bold; }
+        input, button { background: #111; color: #0f0; border: 1px solid #0f0; padding: 12px; margin: 5px 0; width: 100%; box-sizing: border-box; outline: none; border-radius: 4px; }
+        
+        .flex-row { display: flex; gap: 8px; }
+        #nonceInput { width: 35%; text-align: center; font-weight: bold; color: #ff00ff; }
+
+        button { cursor: pointer; font-weight: bold; background: #0f0; color: #000; transition: 0.2s; border: none; }
+        button:active { transform: scale(0.98); background: #bc13fe; }
+        .copy-btn { background: #333; color: #fff; font-size: 0.8em; padding: 5px; margin-top: 10px; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85em; }
+        th, td { border: 1px solid #222; padding: 10px; text-align: center; }
+        th { background: #111; color: #bc13fe; font-size: 0.8em; }
+
+        .bleu { color: #3498db; }
+        .violet { color: #bc13fe; font-weight: bold; }
+        .rose { color: #ff00ff; font-weight: bold; animation: glow 1s infinite alternate; }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 2px #ff00ff; }
+            to { text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff; }
+        }
+
+        #status { margin-top: 15px; padding: 10px; border-left: 3px solid #0f0; font-size: 0.8em; background: #0a0a0a; min-height: 20px; }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h2>🛩️ HERYS ELITE - ANALYSEUR DE CHAÎNE (V38+)</h2>
-    
-    <label>Dernière Server Seed connue (Vidéo) :</label>
-    <input id="serverSeed" value="a6824623f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c">
 
-    <label>Client Seed (Combinée) :</label>
-    <input id="clientCombined" value="G8UjK9LmN2OpQ4RsT6UvW8XyZ0AbC3De:4rT7Y1uI3oP5aS9dF2gH6jK8lN0qW">
+<div class="container" id="mainApp">
+    <h2>🛩️ HERYS ELITE V38.3 (ALERTE)</h2>
 
-    <label><input type="checkbox" id="modeAnalyse"> 🧠 Mode Analyse (détails avancés)</label>
+    <label>Server Seed (depuis la vidéo) :</label>
+    <input id="serverSeed" type="text" placeholder="Coller le Hash ici...">
 
-    <button onclick="simulerSequence()">🔥 GÉNÉRER LA SÉQUENCE FUTURE (10 TOURS)</button>
+    <div class="flex-row">
+        <div style="flex-grow: 1;">
+            <label>Client Seed :</label>
+            <input id="clientSeed" type="text" value="0000000000000000000">
+        </div>
+        <div style="width: 80px;">
+            <label>Tour (Nonce) :</label>
+            <input id="nonceInput" type="number" value="1">
+        </div>
+    </div>
 
-    <div id="status"></div>
+    <button onclick="genererPrevisions()">🔥 ANALYSER & SURVEILLER</button>
+    <button class="copy-btn" onclick="copierResultats()">📋 COPIER LA LISTE</button>
 
-    <table id="resultTable" style="display:none;">
-      <thead>
-        <tr>
-          <th>Vol #</th>
-          <th>Multiplicateur</th>
-          <th>Couleur</th>
-          <th class="analyse_col">h (probabilité)</th>
-          <th class="analyse_col">Risque</th>
-          <th>Hash (Preview)</th>
-        </tr>
-      </thead>
-      <tbody id="resBody"></tbody>
+    <div id="status">Prêt pour l'analyse...</div>
+
+    <table id="resultTable">
+        <thead>
+            <tr>
+                <th>TOUR</th>
+                <th>CÔTE</th>
+                <th>SIGNAL</th>
+            </tr>
+        </thead>
+        <tbody id="resBody"></tbody>
     </table>
+</div>
 
-    <div id="historique" style="margin-top:20px; font-size:0.9em; color:#bc13fe; max-height:200px; overflow-y:scroll;"></div>
-  </div>
+<audio id="alertSound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
 
-  <script>
-    async function sha512(message) {
-      const msgBuffer = new TextEncoder().encode(message);
-      const hashBuffer = await crypto.subtle.digest('SHA-512', msgBuffer);
-      return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+<script>
+    async function hmacSha512(key, message) {
+        const encoder = new TextEncoder();
+        const cryptoKey = await crypto.subtle.importKey(
+            "raw", encoder.encode(key),
+            { name: "HMAC", hash: "SHA-512" },
+            false, ["sign"]
+        );
+        const signature = await crypto.subtle.sign("HMAC", cryptoKey, encoder.encode(message));
+        return Array.from(new Uint8Array(signature)).map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
-    function getMultiplier(hashHex) {
-      const hex13 = hashHex.slice(0, 13);
-      const h = parseInt(hex13, 16) / Math.pow(2, 52);
-      if (h < 0.01) return 1.00;
-      const mult = 0.97 / (1 - h);
-      return Math.max(1.00, Math.floor(mult * 100) / 100);
+    function calculateMultiplier(hash) {
+        const hex13 = hash.slice(0, 13);
+        const intVal = parseInt(hex13, 16);
+        const floatVal = intVal / Math.pow(2, 52);
+        const result = 0.97 / (1 - floatVal);
+        return Math.max(1.00, Math.floor(result * 100) / 100);
     }
 
-    async function simulerSequence() {
-      const startSeed = document.getElementById('serverSeed').value.trim();
-      const clients = document.getElementById('clientCombined').value.trim();
-      const resBody = document.getElementById('resBody');
-      const table = document.getElementById('resultTable');
-      const statusEl = document.getElementById('status');
-      const historiqueEl = document.getElementById('historique');
+    async function genererPrevisions() {
+        const sSeed = document.getElementById('serverSeed').value.trim();
+        const cSeed = document.getElementById('clientSeed').value.trim();
+        const startNonce = parseInt(document.getElementById('nonceInput').value);
+        const statusEl = document.getElementById('status');
+        const resBody = document.getElementById('resBody');
+        const alertSnd = document.getElementById('alertSound');
 
-      if (!startSeed || !clients) {
-        statusEl.innerHTML = '<span style="color:#ff6b6b">⚠️ Veuillez remplir la Server Seed et le Client Seed.</span>';
-        return;
-      }
+        if (!sSeed) {
+            statusEl.innerHTML = "<span style='color:red'>⚠️ Entrez la Server Seed !</span>";
+            return;
+        }
 
-      const btn = document.querySelector('button');
-      btn.disabled = true;
-      btn.innerText = "Calcul en cours…";
+        let tempHTML = "";
+        let roseDetecte = false;
+        let listePrevisions = "";
 
-      resBody.innerHTML = "";
-      table.style.display = "table";
-      let currentSeed = startSeed;
+        for (let i = 0; i < 10; i++) {
+            let currentNonce = startNonce + i;
+            const hash = await hmacSha512(sSeed, `${cSeed}:${currentNonce}`);
+            const mult = calculateMultiplier(hash);
 
-      let total = 0, bleu = 0, violet = 0, rose = 0;
-      let sequence = [];
+            let colorClass = mult < 2 ? 'bleu' : mult < 10 ? 'violet' : 'rose';
+            let icon = mult < 2 ? '🔵' : mult < 10 ? '🟣' : '🌸';
 
-      for (let i = 1; i <= 10; i++) {
-        let hashTour = await sha512(`${currentSeed}:${clients}:${i}`);
-        const hex13 = hashTour.slice(0, 13);
-        const h = parseInt(hex13, 16) / Math.pow(2, 52);
-        let mult = getMultiplier(hashTour);
+            if (mult >= 10) roseDetecte = true;
 
-        total += mult;
-        if (mult < 2) bleu++;
-        else if (mult < 10) violet++;
-        else rose++;
+            tempHTML += `
+                <tr>
+                    <td>#${currentNonce}</td>
+                    <td class="${colorClass}"><b>${mult.toFixed(2)}x</b></td>
+                    <td class="${colorClass}">${icon}</td>
+                </tr>
+            `;
+        }
 
-        let couleurClass = mult < 2 ? 'bleu' : mult < 10 ? 'violet' : 'rose';
-        let couleurNom = mult < 2 ? '🔵 BLEU' : mult < 10 ? '🟣 VIOLET' : '🌸 ROSE';
+        resBody.innerHTML = tempHTML;
 
-        let risque;
-        if (mult < 1.3) risque = '<span style="color:#ff6b6b;font-weight:bold">⚠️ TRÈS ÉLEVÉ</span>';
-        else if (mult < 1.8) risque = '<span style="color:#ffa502">⚠️ ÉLEVÉ</span>';
-        else risque = '<span style="color:#2ecc71">✓ STABLE</span>';
-
-        sequence.push({ tour: i, mult: mult, h: h, hashTour });
-
-        resBody.innerHTML += `
-          <tr>
-            <td>T+${i}</td>
-            <td style="font-size:1.2em"><b>${mult.toFixed(2)}x</b></td>
-            <td class="${couleurClass}">${couleurNom}</td>
-            <td class="analyse_col">${h.toFixed(7)}</td>
-            <td class="analyse_col">${risque}</td>
-            <td style="font-size:0.8em">${hashTour.slice(0,8)}...</td>
-          </tr>
-        `;
-
-        currentSeed = await sha512(currentSeed);
-      }
-
-      const moyenne = total / 10;
-      const pctBleu = (bleu * 100).toFixed(1);
-      const pctViolet = (violet * 100).toFixed(1);
-      const pctRose = (rose * 100).toFixed(1);
-      const safeZone = Math.max(1.6, moyenne * 0.8).toFixed(2);
-
-      statusEl.innerHTML = `
-        Moyenne : ${moyenne.toFixed(2)}x |
-        Bleus : ${pctBleu}% |
-        Violets : ${pctViolet}% |
-        Roses : ${pctRose}%
-        <br><span style="color:#00ff00">🟢 Zone de cash-out conseillée : ${safeZone}x</span>
-      `;
-
-      // Sauvegarde dans l'historique (localStorage)
-      let historique = JSON.parse(localStorage.getItem('herysEliteV38_sequences') || '[]');
-      historique.push({
-        timestamp: Date.now(),
-        startSeed: startSeed,
-        clients: clients,
-        moyenne: moyenne,
-        sequence: sequence.map(s => s.mult)
-      });
-      localStorage.setItem('herysEliteV38_sequences', JSON.stringify(historique));
-
-      // Affichage simplifié de l'historique
-      historiqueEl.innerHTML = '';
-      for (let i = historique.length - 1; i >= 0 && i >= historique.length - 5; i--) {
-        const h = historique[i];
-        const date = new Date(h.timestamp).toLocaleString('fr');
-        historiqueEl.innerHTML += `<div><b>${date}</b> : moyenne = ${h.moyenne.toFixed(2)}x</div>`;
-      }
-
-      btn.disabled = false;
-      btn.innerText = "🔥 GÉNÉRER LA SÉQUENCE FUTURE (10 TOURS)";
+        if (roseDetecte) {
+            statusEl.innerHTML = "<span style='color:#ff00ff'>🚨 ALERTE : ROSE DÉTECTÉ DANS LA SÉQUENCE !</span>";
+            alertSnd.play().catch(e => console.log("Audio bloqué par le navigateur"));
+            document.getElementById('mainApp').style.borderColor = "#ff00ff";
+        } else {
+            statusEl.innerHTML = "✅ Analyse stable (Pas de Rose imminent).";
+            document.getElementById('mainApp').style.borderColor = "#0f0";
+        }
     }
-  </script>
+
+    function copierResultats() {
+        const rows = document.querySelectorAll('#resBody tr');
+        let texte = "Herys Elite V38.3 Results:\n";
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            texte += `${cells[0].innerText} : ${cells[1].innerText}\n`;
+        });
+        navigator.clipboard.writeText(texte);
+        alert("Copié dans le presse-papier !");
+    }
+</script>
+
 </body>
 </html>
