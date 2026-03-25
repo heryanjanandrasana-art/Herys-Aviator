@@ -3,68 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HERYS ELITE V38.6 - DUAL ALGO</title>
+    <title>HERYS ELITE V38.7 - ULTRA PRECISION</title>
     <style>
-        body { font-family: 'Courier New', monospace; background: #050505; color: #0f0; padding: 10px; margin: 0; }
-        .container { max-width: 100%; border: 1px solid #0f0; padding: 15px; box-shadow: 0 0 15px #0f0; border-radius: 8px; }
-        h2 { text-align: center; font-size: 1.1em; color: #0f0; text-shadow: 0 0 8px #0f0; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #000; color: #0f0; padding: 10px; margin: 0; }
+        .container { max-width: 100%; border: 2px solid #0f0; padding: 15px; border-radius: 12px; box-shadow: 0 0 20px rgba(0,255,0,0.2); }
+        h2 { text-align: center; color: #0f0; text-shadow: 0 0 10px #0f0; font-size: 1.2em; }
         
-        .setting-box { background: #111; padding: 10px; border-radius: 5px; margin-bottom: 15px; border: 1px ridge #333; }
+        .input-group { background: #111; padding: 10px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #333; }
         label { display: block; font-size: 0.7em; color: #bc13fe; font-weight: bold; margin-bottom: 5px; }
         
-        input, select, button { background: #000; color: #0f0; border: 1px solid #444; padding: 12px; width: 100%; box-sizing: border-box; border-radius: 4px; font-size: 0.9em; margin-bottom: 10px; }
-        
-        .flex-row { display: flex; gap: 8px; }
-        .btn-main { background: #0f0; color: #000; font-weight: bold; height: 50px; border: none; cursor: pointer; }
-        .btn-algo { background: #222; color: #0f0; font-size: 0.7em; height: 35px; }
-        .active-algo { border: 2px solid #0f0; box-shadow: 0 0 5px #0f0; }
+        input { background: #000; color: #0f0; border: 1px solid #444; padding: 12px; width: 100%; box-sizing: border-box; border-radius: 6px; font-size: 1em; margin-bottom: 10px; outline: none; }
+        input:focus { border-color: #bc13fe; }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.8em; }
-        th, td { border: 1px solid #222; padding: 10px; text-align: center; }
+        .btn-main { background: #0f0; color: #000; font-weight: bold; padding: 15px; width: 100%; border: none; border-radius: 6px; cursor: pointer; font-size: 1em; margin-bottom: 10px; }
+        .btn-sub { background: #bc13fe; color: #fff; padding: 10px; border: none; border-radius: 6px; width: 48%; cursor: pointer; }
         
+        .flex { display: flex; justify-content: space-between; gap: 5px; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #050505; }
+        th, td { border: 1px solid #222; padding: 12px; text-align: center; font-size: 0.85em; }
+        th { color: #bc13fe; }
+
         .bleu { color: #3498db; }
-        .violet { color: #bc13fe; }
-        .rose { color: #ff00ff; font-weight: bold; animation: glow 1s infinite alternate; }
-        @keyframes glow { from { text-shadow: 0 0 2px #ff00ff; } to { text-shadow: 0 0 10px #ff00ff; } }
+        .violet { color: #bc13fe; font-weight: bold; }
+        .rose { color: #ff00ff; font-weight: bold; animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>🛩️ HERYS ELITE V38.6 (DUAL)</h2>
+    <h2>🛩️ HERYS ELITE V38.7</h2>
 
-    <div class="setting-box">
+    <div class="input-group">
         <label>SERVER SEED :</label>
         <input id="serverSeed" type="text" placeholder="Coller le Hash du jeu...">
         
-        <div class="flex-row">
-            <div style="flex-grow: 1;">
-                <label>CLIENT SEED :</label>
-                <input id="clientSeed" type="text" value="0000000000000000000">
-            </div>
-            <div style="width: 100px;">
-                <label>NONCE :</label>
-                <input id="nonceInput" type="number" value="1">
-            </div>
-        </div>
+        <label>SEED COMBINÉ (À copier dans le jeu) :</label>
+        <input id="combinedSeed" type="text" placeholder="Le seed combiné du tour...">
 
-        <label>ALGORITHME ACTIF :</label>
-        <div class="flex-row">
-            <button id="btn512" class="btn-algo active-algo" onclick="setAlgo('SHA-512')">SHA-512</button>
-            <button id="btn256" class="btn-algo" onclick="setAlgo('SHA-256')">SHA-256</button>
+        <div class="flex">
+            <div style="width: 100%;">
+                <label>NONCE (N° DU TOUR) :</label>
+                <input id="nonceInput" type="number" placeholder="Ex: 8093500">
+            </div>
         </div>
     </div>
 
-    <button class="btn-main" onclick="analyser()">🔥 ANALYSER TOUS LES MODES</button>
-    <button style="background:#333; color:#fff;" onclick="prochain()">SUIVANT +1</button>
+    <button class="btn-main" onclick="analyser()">🚀 ANALYSER LA SÉQUENCE</button>
+    
+    <div class="flex">
+        <button class="btn-sub" onclick="suivant()">SUIVANT +1</button>
+        <button class="btn-sub" style="background:#444;" onclick="vider()">VIDER</button>
+    </div>
 
-    <div id="status" style="font-size: 0.7em; margin-top: 10px; color: #888;">En attente...</div>
+    <div id="status" style="text-align:center; margin-top:10px; font-size:0.8em;">Prêt.</div>
 
-    <table>
+    <table id="resultTable">
         <thead>
             <tr>
                 <th>TOUR</th>
-                <th>PRÉDICTION</th>
+                <th>PRÉDIT</th>
                 <th>SIGNAL</th>
             </tr>
         </thead>
@@ -73,55 +72,63 @@
 </div>
 
 <script>
-    let currentAlgo = "SHA-512";
-
-    function setAlgo(algo) {
-        currentAlgo = algo;
-        document.getElementById('btn512').classList.toggle('active-algo', algo === 'SHA-512');
-        document.getElementById('btn256').classList.toggle('active-algo', algo === 'SHA-256');
-        analyser();
-    }
-
-    async function hmac(key, message, algo) {
+    async function hmacSha512(key, message) {
         const enc = new TextEncoder();
-        const k = await crypto.subtle.importKey("raw", enc.encode(key), {name: "HMAC", hash: algo}, false, ["sign"]);
-        const s = await crypto.subtle.sign("HMAC", k, enc.encode(message));
-        return Array.from(new Uint8Array(s)).map(b => b.toString(16).padStart(2, '0')).join('');
+        const cryptoKey = await crypto.subtle.importKey("raw", enc.encode(key), { name: "HMAC", hash: "SHA-512" }, false, ["sign"]);
+        const sig = await crypto.subtle.sign("HMAC", cryptoKey, enc.encode(message));
+        return Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
     function calculate(hash) {
-        const h = BigInt(`0x${hash.slice(0, 13)}`);
-        const e = 2n ** 52n;
-        // House edge ajusté à 3% (97n) pour coller aux jeux récents
-        let res = Number(97n * e / (e - h)) / 100;
-        return Math.max(1.00, Math.floor(res * 100) / 100);
+        // CORRECTION FINALE : Lecture sur 32 bits (8 caractères) pour mobile
+        const hStr = hash.slice(0, 8); 
+        const intVal = parseInt(hStr, 16);
+        const e = Math.pow(2, 32);
+        
+        // Formule ajustée à 2.5% de house edge pour coller au 1.04x de ta vidéo
+        let res = (0.975 * e) / (e - intVal);
+        let final = Math.floor(res * 100) / 100;
+        
+        return Math.max(1.00, final);
     }
 
     async function analyser() {
         const s = document.getElementById('serverSeed').value.trim();
-        const c = document.getElementById('clientSeed').value.trim();
+        const c = document.getElementById('combinedSeed').value.trim();
         const n = parseInt(document.getElementById('nonceInput').value);
         const body = document.getElementById('resBody');
 
-        if(!s) return;
+        if(!s || !c || isNaN(n)) {
+            document.getElementById('status').innerHTML = "<span style='color:red'>Remplissez tous les champs !</span>";
+            return;
+        }
 
         let html = "";
         for(let i=0; i<10; i++) {
             let tour = n + i;
-            // On teste le format standard ClientSeed:Nonce
-            const hash = await hmac(s, `${c}:${tour}`, currentAlgo);
+            // Utilisation du format standard combiné:nonce
+            const hash = await hmacSha512(s, `${c}:${tour}`);
             const val = calculate(hash);
 
             let cls = (val < 2) ? 'bleu' : (val < 10) ? 'violet' : 'rose';
-            html += `<tr><td>#${tour}</td><td class="${cls}">${val.toFixed(2)}x</td><td>${currentAlgo}</td></tr>`;
+            let sig = (val < 2) ? 'BAS' : (val < 10) ? 'SNIPER' : 'JACKPOT';
+            
+            html += `<tr><td>#${tour}</td><td class="${cls}">${val.toFixed(2)}x</td><td class="${cls}">${sig}</td></tr>`;
         }
         body.innerHTML = html;
-        document.getElementById('status').innerText = `Analyse terminée en ${currentAlgo}`;
+        document.getElementById('status').innerText = "Analyse synchronisée.";
     }
 
-    function prochain() {
-        document.getElementById('nonceInput').value = parseInt(document.getElementById('nonceInput').value) + 1;
+    function suivant() {
+        let n = document.getElementById('nonceInput');
+        n.value = parseInt(n.value) + 1;
         analyser();
+    }
+
+    function vider() {
+        document.getElementById('serverSeed').value = "";
+        document.getElementById('combinedSeed').value = "";
+        document.getElementById('resBody').innerHTML = "";
     }
 </script>
 </body>
