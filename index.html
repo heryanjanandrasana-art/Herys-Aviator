@@ -3,73 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HERYS ELITE V38.4 - PRO PRECISION</title>
+    <title>HERYS ELITE V38.6 - DUAL ALGO</title>
     <style>
         body { font-family: 'Courier New', monospace; background: #050505; color: #0f0; padding: 10px; margin: 0; }
-        .container { max-width: 100%; border: 1px solid #0f0; padding: 15px; box-shadow: 0 0 15px #0f0; border-radius: 8px; transition: all 0.3s ease; }
-        h2 { text-align: center; font-size: 1.1em; color: #0f0; text-shadow: 0 0 8px #0f0; margin-bottom: 20px; }
+        .container { max-width: 100%; border: 1px solid #0f0; padding: 15px; box-shadow: 0 0 15px #0f0; border-radius: 8px; }
+        h2 { text-align: center; font-size: 1.1em; color: #0f0; text-shadow: 0 0 8px #0f0; }
         
-        label { display: block; margin-top: 10px; font-size: 0.75em; color: #bc13fe; font-weight: bold; }
-        input, button { background: #111; color: #0f0; border: 1px solid #333; padding: 12px; margin: 5px 0; width: 100%; box-sizing: border-box; outline: none; border-radius: 4px; font-size: 1em; }
+        .setting-box { background: #111; padding: 10px; border-radius: 5px; margin-bottom: 15px; border: 1px ridge #333; }
+        label { display: block; font-size: 0.7em; color: #bc13fe; font-weight: bold; margin-bottom: 5px; }
         
-        .flex-row { display: flex; gap: 8px; align-items: flex-end; }
-        #nonceInput { text-align: center; font-weight: bold; color: #ff00ff; border: 1px solid #ff00ff; }
+        input, select, button { background: #000; color: #0f0; border: 1px solid #444; padding: 12px; width: 100%; box-sizing: border-box; border-radius: 4px; font-size: 0.9em; margin-bottom: 10px; }
+        
+        .flex-row { display: flex; gap: 8px; }
+        .btn-main { background: #0f0; color: #000; font-weight: bold; height: 50px; border: none; cursor: pointer; }
+        .btn-algo { background: #222; color: #0f0; font-size: 0.7em; height: 35px; }
+        .active-algo { border: 2px solid #0f0; box-shadow: 0 0 5px #0f0; }
 
-        .btn-main { cursor: pointer; font-weight: bold; background: #0f0; color: #000; border: none; height: 50px; }
-        .btn-next { background: #bc13fe; color: #fff; width: 120px; border: none; cursor: pointer; }
-        .btn-reset { background: #444; color: #eee; width: 100px; border: none; cursor: pointer; }
-        .btn-main:active, .btn-next:active { opacity: 0.7; transform: scale(0.95); }
-
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85em; background: #000; }
-        th, td { border: 1px solid #222; padding: 12px; text-align: center; }
-        th { background: #111; color: #bc13fe; }
-
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.8em; }
+        th, td { border: 1px solid #222; padding: 10px; text-align: center; }
+        
         .bleu { color: #3498db; }
-        .violet { color: #bc13fe; font-weight: bold; }
+        .violet { color: #bc13fe; }
         .rose { color: #ff00ff; font-weight: bold; animation: glow 1s infinite alternate; }
-        
-        @keyframes glow {
-            from { text-shadow: 0 0 2px #ff00ff; }
-            to { text-shadow: 0 0 10px #ff00ff; }
-        }
-
-        #status { margin-top: 15px; padding: 10px; border-left: 3px solid #0f0; font-size: 0.8em; background: #0a0a0a; min-height: 20px; }
+        @keyframes glow { from { text-shadow: 0 0 2px #ff00ff; } to { text-shadow: 0 0 10px #ff00ff; } }
     </style>
 </head>
 <body>
 
-<div class="container" id="mainApp">
-    <h2>🛩️ HERYS ELITE V38.4 (PRECISION)</h2>
+<div class="container">
+    <h2>🛩️ HERYS ELITE V38.6 (DUAL)</h2>
 
-    <label>Server Seed (Hash de la vidéo) :</label>
-    <input id="serverSeed" type="text" placeholder="Coller le dernier Hash SHA512...">
-
-    <div class="flex-row">
-        <div style="flex-grow: 1;">
-            <label>Client Seed :</label>
-            <input id="clientSeed" type="text" value="0000000000000000000">
+    <div class="setting-box">
+        <label>SERVER SEED :</label>
+        <input id="serverSeed" type="text" placeholder="Coller le Hash du jeu...">
+        
+        <div class="flex-row">
+            <div style="flex-grow: 1;">
+                <label>CLIENT SEED :</label>
+                <input id="clientSeed" type="text" value="0000000000000000000">
+            </div>
+            <div style="width: 100px;">
+                <label>NONCE :</label>
+                <input id="nonceInput" type="number" value="1">
+            </div>
         </div>
-        <div style="width: 100px;">
-            <label>Nonce (Tour) :</label>
-            <input id="nonceInput" type="number" value="1">
+
+        <label>ALGORITHME ACTIF :</label>
+        <div class="flex-row">
+            <button id="btn512" class="btn-algo active-algo" onclick="setAlgo('SHA-512')">SHA-512</button>
+            <button id="btn256" class="btn-algo" onclick="setAlgo('SHA-256')">SHA-256</button>
         </div>
     </div>
 
-    <button class="btn-main" onclick="genererPrevisions()">🔥 ANALYSER LA SEQUENCE</button>
-    
-    <div class="flex-row">
-        <button class="btn-next" onclick="incrementerNonce()">SUIVANT +1</button>
-        <button class="btn-reset" onclick="resetApp()">Vider</button>
-        <button style="background:#222; color:#fff; flex-grow:1; border:1px solid #444;" onclick="copierResultats()">📋 COPIER</button>
-    </div>
+    <button class="btn-main" onclick="analyser()">🔥 ANALYSER TOUS LES MODES</button>
+    <button style="background:#333; color:#fff;" onclick="prochain()">SUIVANT +1</button>
 
-    <div id="status">Prêt pour l'analyse...</div>
+    <div id="status" style="font-size: 0.7em; margin-top: 10px; color: #888;">En attente...</div>
 
-    <table id="resultTable">
+    <table>
         <thead>
             <tr>
                 <th>TOUR</th>
-                <th>CÔTE PRÉDITE</th>
+                <th>PRÉDICTION</th>
                 <th>SIGNAL</th>
             </tr>
         </thead>
@@ -77,119 +72,57 @@
     </table>
 </div>
 
-<audio id="alertSound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
-
 <script>
-    // Algorithme HMAC SHA-512 optimisé
-    async function hmacSha512(key, message) {
-        const encoder = new TextEncoder();
-        const cryptoKey = await crypto.subtle.importKey(
-            "raw", encoder.encode(key),
-            { name: "HMAC", hash: "SHA-512" },
-            false, ["sign"]
-        );
-        const signature = await crypto.subtle.sign("HMAC", cryptoKey, encoder.encode(message));
-        return Array.from(new Uint8Array(signature)).map(b => b.toString(16).padStart(2, '0')).join('');
+    let currentAlgo = "SHA-512";
+
+    function setAlgo(algo) {
+        currentAlgo = algo;
+        document.getElementById('btn512').classList.toggle('active-algo', algo === 'SHA-512');
+        document.getElementById('btn256').classList.toggle('active-algo', algo === 'SHA-256');
+        analyser();
     }
 
-    // Calculateur de multiplicateur (Standard Provably Fair)
-    function calculateMultiplier(hash) {
-        const hex13 = hash.slice(0, 13);
-        const intVal = parseInt(hex13, 16);
-        const floatVal = intVal / Math.pow(2, 52); 
-        const result = 0.98 / (1 - floatVal);
-        const finalMult = Math.floor(result * 100) / 100;
-        return Math.max(1.00, finalMult);
+    async function hmac(key, message, algo) {
+        const enc = new TextEncoder();
+        const k = await crypto.subtle.importKey("raw", enc.encode(key), {name: "HMAC", hash: algo}, false, ["sign"]);
+        const s = await crypto.subtle.sign("HMAC", k, enc.encode(message));
+        return Array.from(new Uint8Array(s)).map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
-    function incrementerNonce() {
-        const nInput = document.getElementById('nonceInput');
-        nInput.value = parseInt(nInput.value) + 1;
-        genererPrevisions();
+    function calculate(hash) {
+        const h = BigInt(`0x${hash.slice(0, 13)}`);
+        const e = 2n ** 52n;
+        // House edge ajusté à 3% (97n) pour coller aux jeux récents
+        let res = Number(97n * e / (e - h)) / 100;
+        return Math.max(1.00, Math.floor(res * 100) / 100);
     }
 
-    function resetApp() {
-        document.getElementById('serverSeed').value = '';
-        document.getElementById('resBody').innerHTML = '';
-        document.getElementById('status').innerText = 'Champs réinitialisés.';
-        document.getElementById('mainApp').style.borderColor = "#0f0";
-        document.getElementById('mainApp').style.boxShadow = "0 0 15px #0f0";
-    }
+    async function analyser() {
+        const s = document.getElementById('serverSeed').value.trim();
+        const c = document.getElementById('clientSeed').value.trim();
+        const n = parseInt(document.getElementById('nonceInput').value);
+        const body = document.getElementById('resBody');
 
-    async function genererPrevisions() {
-        const sSeed = document.getElementById('serverSeed').value.trim();
-        const cSeed = document.getElementById('clientSeed').value.trim();
-        const startNonce = parseInt(document.getElementById('nonceInput').value);
-        const statusEl = document.getElementById('status');
-        const resBody = document.getElementById('resBody');
-        const alertSnd = document.getElementById('alertSound');
+        if(!s) return;
 
-        if (!sSeed) {
-            statusEl.innerHTML = "<span style='color:red'>⚠️ Collez le Server Seed !</span>";
-            return;
+        let html = "";
+        for(let i=0; i<10; i++) {
+            let tour = n + i;
+            // On teste le format standard ClientSeed:Nonce
+            const hash = await hmac(s, `${c}:${tour}`, currentAlgo);
+            const val = calculate(hash);
+
+            let cls = (val < 2) ? 'bleu' : (val < 10) ? 'violet' : 'rose';
+            html += `<tr><td>#${tour}</td><td class="${cls}">${val.toFixed(2)}x</td><td>${currentAlgo}</td></tr>`;
         }
-
-        let tempHTML = "";
-        let alerteRose = false;
-
-        // Analyse des 12 tours suivants
-        for (let i = 0; i < 12; i++) {
-            let currentNonce = startNonce + i;
-            
-            // On utilise le Client Seed + Nonce comme message, et le Server Seed comme Clé
-            const hash = await hmacSha512(sSeed, `${cSeed}-${currentNonce}`); 
-            const mult = calculateMultiplier(hash);
-
-            let colorClass = 'bleu';
-            let icon = '🔵';
-            let signal = "RISQUE";
-
-            if (mult >= 2 && mult < 10) {
-                colorClass = 'violet';
-                icon = '🟣';
-                signal = "SNIPER";
-            } else if (mult >= 10) {
-                colorClass = 'rose';
-                icon = '🔥';
-                signal = "JACKPOT";
-                if(i < 3) alerteRose = true; 
-            }
-
-            tempHTML += `
-                <tr>
-                    <td>#${currentNonce}</td>
-                    <td class="${colorClass}"><b>${mult.toFixed(2)}x</b></td>
-                    <td class="${colorClass}">${icon} ${signal}</td>
-                </tr>
-            `;
-        }
-
-        resBody.innerHTML = tempHTML;
-
-        if (alerteRose) {
-            statusEl.innerHTML = "<span style='color:#ff00ff'>🚨 ALERTE : ROSE IMMINENT (TOP 3) !</span>";
-            try { alertSnd.play(); } catch(e) {}
-            document.getElementById('mainApp').style.borderColor = "#ff00ff";
-            document.getElementById('mainApp').style.boxShadow = "0 0 30px #ff00ff";
-        } else {
-            statusEl.innerHTML = "✅ Séquence synchronisée avec succès.";
-            document.getElementById('mainApp').style.borderColor = "#0f0";
-            document.getElementById('mainApp').style.boxShadow = "0 0 15px #0f0";
-        }
+        body.innerHTML = html;
+        document.getElementById('status').innerText = `Analyse terminée en ${currentAlgo}`;
     }
 
-    function copierResultats() {
-        const rows = document.querySelectorAll('#resBody tr');
-        if(rows.length === 0) return;
-        let texte = "Herys Elite V38.4 - Prévisions :\n";
-        rows.forEach(row => {
-            const cells = row.querySelectorAll('td');
-            texte += `${cells[0].innerText} -> ${cells[1].innerText}\n`;
-        });
-        navigator.clipboard.writeText(texte);
-        alert("Séquence copiée !");
+    function prochain() {
+        document.getElementById('nonceInput').value = parseInt(document.getElementById('nonceInput').value) + 1;
+        analyser();
     }
 </script>
-
 </body>
 </html>
