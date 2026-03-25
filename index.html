@@ -3,33 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HERYS ELITE V38.3 - PRO</title>
+    <title>HERYS ELITE V38.4 - PRO PRECISION</title>
     <style>
         body { font-family: 'Courier New', monospace; background: #050505; color: #0f0; padding: 10px; margin: 0; }
-        .container { max-width: 100%; border: 1px solid #0f0; padding: 15px; box-shadow: 0 0 10px #0f0; }
-        h2 { text-align: center; font-size: 1.1em; color: #0f0; text-shadow: 0 0 5px #0f0; margin-bottom: 20px; }
+        .container { max-width: 100%; border: 1px solid #0f0; padding: 15px; box-shadow: 0 0 15px #0f0; border-radius: 8px; }
+        h2 { text-align: center; font-size: 1.1em; color: #0f0; text-shadow: 0 0 8px #0f0; margin-bottom: 20px; }
         
         label { display: block; margin-top: 10px; font-size: 0.75em; color: #bc13fe; font-weight: bold; }
-        input, button { background: #111; color: #0f0; border: 1px solid #0f0; padding: 12px; margin: 5px 0; width: 100%; box-sizing: border-box; outline: none; border-radius: 4px; }
+        input, button { background: #111; color: #0f0; border: 1px solid #333; padding: 12px; margin: 5px 0; width: 100%; box-sizing: border-box; outline: none; border-radius: 4px; font-size: 1em; }
         
-        .flex-row { display: flex; gap: 8px; }
-        #nonceInput { width: 35%; text-align: center; font-weight: bold; color: #ff00ff; }
+        .flex-row { display: flex; gap: 8px; align-items: flex-end; }
+        #nonceInput { text-align: center; font-weight: bold; color: #ff00ff; border: 1px solid #ff00ff; }
 
-        button { cursor: pointer; font-weight: bold; background: #0f0; color: #000; transition: 0.2s; border: none; }
-        button:active { transform: scale(0.98); background: #bc13fe; }
-        .copy-btn { background: #333; color: #fff; font-size: 0.8em; padding: 5px; margin-top: 10px; }
+        .btn-main { cursor: pointer; font-weight: bold; background: #0f0; color: #000; border: none; height: 50px; }
+        .btn-next { background: #bc13fe; color: #fff; width: 120px; border: none; }
+        .btn-main:active, .btn-next:active { opacity: 0.7; transform: scale(0.95); }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85em; }
-        th, td { border: 1px solid #222; padding: 10px; text-align: center; }
-        th { background: #111; color: #bc13fe; font-size: 0.8em; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85em; background: #000; }
+        th, td { border: 1px solid #222; padding: 12px; text-align: center; }
+        th { background: #111; color: #bc13fe; }
 
-        .bleu { color: #3498db; }
-        .violet { color: #bc13fe; font-weight: bold; }
-        .rose { color: #ff00ff; font-weight: bold; animation: glow 1s infinite alternate; }
+        .bleu { color: #3498db; } /* Crash bas */
+        .violet { color: #bc13fe; font-weight: bold; } /* Moyen */
+        .rose { color: #ff00ff; font-weight: bold; animation: glow 1s infinite alternate; } /* Gros multiplicateur */
         
         @keyframes glow {
             from { text-shadow: 0 0 2px #ff00ff; }
-            to { text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff; }
+            to { text-shadow: 0 0 10px #ff00ff; }
         }
 
         #status { margin-top: 15px; padding: 10px; border-left: 3px solid #0f0; font-size: 0.8em; background: #0a0a0a; min-height: 20px; }
@@ -38,24 +38,28 @@
 <body>
 
 <div class="container" id="mainApp">
-    <h2>🛩️ HERYS ELITE V38.3 (ALERTE)</h2>
+    <h2>🛩️ HERYS ELITE V38.4 (PRECISION)</h2>
 
-    <label>Server Seed (depuis la vidéo) :</label>
-    <input id="serverSeed" type="text" placeholder="Coller le Hash ici...">
+    <label>Server Seed (Hash de la vidéo) :</label>
+    <input id="serverSeed" type="text" placeholder="Coller le dernier Hash...">
 
     <div class="flex-row">
         <div style="flex-grow: 1;">
             <label>Client Seed :</label>
             <input id="clientSeed" type="text" value="0000000000000000000">
         </div>
-        <div style="width: 80px;">
-            <label>Tour (Nonce) :</label>
+        <div style="width: 100px;">
+            <label>Nonce (Tour) :</label>
             <input id="nonceInput" type="number" value="1">
         </div>
     </div>
 
-    <button onclick="genererPrevisions()">🔥 ANALYSER & SURVEILLER</button>
-    <button class="copy-btn" onclick="copierResultats()">📋 COPIER LA LISTE</button>
+    <button class="btn-main" onclick="genererPrevisions()">🔥 ANALYSER LA SEQUENCE</button>
+    
+    <div class="flex-row">
+        <button class="btn-next" onclick="incrementerNonce()">SUIVANT +1</button>
+        <button style="background:#333; color:#fff;" onclick="copierResultats()">📋 COPIER</button>
+    </div>
 
     <div id="status">Prêt pour l'analyse...</div>
 
@@ -63,7 +67,7 @@
         <thead>
             <tr>
                 <th>TOUR</th>
-                <th>CÔTE</th>
+                <th>CÔTE PRÉDITE</th>
                 <th>SIGNAL</th>
             </tr>
         </thead>
@@ -74,6 +78,7 @@
 <audio id="alertSound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
 
 <script>
+    // Algorithme SHA-512 High Speed
     async function hmacSha512(key, message) {
         const encoder = new TextEncoder();
         const cryptoKey = await crypto.subtle.importKey(
@@ -85,12 +90,25 @@
         return Array.from(new Uint8Array(signature)).map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
+    // Calculateur de multiplicateur ultra-précis (Provably Fair Standard)
     function calculateMultiplier(hash) {
         const hex13 = hash.slice(0, 13);
         const intVal = parseInt(hex13, 16);
-        const floatVal = intVal / Math.pow(2, 52);
-        const result = 0.97 / (1 - floatVal);
-        return Math.max(1.00, Math.floor(result * 100) / 100);
+        
+        // Diviseur 2^52 pour une précision maximale
+        const floatVal = intVal / 4503599627370496; 
+        
+        // Application du House Edge à 2% (Standard 0.98)
+        const result = 0.98 / (1 - floatVal);
+        
+        const finalMult = Math.floor(result * 100) / 100;
+        return Math.max(1.00, finalMult);
+    }
+
+    function incrementerNonce() {
+        const nInput = document.getElementById('nonceInput');
+        nInput.value = parseInt(nInput.value) + 1;
+        genererPrevisions();
     }
 
     async function genererPrevisions() {
@@ -102,54 +120,66 @@
         const alertSnd = document.getElementById('alertSound');
 
         if (!sSeed) {
-            statusEl.innerHTML = "<span style='color:red'>⚠️ Entrez la Server Seed !</span>";
+            statusEl.innerHTML = "<span style='color:red'>⚠️ Collez le Server Seed !</span>";
             return;
         }
 
         let tempHTML = "";
-        let roseDetecte = false;
-        let listePrevisions = "";
+        let alerteRose = false;
 
-        for (let i = 0; i < 10; i++) {
+        // Analyse des 12 prochains tours
+        for (let i = 0; i < 12; i++) {
             let currentNonce = startNonce + i;
             const hash = await hmacSha512(sSeed, `${cSeed}:${currentNonce}`);
             const mult = calculateMultiplier(hash);
 
-            let colorClass = mult < 2 ? 'bleu' : mult < 10 ? 'violet' : 'rose';
-            let icon = mult < 2 ? '🔵' : mult < 10 ? '🟣' : '🌸';
+            let colorClass = 'bleu';
+            let icon = '🔵';
+            let signal = "RISQUE";
 
-            if (mult >= 10) roseDetecte = true;
+            if (mult >= 2 && mult < 10) {
+                colorClass = 'violet';
+                icon = '🟣';
+                signal = "SNIPER";
+            } else if (mult >= 10) {
+                colorClass = 'rose';
+                icon = '🔥';
+                signal = "JACKPOT";
+                if(i < 3) alerteRose = true; // Alerte si le rose est proche (dans les 3 prochains tours)
+            }
 
             tempHTML += `
                 <tr>
                     <td>#${currentNonce}</td>
                     <td class="${colorClass}"><b>${mult.toFixed(2)}x</b></td>
-                    <td class="${colorClass}">${icon}</td>
+                    <td class="${colorClass}">${icon} ${signal}</td>
                 </tr>
             `;
         }
 
         resBody.innerHTML = tempHTML;
 
-        if (roseDetecte) {
-            statusEl.innerHTML = "<span style='color:#ff00ff'>🚨 ALERTE : ROSE DÉTECTÉ DANS LA SÉQUENCE !</span>";
-            alertSnd.play().catch(e => console.log("Audio bloqué par le navigateur"));
+        if (alerteRose) {
+            statusEl.innerHTML = "<span style='color:#ff00ff'>🚨 ALERTE : ROSE IMMINENT (TOP 3) !</span>";
+            alertSnd.play().catch(e => {});
             document.getElementById('mainApp').style.borderColor = "#ff00ff";
+            document.getElementById('mainApp').style.boxShadow = "0 0 30px #ff00ff";
         } else {
-            statusEl.innerHTML = "✅ Analyse stable (Pas de Rose imminent).";
+            statusEl.innerHTML = "✅ Analyse stable. Tendance calculée.";
             document.getElementById('mainApp').style.borderColor = "#0f0";
+            document.getElementById('mainApp').style.boxShadow = "0 0 15px #0f0";
         }
     }
 
     function copierResultats() {
         const rows = document.querySelectorAll('#resBody tr');
-        let texte = "Herys Elite V38.3 Results:\n";
+        let texte = "Herys Elite V38.4 - Prévisions :\n";
         rows.forEach(row => {
             const cells = row.querySelectorAll('td');
-            texte += `${cells[0].innerText} : ${cells[1].innerText}\n`;
+            texte += `${cells[0].innerText} -> ${cells[1].innerText}\n`;
         });
         navigator.clipboard.writeText(texte);
-        alert("Copié dans le presse-papier !");
+        alert("Séquence copiée !");
     }
 </script>
 
