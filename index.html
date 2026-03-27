@@ -2,103 +2,135 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>HERYS ALGO-REVERSION V45</title>
+    <title>HERYS ULTIMATE TRACKER V55</title>
     <style>
-        :root { --neon: #00ffcc; --gold: #ffd700; --warn: #ff3366; }
-        body { background: #050505; color: var(--neon); font-family: 'Courier New', monospace; padding: 20px; display: flex; justify-content: center; }
-        .panel { width: 450px; border: 2px solid var(--neon); border-radius: 15px; padding: 25px; background: #0a0a0a; box-shadow: 0 0 30px rgba(0,255,204,0.15); }
-        h2 { text-align: center; color: var(--gold); text-shadow: 0 0 10px var(--gold); margin-bottom: 30px; border-bottom: 1px solid #222; padding-bottom: 10px; }
+        :root { --neon: #00ffcc; --gold: #ffd700; --bg: #050505; --card: #111; }
+        body { background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; padding: 10px; margin: 0; }
+        .wrapper { max-width: 1000px; margin: auto; border: 1px solid #333; padding: 15px; border-radius: 10px; background: #080808; }
+        h2 { text-align: center; color: var(--gold); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; }
         
-        .input-group { margin-bottom: 20px; background: #111; padding: 15px; border-radius: 8px; border-left: 3px solid var(--gold); }
-        label { font-size: 0.75em; color: #888; text-transform: uppercase; display: block; margin-bottom: 8px; }
-        select, input { width: 100%; background: #000; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 4px; outline: none; }
-        select:focus { border-color: var(--neon); }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
+        th { background: var(--card); color: var(--neon); padding: 12px; border: 1px solid #222; }
+        td { padding: 8px; border: 1px solid #222; text-align: center; vertical-align: middle; }
+        
+        .team-name { font-weight: bold; width: 130px; color: #fff; text-align: left; padding-left: 5px; }
+        input, select { background: #000; border: 1px solid #444; color: var(--neon); padding: 5px; width: 55px; border-radius: 3px; text-align: center; }
+        
+        .btn-calc { width: 100%; padding: 15px; background: var(--gold); color: #000; font-weight: bold; border: none; border-radius: 5px; margin-top: 20px; cursor: pointer; font-size: 1.1em; box-shadow: 0 4px 10px rgba(255, 215, 0, 0.2); }
+        .btn-calc:hover { filter: brightness(1.2); }
 
-        .btn-calc { width: 100%; padding: 15px; background: var(--gold); color: #000; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; font-size: 1em; transition: 0.3s; }
-        .btn-calc:hover { background: var(--neon); box-shadow: 0 0 20px var(--neon); }
-
-        #display-logic { margin-top: 25px; padding: 15px; border-radius: 8px; text-align: center; font-size: 0.9em; min-height: 80px; transition: 0.5s; }
-        .prob-bar { height: 10px; background: #222; border-radius: 5px; margin-top: 10px; overflow: hidden; }
-        .prob-fill { height: 100%; background: var(--neon); width: 0%; transition: 1s ease-in-out; }
+        .prob-result { font-weight: bold; font-size: 1.1em; padding: 5px; border-radius: 4px; display: block; }
+        .win { color: #00ff00; background: rgba(0, 255, 0, 0.1); border: 1px solid #00ff00; }
+        .risk { color: #ff3366; background: rgba(255, 51, 102, 0.1); border: 1px solid #ff3366; }
+        .neutral { color: #888; background: #222; border: 1px solid #444; }
     </style>
 </head>
 <body>
 
-<div class="panel">
-    <h2>HERYS ALGO V45</h2>
+<div class="wrapper">
+    <h2>HERYS PREDICTION V55 - ANALYSEUR DE SESSION</h2>
 
-    <div class="input-group">
-        <label>1. Dernier Score en Zone C/D (Bas)</label>
-        <select id="prev_score">
-            <option value="3">Gros Score (3-0, 4-0, 4-1)</option>
-            <option value="1" selected>Score Moyen (1-0, 2-1, 2-0)</option>
-            <option value="0">Nul ou Défaite</option>
-        </select>
-    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>HOME</th>
+                <th>GEN / SPEC</th>
+                <th>LAST SCORE</th>
+                <th>VS</th>
+                <th>AWAY</th>
+                <th>GEN / SPEC</th>
+                <th>LAST SCORE</th>
+                <th>PROBABILITÉ</th>
+            </tr>
+        </thead>
+        <tbody id="matchBody">
+            </tbody>
+    </table>
 
-    <div class="input-group">
-        <label>2. Position Match Actuel</label>
-        <select id="current_zone">
-            <option value="high">Zone A/B (Matchs 1 à 5)</option>
-            <option value="low">Zone C/D (Matchs 6 à 10)</option>
-        </select>
-    </div>
-
-    <div class="input-group">
-        <label>3. Type d'Adversaire (Top 10?)</label>
-        <select id="opp_rank">
-            <option value="strong">Top 10 (Adversaire Fort)</option>
-            <option value="weak">Bas de tableau</option>
-        </select>
-    </div>
-
-    <button class="btn-calc" onclick="runAlgo()">DÉCODER LA SÉQUENCE</button>
-
-    <div id="display-logic" style="border: 1px solid #333;">
-        SCANNER EN ATTENTE...
-    </div>
-    <div class="prob-bar"><div id="p-fill" class="prob-fill"></div></div>
+    <button class="btn-calc" onclick="calculerTout()">LANCER LE SCAN MATHÉMATIQUE</button>
 </div>
 
 <script>
-function runAlgo() {
-    const score = parseInt(document.getElementById('prev_score').value);
-    const zone = document.getElementById('current_zone').value;
-    const opp = document.getElementById('opp_rank').value;
-    const display = document.getElementById('display-logic');
-    const fill = document.getElementById('p-fill');
+    // Liste des équipes basées sur tes vidéos (English League)
+    const pairs = [
+        ["Manchester #", "C Palace"], ["Liverpool", "London Blues"], ["West Ham", "Brighton"],
+        ["Arsenal", "Everton"], ["Leicester", "Newcastle"], ["A. Villa", "Sunderland"],
+        ["Tottenham", "Southampton"], ["Wolves", "Watford"], ["Burnley", "Leeds"], ["Norwich", "Brentford"]
+    ];
 
-    let proba = 50; // Base neutrale
-    let motif = "";
+    const tbody = document.getElementById('matchBody');
 
-    // LOGIQUE MATHÉMATIQUE BASÉE SUR TES RECHERCHES :
-    
-    if (score === 3 && zone === 'high') {
-        // Cas du Pullback Mean Reversion (70%)
-        proba = 43; 
-        motif = "<span style='color:var(--warn)'>DANGER : Mean Reversion détecté. Probabilité Under 2.5 élevée (43%). L'algorithme freine le momentum.</span>";
-        display.style.borderColor = "var(--warn)";
-    } 
-    else if (score === 1 && zone === 'high' && opp === 'weak') {
-        // Boost lambda home 1.88 + Persistance 0.3
-        proba = 72;
-        motif = "<span style='color:var(--neon)'>SIGNAL OPTIMAL : Persistance 0.3 active. Équipe stable, forte probabilité de Over 1.5.</span>";
-        display.style.borderColor = "var(--neon)";
-    }
-    else if (score === 0) {
-        proba = 30;
-        motif = "SÉQUENCE FROIDE : Aucune persistance détectée. Attendre le prochain cycle.";
-        display.style.borderColor = "#333";
-    }
-    else {
-        proba = 55;
-        motif = "FLUX NEUTRE : Risque modéré. Gestion de bankroll recommandée.";
-        display.style.borderColor = var(--gold);
-    }
+    pairs.forEach((match, i) => {
+        tbody.innerHTML += `
+            <tr>
+                <td class="team-name">${match[0]}</td>
+                <td>
+                    <input type="number" id="h_gen_${i}" placeholder="G" value="5">
+                    <input type="number" id="h_spec_${i}" placeholder="H" value="3">
+                </td>
+                <td>
+                    <select id="h_last_${i}">
+                        <option value="low">Petits buts (1-2)</option>
+                        <option value="high">Gros score (3+)</option>
+                        <option value="none">Nul/Déf</option>
+                    </select>
+                </td>
+                <td style="color:#444">vs</td>
+                <td class="team-name">${match[1]}</td>
+                <td>
+                    <input type="number" id="a_gen_${i}" placeholder="G" value="15">
+                    <input type="number" id="a_spec_${i}" placeholder="A" value="18">
+                </td>
+                <td>
+                    <select id="a_last_${i}">
+                        <option value="low">Petits buts (1-2)</option>
+                        <option value="high">Gros score (3+)</option>
+                        <option value="none">Nul/Déf</option>
+                    </select>
+                </td>
+                <td id="res_${i}"><span class="prob-result neutral">--</span></td>
+            </tr>
+        `;
+    });
 
-    display.innerHTML = motif;
-    fill.style.width = proba + "%";
-}
+    function calculerTout() {
+        for (let i = 0; i < pairs.length; i++) {
+            // Lecture des données
+            const hG = parseInt(document.getElementById(`h_gen_${i}`).value);
+            const hS = parseInt(document.getElementById(`h_spec_${i}`).value);
+            const hL = document.getElementById(`h_last_${i}`).value;
+            
+            const aG = parseInt(document.getElementById(`a_gen_${i}`).value);
+            const aS = parseInt(document.getElementById(`a_spec_${i}`).value);
+            const aL = document.getElementById(`a_last_${i}`).value;
+
+            // --- LOGIQUE MATHÉMATIQUE ---
+            let score = 50; // Neutre
+
+            // 1. Écart de classement (Puissance brute)
+            let diff = aG - hG;
+            score += (diff * 1.5);
+
+            // 2. Persistance 0.3 (Si plus fort à domicile/ext qu'au général)
+            if (hS < hG) score += 7; // Momentum Home
+            if (aS < aG) score -= 7; // Momentum Away
+
+            // 3. Mean Reversion (Le pullback de 70% si gros score avant)
+            if (hL === "high" && hG <= 5) score -= 15; // Trop de buts, risque de frein
+            if (aL === "high" && aG <= 5) score += 15; // L'équipe away risque de freiner aussi
+
+            // 4. Bornes
+            let final = Math.max(5, Math.min(95, Math.round(score)));
+
+            // Affichage
+            const cell = document.getElementById(`res_${i}`);
+            let status = "neutral";
+            if (final >= 65) status = "win";
+            else if (final <= 35) status = "risk";
+
+            cell.innerHTML = `<span class="prob-result ${status}">${final}%</span>`;
+        }
+    }
 </script>
 
 </body>
