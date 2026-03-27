@@ -2,38 +2,136 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Simulateur RTP - Correction de Variance</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Herys RTP Auto-Predict - V39.1</title>
     <style>
-        body { font-family: sans-serif; background: #1a1a1a; color: #e0e0e0; padding: 20px; }
-        .card { background: #2d2d2d; border-radius: 8px; padding: 20px; max-width: 500px; border-left: 5px solid #00ff88; }
-        .stat-row { display: flex; justify-content: space-between; margin: 10px 0; border-bottom: 1px solid #444; padding-bottom: 5px; }
-        .highlight { color: #00ff88; font-weight: bold; }
-        .warning { color: #ffcc00; font-size: 0.9em; margin-top: 15px; }
+        :root {
+            --bg: #0d1117;
+            --card-bg: #161b22;
+            --neon-gold: #ffcf40;
+            --neon-green: #00ff88;
+            --neon-red: #ff4444;
+            --text: #c9d1d9;
+            --accent: #30363d;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); display: flex; justify-content: center; padding: 20px; }
+        .container { background-color: var(--card-bg); border: 1px solid var(--accent); border-radius: 12px; padding: 20px; width: 100%; max-width: 460px; box-shadow: 0 15px 40px rgba(0,0,0,0.7); }
+        
+        /* Signal Jackpot */
+        .jackpot-panel { background: #000; border: 2px solid var(--accent); border-radius: 10px; padding: 15px; margin-bottom: 15px; text-align: center; }
+        #signal-light { width: 15px; height: 15px; border-radius: 50%; background: #333; margin: 0 auto 8px; transition: 0.3s; }
+        .active-signal { background: var(--neon-green) !important; box-shadow: 0 0 15px var(--neon-green) !important; animation: blink 0.6s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+
+        /* Auto-Ajusteur */
+        .auto-input { background: #0d1117; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--neon-gold); }
+        select { width: 100%; background: #1c2128; color: white; border: 1px solid var(--accent); padding: 8px; border-radius: 4px; cursor: pointer; }
+
+        .control-panel { background: #0d1117; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+        input[type=range] { width: 100%; cursor: pointer; accent-color: var(--neon-gold); }
+
+        .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .stat-card { background: #1c2128; padding: 12px; border-radius: 6px; text-align: center; border: 1px solid var(--accent); }
+        .stat-card span { display: block; font-size: 0.7em; opacity: 0.6; margin-bottom: 3px; }
+        .stat-card b { font-size: 1.2em; color: var(--neon-green); }
+
+        .footer { text-align: center; margin-top: 15px; font-size: 0.65em; opacity: 0.4; letter-spacing: 1px; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h2>Analyse Post-Gros Score (>3.5)</h2>
-        <p>Ajustement Algo : <span class="highlight">λ = 2.0</span> (Mode Équilibre)</p>
-        
-        <div class="stat-row">
-            <span>Probabilité Under 1.5</span>
-            <span class="highlight">40.59%</span>
-        </div>
-        <div class="stat-row">
-            <span>Probabilité 0-0</span>
-            <span>13.53%</span>
-        </div>
-        <div class="stat-row">
-            <span>Probabilité 1-1</span>
-            <span>13.53%</span>
-        </div>
-        <div class="stat-row">
-            <span>Probabilité Over 2.5</span>
-            <span style="color: #ff4444;">32.33%</span>
-        </div>
 
-        <p class="warning">⚠️ Persistance 0.3 active : Le boost "Home" est neutralisé par le moteur de retour à la moyenne.</p>
+<div class="container">
+    <div class="jackpot-panel">
+        <div id="signal-light"></div>
+        <div id="signal-text" style="font-weight: bold; font-size: 0.8em; text-transform: uppercase;">Prêt pour analyse</div>
     </div>
+
+    <div class="auto-input">
+        <label style="font-size: 0.8em; color: var(--neon-gold); display: block; margin-bottom: 8px;">TOTAL BUTS DU DERNIER MATCH :</label>
+        <select id="lastScore" onchange="autoAdjust()">
+            <option value="none">-- Choisir le score --</option>
+            <option value="low">0 - 1 But (Under 1.5)</option>
+            <option value="med">2 - 3 Buts (Normal)</option>
+            <option value="high">4 Buts ou + (Score Fleuve)</option>
+        </select>
+    </div>
+    
+    <div class="control-panel">
+        <label style="color:var(--neon-gold); font-size:0.8em; display:flex; justify-content:space-between;">
+            <span>MODÈLE λ (Ajusté)</span>
+            <span id="lambdaVal" style="color:white; font-weight:bold;">2.0</span>
+        </label>
+        <input type="range" id="lambdaRange" min="0.5" max="3.5" step="0.1" value="2.0">
+    </div>
+
+    <div class="result-grid">
+        <div class="stat-card"><span>PRÉDICTION U1.5</span><b id="under15">40.6%</b></div>
+        <div class="stat-card"><span>FORCE REVERSION</span><b>90%</b></div>
+        <div class="stat-card"><span>CLEAN SHEET (0-0)</span><b id="score00">13.5%</b></div>
+        <div class="stat-card"><span>RISQUE OVER 3.5</span><b id="over35" style="color:var(--neon-red);">14.3%</b></div>
+    </div>
+
+    <div class="footer">HERYS V39.1 | BY ANJA | AUTO-PREDICT: ON</div>
+</div>
+
+<script>
+    const lambdaRange = document.getElementById('lambdaRange');
+    const lambdaVal = document.getElementById('lambdaVal');
+    const lastScore = document.getElementById('lastScore');
+    const light = document.getElementById('signal-light');
+    const sigText = document.getElementById('signal-text');
+
+    function autoAdjust() {
+        if (lastScore.value === "high") {
+            lambdaRange.value = 1.7; // Force Under
+        } else if (lastScore.value === "low") {
+            lambdaRange.value = 2.6; // Force Over possible
+        } else {
+            lambdaRange.value = 2.0; // Moyenne
+        }
+        update();
+    }
+
+    function poisson(k, lambda) {
+        let fact = 1;
+        for (let i = 1; i <= k; i++) fact *= i;
+        return (Math.exp(-lambda) * Math.pow(lambda, k)) / fact;
+    }
+
+    function update() {
+        const L = parseFloat(lambdaRange.value);
+        lambdaVal.innerText = L.toFixed(1);
+
+        const p0 = poisson(0, L);
+        const p1 = poisson(1, L);
+        const p2 = poisson(2, L);
+        const p3 = poisson(3, L);
+
+        const u15 = (p0 + p1) * 100;
+        const o35 = (1 - (p0 + p1 + p2 + p3)) * 100;
+
+        document.getElementById('under15').innerText = u15.toFixed(1) + '%';
+        document.getElementById('score00').innerText = (p0 * 100).toFixed(1) + '%';
+        document.getElementById('over35').innerText = o35.toFixed(1) + '%';
+
+        if (u15 >= 45) {
+            light.classList.add('active-signal');
+            sigText.innerText = "JACKPOT SIGNAL: UNDER 1.5 FORT";
+            sigText.style.color = "var(--neon-green)";
+        } else if (o35 > 25) {
+            light.classList.remove('active-signal');
+            sigText.innerText = "ALERTE : RISQUE OVER DÉTECTÉ";
+            sigText.style.color = "var(--neon-red)";
+        } else {
+            light.classList.remove('active-signal');
+            sigText.innerText = "EN ATTENTE D'ANOMALIE...";
+            sigText.style.color = "var(--text)";
+        }
+    }
+
+    lambdaRange.addEventListener('input', update);
+    update();
+</script>
+
 </body>
 </html>
