@@ -3,183 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HERYS ELITE V38.9 - SMART SYNC</title>
+    <title>HERYS PREDICTION V38.5 - FLUX DE ZONE</title>
     <style>
-        :root { --neon-green: #0f0; --neon-purple: #bc13fe; --neon-pink: #ff00ff; }
-        body { font-family: 'Courier New', monospace; background: #000; color: var(--neon-green); padding: 10px; margin: 0; overflow-x: hidden; }
-        .container { border: 2px solid var(--neon-green); padding: 12px; border-radius: 12px; box-shadow: 0 0 20px rgba(0, 255, 0, 0.2); max-width: 500px; margin: auto; }
-        h2 { text-align: center; font-size: 1.1em; text-shadow: 0 0 10px var(--neon-green); margin-bottom: 15px; }
-        
-        .box { background: #0a0a0a; padding: 12px; border-radius: 8px; margin-bottom: 12px; border: 1px solid #222; }
-        label { display: block; font-size: 0.7em; color: var(--neon-purple); font-weight: bold; margin-bottom: 4px; text-transform: uppercase; }
-        
-        input { background: #000; color: var(--neon-green); border: 1px solid #333; padding: 12px; width: 100%; box-sizing: border-box; border-radius: 6px; font-size: 0.95em; margin-bottom: 10px; outline: none; transition: 0.3s; }
-        input:focus { border-color: var(--neon-purple); box-shadow: 0 0 5px var(--neon-purple); }
+        body {
+            background-color: #050505;
+            color: #00ffcc;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
 
-        .btn-main { background: var(--neon-green); color: #000; font-weight: bold; padding: 15px; width: 100%; border: none; border-radius: 6px; cursor: pointer; font-size: 1em; text-transform: uppercase; }
-        .btn-calib { background: var(--neon-pink); color: #fff; font-size: 0.8em; margin-top: 5px; border: none; padding: 12px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; }
-        
-        .flex { display: flex; gap: 8px; margin-top: 10px; }
-        .btn-tool { background: #1a1a1a; color: #fff; border: 1px solid #333; flex: 1; padding: 10px; border-radius: 6px; cursor: pointer; font-size: 0.8em; }
+        #main-container {
+            width: 100%;
+            max-width: 450px;
+            background: #0f0f0f;
+            border: 2px solid #00ffcc;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+        }
 
-        #status { font-size: 0.75em; text-align: center; margin: 12px 0; color: #ff0; min-height: 15px; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #050505; border-radius: 8px; overflow: hidden; }
-        th, td { border: 1px solid #1a1a1a; padding: 10px; text-align: center; font-size: 0.85em; }
-        th { color: var(--neon-purple); background: #0a0a0a; }
+        h2 {
+            text-align: center;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+        }
 
-        .bleu { color: #3498db; }
-        .violet { color: var(--neon-purple); font-weight: bold; }
-        .win { color: var(--neon-pink); font-weight: bold; text-shadow: 0 0 8px var(--neon-pink); }
+        .section {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #ffd700;
+        }
+
+        .dot-container {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .dot {
+            width: 35px;
+            height: 35px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #000;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        select, button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: none;
+            font-size: 1rem;
+        }
+
+        select {
+            background: #333;
+            color: white;
+            border: 1px solid #00ffcc;
+        }
+
+        button {
+            background: #ffd700;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            background: #ffcc00;
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        #result-display {
+            margin-top: 20px;
+            padding: 15px;
+            text-align: center;
+            min-height: 60px;
+            border: 1px dashed #555;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        #timer-box {
+            text-align: center;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.5em;
+            color: #ff3366;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>🎯 HERYS ELITE V38.9 SMART-SYNC</h2>
+<div id="main-container">
+    <h2>HERYS ANALYSE V38.5</h2>
 
-    <div class="box">
-        <label>Hash Serveur (Dernier tour) :</label>
-        <input id="sSeed" type="text" placeholder="Coller le Server Seed ici...">
-        
-        <label>Seed Combiné / Client :</label>
-        <input id="cSeed" type="text" placeholder="Coller le Seed du jeu ici...">
-
-        <div style="display:flex; gap:8px;">
-            <div style="flex:1">
-                <label>Tour (Nonce) :</label>
-                <input id="nonce" type="number" placeholder="Ex: 8093500">
-            </div>
-            <div style="flex:1">
-                <label>RÉSULTAT RÉEL :</label>
-                <input id="realRes" type="number" step="0.01" placeholder="Ex: 1.04">
-            </div>
+    <div class="section">
+        <span style="font-size: 0.8em; color: #888;">FORME RÉCENTE (Cliquez pour éditer)</span>
+        <div class="dot-container" id="history">
+            <div onclick="toggleDot(this)" class="dot" style="background:#00ff00" data-status="V">V</div>
+            <div onclick="toggleDot(this)" class="dot" style="background:#00ff00" data-status="V">V</div>
+            <div onclick="toggleDot(this)" class="dot" style="background:#888" data-status="N">N</div>
+            <div onclick="toggleDot(this)" class="dot" style="background:#ff0000" data-status="D">D</div>
+            <div onclick="toggleDot(this)" class="dot" style="background:#00ff00" data-status="V">V</div>
         </div>
-        <button class="btn-calib" onclick="calibrate()">🛠️ SYNCHRONISER L'ALGORITHME</button>
     </div>
 
-    <button class="btn-main" onclick="predict()">🔮 GÉNÉRER LES PRÉDICTIONS</button>
+    <div class="section">
+        <label>Dernier match (Zone C ou D) :</label>
+        <select id="lastMatchResult">
+            <option value="V">Victoire</option>
+            <option value="N">Nul</option>
+            <option value="D">Défaite</option>
+        </select>
 
-    <div class="flex">
-        <button class="btn-tool" onclick="next()">TOUR +1</button>
-        <button class="btn-tool" onclick="vider()">VIDER TOUT</button>
+        <div style="margin-top:15px;">
+            <input type="checkbox" id="isMovingUp" checked> 
+            <label for="isMovingUp">L'équipe monte en Zone A ou B ?</label>
+        </div>
     </div>
 
-    <div id="status">En attente de synchronisation...</div>
+    <button onclick="genererPrediction()">Analyser le Signal</button>
 
-    <table>
-        <thead>
-            <tr>
-                <th>TOUR</th>
-                <th>PRÉDIT</th>
-                <th>SIGNAL</th>
-            </tr>
-        </thead>
-        <tbody id="resBody"></tbody>
-    </table>
+    <div id="result-display">EN ATTENTE D'ANALYSE...</div>
+    <div id="timer-box">00:00</div>
 </div>
 
 <script>
-    // Mémoire de l'application
-    let bestConfig = JSON.parse(localStorage.getItem('herys_config')) || { algo: "SHA-512", bits: 32, sep: ":", edge: 0.98 };
+    let timerInterval;
 
-    async function getHash(s, c, n, config) {
-        const enc = new TextEncoder();
-        // Le secret réside souvent dans l'ordre des seeds et le séparateur
-        const msg = `${c}${config.sep}${n}`;
-        const data = enc.encode(msg);
-        const hashBuf = await crypto.subtle.digest(config.algo, data);
-        return Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
-    }
-
-    function calc(hash, config) {
-        const chars = (config.bits === 32) ? 8 : 13;
-        const h = BigInt(`0x${hash.slice(0, chars)}`);
-        const e = 2n ** BigInt(config.bits);
-        let res = Number(BigInt(Math.floor(config.edge * 100)) * e / (e - h)) / 100;
-        return Math.max(1.00, Math.floor(res * 100) / 100);
-    }
-
-    async function calibrate() {
-        const s = document.getElementById('sSeed').value.trim();
-        const c = document.getElementById('cSeed').value.trim();
-        const n = document.getElementById('nonce').value;
-        const target = parseFloat(document.getElementById('realRes').value);
-        const status = document.getElementById('status');
-
-        if(!s || !c || !target) { 
-            status.innerHTML = "<span style='color:red'>⚠️ Entrez Seeds + Résultat Réel !</span>"; 
-            return; 
+    function toggleDot(el) {
+        if (el.dataset.status === "V") {
+            el.dataset.status = "N";
+            el.style.background = "#888";
+            el.innerText = "N";
+        } else if (el.dataset.status === "N") {
+            el.dataset.status = "D";
+            el.style.background = "#ff0000";
+            el.innerText = "D";
+        } else {
+            el.dataset.status = "V";
+            el.style.background = "#00ff00";
+            el.innerText = "V";
         }
-        
-        status.innerText = "⏳ Scan des protocoles en cours...";
-        
-        const algos = ["SHA-512", "SHA-256"];
-        const bits = [32, 52];
-        const seps = [":", "-", ""];
-        
-        let found = false;
-        for(let a of algos) {
-            for(let b of bits) {
-                for(let sp of seps) {
-                    let cfg = { algo: a, bits: b, sep: sp, edge: 0.98 };
-                    let h = await getHash(s, c, n, cfg);
-                    let res = calc(h, cfg);
-                    
-                    // Si on est à moins de 0.02 du résultat réel, la formule est validée
-                    if(Math.abs(res - target) < 0.02) {
-                        bestConfig = cfg;
-                        localStorage.setItem('herys_config', JSON.stringify(cfg));
-                        status.innerHTML = `✅ ALGO SYNC : ${a} / ${b}bits`;
-                        predict();
-                        found = true;
-                        break;
-                    }
-                }
-                if(found) break;
+    }
+
+    function startTimer(duration) {
+        clearInterval(timerInterval);
+        let timer = duration, minutes, seconds;
+        timerInterval = setInterval(function () {
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+            document.getElementById('timer-box').textContent = minutes + ":" + seconds;
+            if (--timer < 0) {
+                clearInterval(timerInterval);
+                document.getElementById('timer-box').textContent = "MATCH EN COURS !";
             }
-            if(found) break;
-        }
-        if(!found) status.innerHTML = "<span style='color:orange'>❌ Échec. Essaye un autre tour récent.</span>";
+        }, 1000);
     }
 
-    async function predict() {
-        const s = document.getElementById('sSeed').value.trim();
-        const c = document.getElementById('cSeed').value.trim();
-        const n = parseInt(document.getElementById('nonce').value);
-        const body = document.getElementById('resBody');
+    function genererPrediction() {
+        const lastRes = document.getElementById('lastMatchResult').value;
+        const upZone = document.getElementById('isMovingUp').checked;
+        const dots = document.querySelectorAll('.dot');
+        const display = document.getElementById('result-display');
         
-        if(!s || !c) return;
+        let winCount = 0;
+        dots.forEach(d => { if(d.dataset.status === "V") winCount++; });
 
-        let html = "";
-        for(let i=1; i<=10; i++) {
-            let tour = n + i;
-            let h = await getHash(s, c, tour, bestConfig);
-            let val = calc(h, bestConfig);
-            
-            let sig = (val < 2) ? "BAS" : (val < 10) ? "SNIPER" : "🔥 JACKPOT";
-            let cls = (val < 2) ? "bleu" : (val < 10) ? "violet" : "win";
-            
-            html += `<tr><td>#${tour}</td><td class="${cls}">${val.toFixed(2)}x</td><td>${sig}</td></tr>`;
+        // Analyse de probabilité
+        if (winCount >= 4) {
+            display.innerHTML = "<span style='color:#ff9900'>⚠️ ALERTE SATURATION<br>Trop de victoires, l'algorithme va casser la série.</span>";
+            display.style.borderColor = "#ff9900";
+        } else if (lastRes === "V" && upZone) {
+            display.innerHTML = "<span style='color:#00ff00; text-shadow:0 0 5px #00ff00'>🔥 SIGNAL GOLD : VICTOIRE PROBABLE 🔥<br>Flux C/D vers A/B validé.</span>";
+            display.style.borderColor = "#00ff00";
+        } else if (lastRes === "D") {
+            display.innerHTML = "<span style='color:#ff0000'>❌ SIGNAL NÉGATIF<br>Évitez de parier sur ce match.</span>";
+            display.style.borderColor = "#ff0000";
+        } else {
+            display.innerHTML = "<span style='color:#888'>PAS DE SIGNAL CLAIR<br>Attendre la prochaine journée.</span>";
+            display.style.borderColor = "#444";
         }
-        body.innerHTML = html;
-    }
 
-    function next() {
-        let nInput = document.getElementById('nonce');
-        nInput.value = parseInt(nInput.value) + 1;
-        predict();
+        // Lancer le timer de 90 secondes pour la prochaine session
+        startTimer(90);
     }
-
-    function vider() {
-        document.querySelectorAll('input').forEach(i => i.value = "");
-        document.getElementById('resBody').innerHTML = "";
-        document.getElementById('status').innerText = "Mémoire effacée.";
-    }
-
-    window.onload = () => {
-        document.getElementById('status').innerText = `Dernière Sync : ${bestConfig.algo} (${bestConfig.bits}b)`;
-    };
 </script>
+
 </body>
 </html>
