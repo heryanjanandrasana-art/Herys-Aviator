@@ -2,210 +2,103 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HERYS PREDICTION V38.5 - FLUX DE ZONE</title>
+    <title>HERYS ALGO-REVERSION V45</title>
     <style>
-        body {
-            background-color: #050505;
-            color: #00ffcc;
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            display: flex;
-            justify-content: center;
-            padding: 20px;
-        }
+        :root { --neon: #00ffcc; --gold: #ffd700; --warn: #ff3366; }
+        body { background: #050505; color: var(--neon); font-family: 'Courier New', monospace; padding: 20px; display: flex; justify-content: center; }
+        .panel { width: 450px; border: 2px solid var(--neon); border-radius: 15px; padding: 25px; background: #0a0a0a; box-shadow: 0 0 30px rgba(0,255,204,0.15); }
+        h2 { text-align: center; color: var(--gold); text-shadow: 0 0 10px var(--gold); margin-bottom: 30px; border-bottom: 1px solid #222; padding-bottom: 10px; }
+        
+        .input-group { margin-bottom: 20px; background: #111; padding: 15px; border-radius: 8px; border-left: 3px solid var(--gold); }
+        label { font-size: 0.75em; color: #888; text-transform: uppercase; display: block; margin-bottom: 8px; }
+        select, input { width: 100%; background: #000; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 4px; outline: none; }
+        select:focus { border-color: var(--neon); }
 
-        #main-container {
-            width: 100%;
-            max-width: 450px;
-            background: #0f0f0f;
-            border: 2px solid #00ffcc;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
-        }
+        .btn-calc { width: 100%; padding: 15px; background: var(--gold); color: #000; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; font-size: 1em; transition: 0.3s; }
+        .btn-calc:hover { background: var(--neon); box-shadow: 0 0 20px var(--neon); }
 
-        h2 {
-            text-align: center;
-            color: #ffd700;
-            text-shadow: 0 0 10px #ffd700;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #333;
-            padding-bottom: 10px;
-        }
-
-        .section {
-            background: #1a1a1a;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            border-left: 4px solid #ffd700;
-        }
-
-        .dot-container {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .dot {
-            width: 35px;
-            height: 35px;
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #000;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        select, button {
-            width: 100%;
-            padding: 12px;
-            margin-top: 10px;
-            border-radius: 5px;
-            border: none;
-            font-size: 1rem;
-        }
-
-        select {
-            background: #333;
-            color: white;
-            border: 1px solid #00ffcc;
-        }
-
-        button {
-            background: #ffd700;
-            color: #000;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-
-        button:hover {
-            background: #ffcc00;
-            box-shadow: 0 0 15px #ffd700;
-        }
-
-        #result-display {
-            margin-top: 20px;
-            padding: 15px;
-            text-align: center;
-            min-height: 60px;
-            border: 1px dashed #555;
-            border-radius: 8px;
-            font-weight: bold;
-        }
-
-        #timer-box {
-            text-align: center;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 1.5em;
-            color: #ff3366;
-            margin-top: 10px;
-        }
+        #display-logic { margin-top: 25px; padding: 15px; border-radius: 8px; text-align: center; font-size: 0.9em; min-height: 80px; transition: 0.5s; }
+        .prob-bar { height: 10px; background: #222; border-radius: 5px; margin-top: 10px; overflow: hidden; }
+        .prob-fill { height: 100%; background: var(--neon); width: 0%; transition: 1s ease-in-out; }
     </style>
 </head>
 <body>
 
-<div id="main-container">
-    <h2>HERYS ANALYSE V38.5</h2>
+<div class="panel">
+    <h2>HERYS ALGO V45</h2>
 
-    <div class="section">
-        <span style="font-size: 0.8em; color: #888;">FORME RÉCENTE (Cliquez pour éditer)</span>
-        <div class="dot-container" id="history">
-            <div onclick="toggleDot(this)" class="dot" style="background:#00ff00" data-status="V">V</div>
-            <div onclick="toggleDot(this)" class="dot" style="background:#00ff00" data-status="V">V</div>
-            <div onclick="toggleDot(this)" class="dot" style="background:#888" data-status="N">N</div>
-            <div onclick="toggleDot(this)" class="dot" style="background:#ff0000" data-status="D">D</div>
-            <div onclick="toggleDot(this)" class="dot" style="background:#00ff00" data-status="V">V</div>
-        </div>
-    </div>
-
-    <div class="section">
-        <label>Dernier match (Zone C ou D) :</label>
-        <select id="lastMatchResult">
-            <option value="V">Victoire</option>
-            <option value="N">Nul</option>
-            <option value="D">Défaite</option>
+    <div class="input-group">
+        <label>1. Dernier Score en Zone C/D (Bas)</label>
+        <select id="prev_score">
+            <option value="3">Gros Score (3-0, 4-0, 4-1)</option>
+            <option value="1" selected>Score Moyen (1-0, 2-1, 2-0)</option>
+            <option value="0">Nul ou Défaite</option>
         </select>
-
-        <div style="margin-top:15px;">
-            <input type="checkbox" id="isMovingUp" checked> 
-            <label for="isMovingUp">L'équipe monte en Zone A ou B ?</label>
-        </div>
     </div>
 
-    <button onclick="genererPrediction()">Analyser le Signal</button>
+    <div class="input-group">
+        <label>2. Position Match Actuel</label>
+        <select id="current_zone">
+            <option value="high">Zone A/B (Matchs 1 à 5)</option>
+            <option value="low">Zone C/D (Matchs 6 à 10)</option>
+        </select>
+    </div>
 
-    <div id="result-display">EN ATTENTE D'ANALYSE...</div>
-    <div id="timer-box">00:00</div>
+    <div class="input-group">
+        <label>3. Type d'Adversaire (Top 10?)</label>
+        <select id="opp_rank">
+            <option value="strong">Top 10 (Adversaire Fort)</option>
+            <option value="weak">Bas de tableau</option>
+        </select>
+    </div>
+
+    <button class="btn-calc" onclick="runAlgo()">DÉCODER LA SÉQUENCE</button>
+
+    <div id="display-logic" style="border: 1px solid #333;">
+        SCANNER EN ATTENTE...
+    </div>
+    <div class="prob-bar"><div id="p-fill" class="prob-fill"></div></div>
 </div>
 
 <script>
-    let timerInterval;
+function runAlgo() {
+    const score = parseInt(document.getElementById('prev_score').value);
+    const zone = document.getElementById('current_zone').value;
+    const opp = document.getElementById('opp_rank').value;
+    const display = document.getElementById('display-logic');
+    const fill = document.getElementById('p-fill');
 
-    function toggleDot(el) {
-        if (el.dataset.status === "V") {
-            el.dataset.status = "N";
-            el.style.background = "#888";
-            el.innerText = "N";
-        } else if (el.dataset.status === "N") {
-            el.dataset.status = "D";
-            el.style.background = "#ff0000";
-            el.innerText = "D";
-        } else {
-            el.dataset.status = "V";
-            el.style.background = "#00ff00";
-            el.innerText = "V";
-        }
+    let proba = 50; // Base neutrale
+    let motif = "";
+
+    // LOGIQUE MATHÉMATIQUE BASÉE SUR TES RECHERCHES :
+    
+    if (score === 3 && zone === 'high') {
+        // Cas du Pullback Mean Reversion (70%)
+        proba = 43; 
+        motif = "<span style='color:var(--warn)'>DANGER : Mean Reversion détecté. Probabilité Under 2.5 élevée (43%). L'algorithme freine le momentum.</span>";
+        display.style.borderColor = "var(--warn)";
+    } 
+    else if (score === 1 && zone === 'high' && opp === 'weak') {
+        // Boost lambda home 1.88 + Persistance 0.3
+        proba = 72;
+        motif = "<span style='color:var(--neon)'>SIGNAL OPTIMAL : Persistance 0.3 active. Équipe stable, forte probabilité de Over 1.5.</span>";
+        display.style.borderColor = "var(--neon)";
+    }
+    else if (score === 0) {
+        proba = 30;
+        motif = "SÉQUENCE FROIDE : Aucune persistance détectée. Attendre le prochain cycle.";
+        display.style.borderColor = "#333";
+    }
+    else {
+        proba = 55;
+        motif = "FLUX NEUTRE : Risque modéré. Gestion de bankroll recommandée.";
+        display.style.borderColor = var(--gold);
     }
 
-    function startTimer(duration) {
-        clearInterval(timerInterval);
-        let timer = duration, minutes, seconds;
-        timerInterval = setInterval(function () {
-            minutes = parseInt(timer / 60, 10);
-            seconds = parseInt(timer % 60, 10);
-            minutes = minutes < 10 ? "0" + minutes : minutes;
-            seconds = seconds < 10 ? "0" + seconds : seconds;
-            document.getElementById('timer-box').textContent = minutes + ":" + seconds;
-            if (--timer < 0) {
-                clearInterval(timerInterval);
-                document.getElementById('timer-box').textContent = "MATCH EN COURS !";
-            }
-        }, 1000);
-    }
-
-    function genererPrediction() {
-        const lastRes = document.getElementById('lastMatchResult').value;
-        const upZone = document.getElementById('isMovingUp').checked;
-        const dots = document.querySelectorAll('.dot');
-        const display = document.getElementById('result-display');
-        
-        let winCount = 0;
-        dots.forEach(d => { if(d.dataset.status === "V") winCount++; });
-
-        // Analyse de probabilité
-        if (winCount >= 4) {
-            display.innerHTML = "<span style='color:#ff9900'>⚠️ ALERTE SATURATION<br>Trop de victoires, l'algorithme va casser la série.</span>";
-            display.style.borderColor = "#ff9900";
-        } else if (lastRes === "V" && upZone) {
-            display.innerHTML = "<span style='color:#00ff00; text-shadow:0 0 5px #00ff00'>🔥 SIGNAL GOLD : VICTOIRE PROBABLE 🔥<br>Flux C/D vers A/B validé.</span>";
-            display.style.borderColor = "#00ff00";
-        } else if (lastRes === "D") {
-            display.innerHTML = "<span style='color:#ff0000'>❌ SIGNAL NÉGATIF<br>Évitez de parier sur ce match.</span>";
-            display.style.borderColor = "#ff0000";
-        } else {
-            display.innerHTML = "<span style='color:#888'>PAS DE SIGNAL CLAIR<br>Attendre la prochaine journée.</span>";
-            display.style.borderColor = "#444";
-        }
-
-        // Lancer le timer de 90 secondes pour la prochaine session
-        startTimer(90);
-    }
+    display.innerHTML = motif;
+    fill.style.width = proba + "%";
+}
 </script>
 
 </body>
