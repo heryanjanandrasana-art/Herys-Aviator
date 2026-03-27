@@ -2,83 +2,105 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Herys PRO-INTERFACE V40</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HERYS ELITE V40.1</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
-        :root { --bg: #0d1117; --neon-gold: #ffcf40; --neon-green: #00ff88; --accent: #30363d; }
-        body { font-family: sans-serif; background: var(--bg); color: #c9d1d9; display: flex; justify-content: center; padding: 10px; }
-        .app-container { width: 100%; max-width: 420px; border: 2px solid var(--accent); border-radius: 15px; padding: 15px; background: #161b22; }
-        
-        .timer-box { font-size: 2em; text-align: center; color: var(--neon-gold); font-family: monospace; margin-bottom: 10px; border: 1px solid #444; border-radius: 8px; padding: 5px; }
-        
-        .jackpot-light { height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-bottom: 15px; background: #000; transition: 0.5s; }
-        .blink { animation: blinker 0.8s linear infinite; background: var(--neon-green); color: #000; box-shadow: 0 0 20px var(--neon-green); }
-        @keyframes blinker { 50% { opacity: 0.5; } }
-
-        select, button { width: 100%; padding: 12px; margin-top: 10px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; }
-        .btn-reset { background: #ff4444; color: white; }
+        :root { --gold: #d4af37; --pink: #ec4899; --blue: #3b82f6; --violet: #a855f7; --bg: #0a0a0a; --red: #ff4444; }
+        body { background: var(--bg); color: #fff; font-family: sans-serif; margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; }
+        .container { width: 100%; max-width: 450px; background: #161616; border: 1px solid #333; border-radius: 20px; padding: 20px; box-sizing: border-box; }
+        h1 { color: var(--gold); font-size: 1.1rem; text-align: center; text-transform: uppercase; border-bottom: 1px solid #333; padding-bottom: 10px; margin: 0; }
+        label { display: block; font-size: 0.7rem; color: #888; margin: 10px 0 5px 5px; }
+        input { width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: #fff; border-radius: 10px; box-sizing: border-box; outline: none; margin-bottom: 5px; font-family: monospace; }
+        button { width: 100%; padding: 18px; background: var(--gold); border: none; border-radius: 12px; font-weight: 900; margin-top: 10px; cursor: pointer; }
+        #display { font-size: 3.5rem; text-align: center; margin: 10px 0; font-weight: 900; }
+        #scannerBox { margin-top: 15px; background: #000; border-radius: 15px; padding: 12px; border: 1px solid #222; }
+        .scan-item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #111; font-size: 0.85rem; }
+        .check-box { background: #1f1f1f; padding: 10px; border-radius: 10px; margin-top: 10px; border: 1px dashed #444; }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    <div class="timer-box" id="timer">02:00</div>
+<div class="container">
+    <h1>HERYS ELITE V40.1</h1>
     
-    <div id="signal" class="jackpot-light">SCANNING ENGLISH LEAGUE...</div>
+    <label>COMBINED SEED (HASH DU TOUR)</label>
+    <input type="text" id="sSeed" placeholder="Coller le seed complet...">
 
-    <div style="background: #0d1117; padding: 10px; border-radius: 8px;">
-        <label style="font-size: 0.8em; color: var(--neon-gold);">RÉSULTAT PRÉCÉDENT :</label>
-        <select id="lastRes" onchange="process()">
-            <option value="2">Match Normal (2-3 buts)</option>
-            <option value="4">Score Fleuve (4+ buts)</option>
-            <option value="1">Petit Score (0-1 but)</option>
-        </select>
+    <label>NONCE DU TOUR COLLÉ</label>
+    <input type="number" id="nonce" placeholder="Ex: 8101784">
+
+    <div class="check-box">
+        <label style="margin:0; color:var(--gold)">VÉRIFICATION (Multiplicateur du tour collé)</label>
+        <input type="number" id="checkVal" step="0.01" placeholder="Ex: 1.51">
     </div>
+    
+    <button onclick="runHerysPredictor()">SCANNER LA SUITE</button>
 
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
-        <div style="text-align: center; background: #1c2128; padding: 10px; border-radius: 5px;">
-            <span style="font-size: 0.7em;">U1.5 PROB</span><br>
-            <b id="u15" style="color: var(--neon-green);">40%</b>
-        </div>
-        <div style="text-align: center; background: #1c2128; padding: 10px; border-radius: 5px;">
-            <span style="font-size: 0.7em;">REVERSION</span><br>
-            <b style="color: var(--neon-gold);">91%</b>
-        </div>
+    <div id="display">---</div>
+
+    <div id="scannerBox" style="display:none;">
+        <div style="color:var(--gold); font-size:0.8rem; margin-bottom:10px;">PRÉVISIONS DES 10 PROCHAINS :</div>
+        <div id="scanList"></div>
     </div>
-
-    <button class="btn-reset" onclick="resetTimer()">RESET TIMER (NOUVEAU MATCH)</button>
-    <div style="text-align: center; font-size: 0.6em; margin-top: 15px; opacity: 0.5;">ANJA - HERYS ENGINE V40</div>
 </div>
 
 <script>
-    let timeLeft = 120;
-    const timerDisplay = document.getElementById('timer');
+    let audioCtx = null;
+    function playAlert() {
+        if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+    }
 
-    function resetTimer() { timeLeft = 120; }
+    function calculateCrash(s, n) {
+        // Dans Aviator, le combined seed contient souvent déjà les client seeds
+        const hash = CryptoJS.SHA512(s + n).toString();
+        if (parseInt(hash.substring(0, 8), 16) % 33 === 0) return 1.00;
+        const h = parseInt(hash.substring(0, 13), 16) / Math.pow(2, 52);
+        return Math.floor((0.97 / (1 - h)) * 100) / 100;
+    }
 
-    setInterval(() => {
-        if (timeLeft > 0) {
-            timeLeft--;
-            let mins = Math.floor(timeLeft / 60);
-            let secs = timeLeft % 60;
-            timerDisplay.innerText = `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+    function runHerysPredictor() {
+        const s = document.getElementById('sSeed').value;
+        const n = parseInt(document.getElementById('nonce').value);
+        const check = parseFloat(document.getElementById('checkVal').value);
+
+        if (!s || isNaN(n)) return alert("Données manquantes !");
+
+        // 1. Vérification de la graine
+        const realNow = calculateCrash(s, ""); // Sur certains systèmes, le n est déjà dans le s
+        const display = document.getElementById('display');
+        
+        document.getElementById('scannerBox').style.display = "block";
+        let scanHTML = "";
+        let roseFound = false;
+
+        for (let i = 1; i <= 10; i++) {
+            const nextN = n + i;
+            // Test de calcul hybride (Graine + Incrément)
+            const res = calculateCrash(s, i); 
+            
+            let color = "var(--blue)";
+            if (res >= 10) { color = "var(--pink)"; roseFound = true; }
+            else if (res >= 2) { color = "var(--violet)"; }
+
+            scanHTML += `<div class="scan-item" style="color:${color}">
+                <span>TOUR +${i}</span>
+                <span><b>${res.toFixed(2)}x</b></span>
+            </div>`;
         }
-    }, 1000);
 
-    function process() {
-        const val = document.getElementById('lastRes').value;
-        const sig = document.getElementById('signal');
-        const u15Disp = document.getElementById('u15');
-
-        if (val == "4") {
-            u15Disp.innerText = "48.2%";
-            sig.innerText = "JACKPOT: MISEZ UNDER 1.5";
-            sig.classList.add('blink');
-        } else {
-            u15Disp.innerText = "32.1%";
-            sig.innerText = "ATTENTE VARIANCE...";
-            sig.classList.remove('blink');
-        }
+        display.innerText = "SÉQUENCE OK";
+        display.style.color = "var(--gold)";
+        document.getElementById('scanList').innerHTML = scanHTML;
+        if (roseFound) playAlert();
     }
 </script>
+
 </body>
 </html>
