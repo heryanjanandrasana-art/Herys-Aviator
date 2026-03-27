@@ -2,136 +2,38 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>HERYS ULTIMATE TRACKER V55</title>
+    <title>Simulateur RTP - Correction de Variance</title>
     <style>
-        :root { --neon: #00ffcc; --gold: #ffd700; --bg: #050505; --card: #111; }
-        body { background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; padding: 10px; margin: 0; }
-        .wrapper { max-width: 1000px; margin: auto; border: 1px solid #333; padding: 15px; border-radius: 10px; background: #080808; }
-        h2 { text-align: center; color: var(--gold); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; }
-        
-        table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
-        th { background: var(--card); color: var(--neon); padding: 12px; border: 1px solid #222; }
-        td { padding: 8px; border: 1px solid #222; text-align: center; vertical-align: middle; }
-        
-        .team-name { font-weight: bold; width: 130px; color: #fff; text-align: left; padding-left: 5px; }
-        input, select { background: #000; border: 1px solid #444; color: var(--neon); padding: 5px; width: 55px; border-radius: 3px; text-align: center; }
-        
-        .btn-calc { width: 100%; padding: 15px; background: var(--gold); color: #000; font-weight: bold; border: none; border-radius: 5px; margin-top: 20px; cursor: pointer; font-size: 1.1em; box-shadow: 0 4px 10px rgba(255, 215, 0, 0.2); }
-        .btn-calc:hover { filter: brightness(1.2); }
-
-        .prob-result { font-weight: bold; font-size: 1.1em; padding: 5px; border-radius: 4px; display: block; }
-        .win { color: #00ff00; background: rgba(0, 255, 0, 0.1); border: 1px solid #00ff00; }
-        .risk { color: #ff3366; background: rgba(255, 51, 102, 0.1); border: 1px solid #ff3366; }
-        .neutral { color: #888; background: #222; border: 1px solid #444; }
+        body { font-family: sans-serif; background: #1a1a1a; color: #e0e0e0; padding: 20px; }
+        .card { background: #2d2d2d; border-radius: 8px; padding: 20px; max-width: 500px; border-left: 5px solid #00ff88; }
+        .stat-row { display: flex; justify-content: space-between; margin: 10px 0; border-bottom: 1px solid #444; padding-bottom: 5px; }
+        .highlight { color: #00ff88; font-weight: bold; }
+        .warning { color: #ffcc00; font-size: 0.9em; margin-top: 15px; }
     </style>
 </head>
 <body>
+    <div class="card">
+        <h2>Analyse Post-Gros Score (>3.5)</h2>
+        <p>Ajustement Algo : <span class="highlight">λ = 2.0</span> (Mode Équilibre)</p>
+        
+        <div class="stat-row">
+            <span>Probabilité Under 1.5</span>
+            <span class="highlight">40.59%</span>
+        </div>
+        <div class="stat-row">
+            <span>Probabilité 0-0</span>
+            <span>13.53%</span>
+        </div>
+        <div class="stat-row">
+            <span>Probabilité 1-1</span>
+            <span>13.53%</span>
+        </div>
+        <div class="stat-row">
+            <span>Probabilité Over 2.5</span>
+            <span style="color: #ff4444;">32.33%</span>
+        </div>
 
-<div class="wrapper">
-    <h2>HERYS PREDICTION V55 - ANALYSEUR DE SESSION</h2>
-
-    <table>
-        <thead>
-            <tr>
-                <th>HOME</th>
-                <th>GEN / SPEC</th>
-                <th>LAST SCORE</th>
-                <th>VS</th>
-                <th>AWAY</th>
-                <th>GEN / SPEC</th>
-                <th>LAST SCORE</th>
-                <th>PROBABILITÉ</th>
-            </tr>
-        </thead>
-        <tbody id="matchBody">
-            </tbody>
-    </table>
-
-    <button class="btn-calc" onclick="calculerTout()">LANCER LE SCAN MATHÉMATIQUE</button>
-</div>
-
-<script>
-    // Liste des équipes basées sur tes vidéos (English League)
-    const pairs = [
-        ["Manchester #", "C Palace"], ["Liverpool", "London Blues"], ["West Ham", "Brighton"],
-        ["Arsenal", "Everton"], ["Leicester", "Newcastle"], ["A. Villa", "Sunderland"],
-        ["Tottenham", "Southampton"], ["Wolves", "Watford"], ["Burnley", "Leeds"], ["Norwich", "Brentford"]
-    ];
-
-    const tbody = document.getElementById('matchBody');
-
-    pairs.forEach((match, i) => {
-        tbody.innerHTML += `
-            <tr>
-                <td class="team-name">${match[0]}</td>
-                <td>
-                    <input type="number" id="h_gen_${i}" placeholder="G" value="5">
-                    <input type="number" id="h_spec_${i}" placeholder="H" value="3">
-                </td>
-                <td>
-                    <select id="h_last_${i}">
-                        <option value="low">Petits buts (1-2)</option>
-                        <option value="high">Gros score (3+)</option>
-                        <option value="none">Nul/Déf</option>
-                    </select>
-                </td>
-                <td style="color:#444">vs</td>
-                <td class="team-name">${match[1]}</td>
-                <td>
-                    <input type="number" id="a_gen_${i}" placeholder="G" value="15">
-                    <input type="number" id="a_spec_${i}" placeholder="A" value="18">
-                </td>
-                <td>
-                    <select id="a_last_${i}">
-                        <option value="low">Petits buts (1-2)</option>
-                        <option value="high">Gros score (3+)</option>
-                        <option value="none">Nul/Déf</option>
-                    </select>
-                </td>
-                <td id="res_${i}"><span class="prob-result neutral">--</span></td>
-            </tr>
-        `;
-    });
-
-    function calculerTout() {
-        for (let i = 0; i < pairs.length; i++) {
-            // Lecture des données
-            const hG = parseInt(document.getElementById(`h_gen_${i}`).value);
-            const hS = parseInt(document.getElementById(`h_spec_${i}`).value);
-            const hL = document.getElementById(`h_last_${i}`).value;
-            
-            const aG = parseInt(document.getElementById(`a_gen_${i}`).value);
-            const aS = parseInt(document.getElementById(`a_spec_${i}`).value);
-            const aL = document.getElementById(`a_last_${i}`).value;
-
-            // --- LOGIQUE MATHÉMATIQUE ---
-            let score = 50; // Neutre
-
-            // 1. Écart de classement (Puissance brute)
-            let diff = aG - hG;
-            score += (diff * 1.5);
-
-            // 2. Persistance 0.3 (Si plus fort à domicile/ext qu'au général)
-            if (hS < hG) score += 7; // Momentum Home
-            if (aS < aG) score -= 7; // Momentum Away
-
-            // 3. Mean Reversion (Le pullback de 70% si gros score avant)
-            if (hL === "high" && hG <= 5) score -= 15; // Trop de buts, risque de frein
-            if (aL === "high" && aG <= 5) score += 15; // L'équipe away risque de freiner aussi
-
-            // 4. Bornes
-            let final = Math.max(5, Math.min(95, Math.round(score)));
-
-            // Affichage
-            const cell = document.getElementById(`res_${i}`);
-            let status = "neutral";
-            if (final >= 65) status = "win";
-            else if (final <= 35) status = "risk";
-
-            cell.innerHTML = `<span class="prob-result ${status}">${final}%</span>`;
-        }
-    }
-</script>
-
+        <p class="warning">⚠️ Persistance 0.3 active : Le boost "Home" est neutralisé par le moteur de retour à la moyenne.</p>
+    </div>
 </body>
 </html>
