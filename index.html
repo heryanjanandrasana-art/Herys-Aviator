@@ -11,7 +11,6 @@
             --gold: #D4AF37;
             --violet: #8A2BE2;
             --rose: #FF1493;
-            --bas: #444;
             --text-main: #E0E0FF;
         }
 
@@ -28,7 +27,7 @@
         }
 
         #appContent {
-            display: none; /* Masqué jusqu'à validation du code */
+            display: block; 
             width: 100%;
             max-width: 420px;
             padding: 20px;
@@ -66,7 +65,6 @@
             margin: 25px 0;
             min-height: 60px;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-shadow: 0 0 10px rgba(255,255,255,0.1);
         }
 
         .input-group {
@@ -92,12 +90,6 @@
             font-size: 1.1rem;
             box-sizing: border-box;
             outline: none;
-            transition: 0.3s;
-        }
-
-        input:focus {
-            border-color: var(--gold);
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
         }
 
         .btn-predict {
@@ -110,26 +102,30 @@
             font-weight: 700;
             font-size: 1.1rem;
             cursor: pointer;
-            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.25);
-            transition: transform 0.1s;
+            margin-bottom: 15px;
         }
 
-        .btn-predict:active { transform: scale(0.96); }
-
-        .history-container {
-            margin-top: 25px;
-            text-align: left;
+        .btn-reset {
+            background: transparent;
+            color: #ff4444;
+            border: 1px solid #ff4444;
+            padding: 8px 15px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: 0.3s;
         }
+
+        .btn-reset:hover { opacity: 1; background: rgba(255, 68, 68, 0.1); }
 
         .history-list {
             display: flex;
             gap: 10px;
             overflow-x: auto;
-            padding: 10px 0;
-            scrollbar-width: none; /* Firefox */
+            padding: 15px 0;
+            scrollbar-width: none;
         }
-
-        .history-list::-webkit-scrollbar { display: none; } /* Chrome/Safari */
 
         .badge {
             padding: 8px 15px;
@@ -137,7 +133,6 @@
             font-size: 0.9rem;
             font-weight: 700;
             min-width: 45px;
-            text-align: center;
             animation: fadeIn 0.4s ease;
         }
 
@@ -166,39 +161,17 @@
         <div class="history-container">
             <label>HISTORIQUE RÉCENT :</label>
             <div class="history-list" id="history"></div>
+            <button class="btn-reset" onclick="resetApp()">RÉINITIALISER TOUT</button>
         </div>
     </div>
 </div>
 
 <script>
-    // --- CONFIGURATION ---
-    const SECRET_HASH = "809865662706e40854f9a06689d7010411a2f6460980590c6810a9058b8d00d2"; // code: anja2026
     let history = [];
-    
-    // Éléments DOM cachés (Optimisation Perplexity)
     const display = document.getElementById('display');
     const input = document.getElementById('valInput');
     const historyBox = document.getElementById('history');
 
-    // --- SÉCURITÉ ---
-    async function verifyAccess() {
-        const pass = prompt("Entrez la clé d'accès Herys Elite :");
-        if(!pass) return window.location.reload();
-
-        const msgUint8 = new TextEncoder().encode(pass);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-
-        if (hashHex === SECRET_HASH) {
-            document.getElementById('appContent').style.display = "block";
-        } else {
-            alert("Clé invalide.");
-            window.location.reload();
-        }
-    }
-
-    // --- LOGIQUE CORE ---
     function categorize(v) {
         if (v >= 2 && v < 5) return "VIOLET";
         if (v >= 5) return "ROSE";
@@ -210,24 +183,19 @@
         if (isNaN(val) || val <= 0) return;
 
         history.push(val);
-        
-        // UI Updates
         updateUI();
         makePrediction();
-
-        // Mobile UX: Reset & Keep keyboard open
         input.value = "";
         input.focus();
     }
 
     function makePrediction() {
         if (history.length < 5) {
-            display.innerText = "DATA INSUFFISANTE";
+            display.innerText = "DATA INSUFFISANTE (" + history.length + "/5)";
             display.style.color = "#444";
             return;
         }
 
-        // Algorithme de Transition (Logic ChatGPT)
         let transitions = { "BAS": { "VIOLET": 0, "ROSE": 0 }, "VIOLET": { "VIOLET": 0, "ROSE": 0 }, "ROSE": { "VIOLET": 0, "ROSE": 0 } };
         
         for (let i = 0; i < history.length - 1; i++) {
@@ -241,7 +209,6 @@
         const lastCat = categorize(history[history.length - 1]);
         const nextStats = transitions[lastCat];
 
-        // Décision
         if (nextStats.ROSE >= nextStats.VIOLET && nextStats.ROSE > 0) {
             display.innerText = "ROSE PROBABLE";
             display.style.color = "#FF1493";
@@ -252,17 +219,13 @@
             display.innerText = "CYCLE INSTABLE";
             display.style.color = "#D4AF37";
         }
-        
         display.style.textShadow = `0 0 20px ${display.style.color}`;
     }
 
     function updateUI() {
-        // Optimisation DocumentFragment (Logic Perplexity)
         historyBox.innerHTML = "";
         const fragment = document.createDocumentFragment();
-        const recent = history.slice(-6);
-
-        recent.forEach(h => {
+        history.slice(-6).forEach(h => {
             const span = document.createElement('span');
             span.className = 'badge';
             const cat = categorize(h);
@@ -273,8 +236,14 @@
         historyBox.appendChild(fragment);
     }
 
-    // Initialisation
-    window.onload = verifyAccess;
+    function resetApp() {
+        history = [];
+        historyBox.innerHTML = "";
+        display.innerText = "PRÊT";
+        display.style.color = "#444";
+        display.style.textShadow = "none";
+        input.value = "";
+    }
 </script>
 
 </body>
