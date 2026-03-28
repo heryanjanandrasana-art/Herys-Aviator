@@ -3,111 +3,153 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Analyzer Pro</title>
+<title>HERYS PRO AI V2</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 body {
     background: #050505;
     color: #00f2ff;
-    font-family: Arial, sans-serif;
+    font-family: 'Orbitron', monospace;
     text-align: center;
-    padding: 20px;
 }
 
 input, button {
-    padding: 10px;
+    padding: 12px;
     margin: 8px;
-    border-radius: 6px;
-    border: none;
+    border-radius: 8px;
+    border: 1px solid #00f2ff;
+    background: #111;
+    color: #00f2ff;
+    width: 250px;
 }
 
 button {
-    background: #00f2ff;
+    background: linear-gradient(45deg, #00f2ff, #ff007b);
     color: black;
     font-weight: bold;
 }
 
-#result, #confidence {
-    margin-top: 20px;
-    font-size: 18px;
-}
-
-.bar {
-    width: 80%;
-    height: 20px;
-    background: #222;
-    margin: 20px auto;
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.fill {
-    height: 100%;
-    width: 0%;
-    background: #00f2ff;
-    transition: 0.3s;
+#signal {
+    font-size: 22px;
+    margin-top: 15px;
+    font-weight: bold;
 }
 </style>
 </head>
 
 <body>
 
-<h2>🔍 Analyzer Pro</h2>
+<h2>🔥 HERYS PRO AI V2</h2>
 
-<input id="hash" placeholder="Hash SHA512"><br>
 <input id="mult" placeholder="Multiplicateur"><br>
 
-<button onclick="analyze()">Analyser</button>
+<button onclick="analyze()">ANALYSER</button>
 
 <div id="result"></div>
-<div id="confidence"></div>
+<div id="prob"></div>
+<div id="prediction"></div>
+<div id="signal"></div>
 
-<div class="bar">
-    <div id="bar" class="fill"></div>
-</div>
+<canvas id="chart" width="300" height="150"></canvas>
 
 <script>
 let history = [];
 
-function calculateFromHash(hash) {
-    const last8 = hash.slice(-8);
-    const dec = parseInt(last8, 16);
-    const result = Math.max(1, Math.floor((4294967295 * 0.97 / dec) * 100) / 100);
-    return result;
+function weightedProb(history) {
+    let low = 0, mid = 0, high = 0;
+    let totalWeight = 0;
+
+    history.forEach((v, i) => {
+        let weight = history.length - i;
+        totalWeight += weight;
+
+        if (v < 2) low += weight;
+        else if (v < 5) mid += weight;
+        else high += weight;
+    });
+
+    return {
+        low: (low / totalWeight) * 100 || 0,
+        mid: (mid / totalWeight) * 100 || 0,
+        high: (high / totalWeight) * 100 || 0
+    };
+}
+
+function simulate10(probs) {
+    let out = [];
+    let rose = false;
+
+    for (let i = 0; i < 10; i++) {
+        let r = Math.random() * 100;
+
+        if (r < probs.low) {
+            out.push("🔵");
+        } else if (r < probs.low + probs.mid) {
+            out.push("🟣");
+        } else {
+            out.push("🔴⭐");
+            rose = true;
+        }
+    }
+
+    return { out, rose };
+}
+
+let chart;
+
+function updateChart(data) {
+    if (chart) chart.destroy();
+
+    chart = new Chart(document.getElementById("chart"), {
+        type: 'line',
+        data: {
+            labels: data.map((_, i) => i + 1),
+            datasets: [{
+                label: 'Multiplicateur',
+                data: data
+            }]
+        }
+    });
 }
 
 function analyze() {
-    let hash = document.getElementById("hash").value.trim();
     let mult = parseFloat(document.getElementById("mult").value);
 
-    if (!hash || isNaN(mult)) {
-        alert("Données invalides !");
-        return;
-    }
-
-    let calc = calculateFromHash(hash);
-
-    if (Math.abs(calc - mult) > 0.01) {
-        document.getElementById("result").innerText = "⚠️ Données incohérentes";
-        return;
-    }
+    if (isNaN(mult)) return;
 
     history.unshift(mult);
     if (history.length > 20) history.pop();
 
-    let avg = history.reduce((a,b)=>a+b,0) / history.length;
+    let probs = weightedProb(history);
 
-    let confidence = 50;
+    let sim = simulate10(probs);
 
-    if (avg < 2) confidence += 20;
-    if (avg > 5) confidence -= 15;
+    let confidence = (probs.high * 0.5 + probs.mid * 0.3 + probs.low * 0.2);
 
-    confidence = Math.max(0, Math.min(100, confidence));
+    let signal = "ATTENDRE";
+    if (confidence > 60) signal = "MISER";
+    if (probs.high > 30) signal = "FORT RISQUE 🔥";
 
-    document.getElementById("result").innerText = "✔️ Calcul validé : " + calc + "x";
-    document.getElementById("confidence").innerText = "📊 Score : " + confidence.toFixed(0) + "%";
+    document.getElementById("result").innerHTML = "Historique OK";
 
-    document.getElementById("bar").style.width = confidence + "%";
+    document.getElementById("prob").innerHTML = `
+    🔵 Low: ${probs.low.toFixed(1)}%<br>
+    🟣 Mid: ${probs.mid.toFixed(1)}%<br>
+    🔴 High: ${probs.high.toFixed(1)}%
+    `;
+
+    document.getElementById("prediction").innerHTML =
+        "🎯 10 tours: " + sim.out.join(" ");
+
+    document.getElementById("signal").innerHTML =
+        "⚡ SIGNAL: " + signal +
+        (sim.rose ? "<br>⭐ ROSE détecté" : "<br>⚠️ Aucun rose");
+
+    updateChart(history);
 }
 </script>
 
