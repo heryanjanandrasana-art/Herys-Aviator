@@ -1,317 +1,115 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HERYS ULTIMATE V41 - SECURE ENGINE</title>
-    <style>
-        :root {
-            --cyber-cyan: #00f2ff;
-            --cyber-pink: #ff007b;
-            --cyber-violet: #a332ff;
-            --dark-bg: #0d0d0f;
-            --luxe-gold: #d4af37;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analyzer Pro</title>
 
-        body { 
-            background: #050505; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
+<style>
+body {
+    background: #050505;
+    color: #00f2ff;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+}
 
-        .cyber-container {
-            background: var(--dark-bg);
-            border: 1px solid #1a1a1f;
-            padding: 25px;
-            border-radius: 20px;
-            color: white;
-            width: 340px;
-            box-shadow: 0 0 40px rgba(0, 242, 255, 0.15);
-            position: relative;
-        }
+input, button {
+    padding: 10px;
+    margin: 8px;
+    border-radius: 6px;
+    border: none;
+}
 
-        .header { 
-            display: flex; 
-            justify-content: space-between; 
-            margin-bottom: 20px; 
-            font-weight: bold; 
-            font-size: 0.75em; 
-            letter-spacing: 2px; 
-            color: var(--cyber-cyan);
-            text-transform: uppercase;
-        }
+button {
+    background: #00f2ff;
+    color: black;
+    font-weight: bold;
+}
 
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--cyber-cyan);
-            border-radius: 50%;
-            box-shadow: 0 0 8px var(--cyber-cyan);
-            animation: pulse 1.5s infinite;
-        }
+#result, #confidence {
+    margin-top: 20px;
+    font-size: 18px;
+}
 
-        @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
+.bar {
+    width: 80%;
+    height: 20px;
+    background: #222;
+    margin: 20px auto;
+    border-radius: 10px;
+    overflow: hidden;
+}
 
-        /* Jauge Circulaire */
-        .gauge-wrapper { position: relative; margin: 20px auto; width: 160px; height: 160px; }
-        .gauge { transform: rotate(-90deg); width: 100%; height: 100%; }
-        .gauge circle { fill: none; stroke-width: 8; stroke-linecap: round; }
-        .gauge .bg { stroke: #1a1a1f; }
-        .gauge .meter {
-            stroke: var(--cyber-cyan);
-            stroke-dasharray: 283;
-            stroke-dashoffset: 283;
-            transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.5s;
-            filter: drop-shadow(0 0 8px var(--cyber-cyan));
-        }
-
-        .percentage {
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 28px; font-weight: 800;
-            color: #fff;
-        }
-
-        /* Inputs & Boutons */
-        .input-section { display: flex; flex-direction: column; gap: 12px; margin: 25px 0; }
-        input { 
-            background: #15151a; 
-            border: 1px solid #222; 
-            color: white; 
-            padding: 12px; 
-            border-radius: 8px; 
-            outline: none;
-            transition: border 0.3s;
-        }
-        input:focus { border-color: var(--cyber-cyan); }
-        
-        button { 
-            background: linear-gradient(45deg, var(--cyber-cyan), #00a2ff);
-            color: black; 
-            border: none; 
-            padding: 14px; 
-            font-weight: 900; 
-            cursor: pointer; 
-            border-radius: 8px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Signal Box */
-        .prediction-box {
-            background: rgba(255, 255, 255, 0.03);
-            padding: 15px;
-            border-left: 4px solid var(--cyber-cyan);
-            position: relative;
-            overflow: hidden;
-            border-radius: 0 8px 8px 0;
-        }
-
-        #signal-text { font-weight: bold; font-size: 0.9em; margin-bottom: 5px; }
-        #trend-info { font-size: 0.75em; color: #888; }
-
-        .scan-line {
-            position: absolute; top: 0; left: 0; width: 100%; height: 2px;
-            background: var(--cyber-cyan);
-            animation: scan 3s linear infinite;
-            opacity: 0.2;
-        }
-
-        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
-
-        .security-badge {
-            font-size: 10px;
-            color: #444;
-            margin-top: 15px;
-            text-align: center;
-        }
-    </style>
+.fill {
+    height: 100%;
+    width: 0%;
+    background: #00f2ff;
+    transition: 0.3s;
+}
+</style>
 </head>
+
 <body>
 
-    <div class="cyber-container">
-        <div class="header">
-            <span>Herys Ultimate V41</span>
-            <div class="status-dot"></div>
-        </div>
-        
-        <div class="probability-section">
-            <div class="gauge-wrapper">
-                <svg viewBox="0 0 100 100" class="gauge">
-                    <circle class="bg" cx="50" cy="50" r="45"></circle>
-                    <circle id="pressure-bar" class="meter" cx="50" cy="50" r="45"></circle>
-                </svg>
-                <div class="percentage" id="prob-value">0%</div>
-            </div>
-            <div style="text-align:center; font-size: 12px; color: #666; letter-spacing: 1px;">PRESSION RTP</div>
-        </div>
+<h2>🔍 Analyzer Pro</h2>
 
-        <div class="input-section">
-            <input type="text" id="hash-input" placeholder="Dernier Hash (ex: 11760f1b)">
-            <input type="number" id="mult-input" step="0.01" placeholder="Résultat affiché (ex: 14.22)">
-            <button onclick="processNewTour()">Calculer Probabilité</button>
-        </div>
+<input id="hash" placeholder="Hash SHA512"><br>
+<input id="mult" placeholder="Multiplicateur"><br>
 
-        <div class="prediction-box">
-            <div id="signal-text">ANALYSEUR PRÊT</div>
-            <div id="trend-info">En attente de données</div>
-        </div>
+<button onclick="analyze()">Analyser</button>
 
-        <div class="security-badge">
-            Herys Ultimate est un outil d'analyse de tendances (séries de bleus/violets/roses) et de patterns de hash.
-            Il ne prédit pas le multiplicateur futur avec certitude. Cosmos X est un jeu provably fair et chaque tour est indépendant.
-        </div>
-    </div> <!-- .cyber-container -->
+<div id="result"></div>
+<div id="confidence"></div>
 
-    <script>
-        // =======================
-        // ⚙️ CONFIG
-        // =======================
-        const CONFIG = {
-            MAX_HISTORY: 10
-        };
+<div class="bar">
+    <div id="bar" class="fill"></div>
+</div>
 
-        // =======================
-        // 📊 DATA
-        // =======================
-        let history = [];
-        let decimalHistory = [];
+<script>
+let history = [];
 
-        // =======================
-        // 🧠 POIDS TEMPOREL
-        // =======================
-        function weightedScore() {
-            let score = 0;
+function calculateFromHash(hash) {
+    const last8 = hash.slice(-8);
+    const dec = parseInt(last8, 16);
+    const result = Math.max(1, Math.floor((4294967295 * 0.97 / dec) * 100) / 100);
+    return result;
+}
 
-            history.forEach((val, i) => {
-                const weight = (CONFIG.MAX_HISTORY - i) / CONFIG.MAX_HISTORY;
+function analyze() {
+    let hash = document.getElementById("hash").value.trim();
+    let mult = parseFloat(document.getElementById("mult").value);
 
-                if (val < 2) score += 12 * weight;
-                else if (val >= 5) score -= 6 * weight;
-                else score += 2 * weight;
-            });
+    if (!hash || isNaN(mult)) {
+        alert("Données invalides !");
+        return;
+    }
 
-            return Math.min(100, Math.max(0, Math.round(score)));
-        }
+    let calc = calculateFromHash(hash);
 
-        // =======================
-        // 🔍 PATTERN DETECTION
-        // =======================
-        function detectPattern() {
-            if (history.length < 4) return "none";
+    if (Math.abs(calc - mult) > 0.01) {
+        document.getElementById("result").innerText = "⚠️ Données incohérentes";
+        return;
+    }
 
-            const last = history.slice(0, 4);
+    history.unshift(mult);
+    if (history.length > 20) history.pop();
 
-            if (last.every(x => x < 2)) return "low_streak";
-            if (last.every(x => x >= 5)) return "high_streak";
+    let avg = history.reduce((a,b)=>a+b,0) / history.length;
 
-            return "mixed";
-        }
+    let confidence = 50;
 
-        // =======================
-        // 🔐 ENTROPIE HASH
-        // =======================
-        function hashEntropy(hex) {
-            let sum = 0;
-            for (let i = 0; i < hex.length; i++) {
-                sum += hex.charCodeAt(i);
-            }
-            return sum % 100;
-        }
+    if (avg < 2) confidence += 20;
+    if (avg > 5) confidence -= 15;
 
-        // =======================
-        // 🎯 DECISION ENGINE (NON MAGIC)
-        // =======================
-        function getDecision(score, pattern, entropy) {
-            if (pattern === "low_streak" && score > 70)
-                return "🔥 BET FORT (REVERSE EXPECTED)";
+    confidence = Math.max(0, Math.min(100, confidence));
 
-            if (score > 75)
-                return "💥 BET HAUT";
+    document.getElementById("result").innerText = "✔️ Calcul validé : " + calc + "x";
+    document.getElementById("confidence").innerText = "📊 Score : " + confidence.toFixed(0) + "%";
 
-            if (score > 50)
-                return "⚠️ PETITE MISE";
+    document.getElementById("bar").style.width = confidence + "%";
+}
+</script>
 
-            if (entropy > 80)
-                return "⚠️ HASH INSTABLE";
-
-            return "🧊 PAS DE MISE";
-        }
-
-        // =======================
-        // 📊 ANALYSE GLOBALE
-        // =======================
-        function analyze() {
-            const score = weightedScore();
-            const pattern = detectPattern();
-            const entropy = hashEntropy(decimalHistory[0]?.toString(16) || "0");
-
-            return { score, pattern, entropy };
-        }
-
-        // =======================
-        // 🎨 UI UPDATE
-        // =======================
-        function updateUI(data) {
-            const bar = document.getElementById("pressure-bar");
-            const text = document.getElementById("prob-value");
-            const signal = document.getElementById("signal-text");
-            const trendInfo = document.getElementById("trend-info");
-
-            const offset = 283 - (283 * data.score / 100);
-            bar.style.strokeDashoffset = offset;
-            text.innerText = `${data.score}%`;
-
-            // 🎨 Couleurs dynamiques
-            if (data.score > 75) {
-                bar.style.stroke = "#ff007b"; // pink
-            } else if (data.score > 50) {
-                bar.style.stroke = "#00f2ff"; // cyan
-            } else {
-                bar.style.stroke = "#444";   // grey
-            }
-
-            const decision = getDecision(data.score, data.pattern, data.entropy);
-
-            signal.innerHTML = `<b>${decision}</b>`;
-
-            trendInfo.innerHTML =
-                `Pattern: <b>${data.pattern}</b> | Entropy: <b>${data.entropy}</b>`;
-        }
-
-        // =======================
-        // ▶️ INPUT HANDLER
-        // =======================
-        function processNewTour() {
-            const hashInput = document.getElementById("hash-input").value.trim();
-            const multInput = parseFloat(document.getElementById("mult-input").value);
-
-            if (!hashInput || hashInput.length < 8) {
-                alert("Hash invalide");
-                return;
-            }
-
-            if (isNaN(multInput) || multInput < 1) {
-                alert("Multiplicateur invalide");
-                return;
-            }
-
-            const last8Hex = hashInput.slice(-8);
-            const decimalVal = parseInt(last8Hex, 16);
-
-            history.unshift(multInput);
-            decimalHistory.unshift(decimalVal);
-
-            if (history.length > CONFIG.MAX_HISTORY) history.pop();
-            if (decimalHistory.length > CONFIG.MAX_HISTORY) decimalHistory.pop();
-
-            const data = analyze();
-            updateUI(data);
-        }
-    </script>
 </body>
 </html>
