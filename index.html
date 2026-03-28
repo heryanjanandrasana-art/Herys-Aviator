@@ -1,157 +1,170 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HERYS PRO AI V2</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<style>
-body {
-    background: #050505;
-    color: #00f2ff;
-    font-family: 'Orbitron', monospace;
-    text-align: center;
-}
-
-input, button {
-    padding: 12px;
-    margin: 8px;
-    border-radius: 8px;
-    border: 1px solid #00f2ff;
-    background: #111;
-    color: #00f2ff;
-    width: 250px;
-}
-
-button {
-    background: linear-gradient(45deg, #00f2ff, #ff007b);
-    color: black;
-    font-weight: bold;
-}
-
-#signal {
-    font-size: 22px;
-    margin-top: 15px;
-    font-weight: bold;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HERYS PRO V42</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #050505, #0a0a1a);
+            color: #00f2ff;
+            font-family: 'Orbitron', monospace;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+        }
+        h2 { font-size: 28px; text-shadow: 0 0 15px #00f2ff; margin-bottom: 30px; animation: glow 2s ease-in-out infinite alternate; }
+        @keyframes glow { from { text-shadow: 0 0 15px #00f2ff; } to { text-shadow: 0 0 25px #00f2ff, 0 0 35px #ff007b; } }
+        input, button {
+            padding: 15px;
+            margin: 10px;
+            border-radius: 10px;
+            border: 2px solid #00f2ff;
+            background: rgba(0,242,255,0.1);
+            color: #00f2ff;
+            font-family: inherit;
+            font-size: 16px;
+            width: 280px;
+            box-shadow: 0 0 10px rgba(0,242,255,0.3);
+            transition: all 0.3s;
+        }
+        input:focus { box-shadow: 0 0 20px #00f2ff; outline: none; }
+        button {
+            background: linear-gradient(45deg, #00f2ff, #ff007b);
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover { box-shadow: 0 0 25px #00f2ff; transform: scale(1.05); }
+        #result, #confidence, #zone {
+            margin: 15px 0;
+            font-size: 20px;
+            font-weight: bold;
+            text-shadow: 0 0 10px currentColor;
+        }
+        .bar {
+            width: 80%;
+            height: 25px;
+            background: #1a1a1f;
+            margin: 25px auto;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
+            border: 2px solid #333;
+        }
+        .fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00f2ff, #a332ff, #ff007b);
+            transition: width 0.8s ease-out;
+            box-shadow: 0 0 20px currentColor;
+            position: relative;
+        }
+        .fill::after {
+            content: attr(data-label);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12px;
+            font-weight: bold;
+            color: #000;
+            white-space: nowrap;
+        }
+        .history { font-size: 12px; opacity: 0.8; margin-top: 20px; max-height: 100px; overflow-y: auto; }
+    </style>
 </head>
-
 <body>
+    <h2>🔥 HERYS PRO V42</h2>
+    <p style="opacity: 0.7;">Cosmos X Analyzer (Formule 4294967295 * 0.97)</p>
 
-<h2>🔥 HERYS PRO AI V2</h2>
+    <input id="hash" placeholder="8 derniers hex (ex: 11760f1b)"><br>
+    <input id="mult" placeholder="Multiplicateur (ex: 14.22)" step="0.01"><br>
+    <button onclick="analyze()">🚀 ANALYSER & PRÉSSION</button>
 
-<input id="mult" placeholder="Multiplicateur"><br>
+    <div id="result"></div>
+    <div id="confidence"></div>
+    <div id="zone"></div>
 
-<button onclick="analyze()">ANALYSER</button>
+    <div class="bar">
+        <div id="bar" class="fill" data-label=""></div>
+    </div>
 
-<div id="result"></div>
-<div id="prob"></div>
-<div id="prediction"></div>
-<div id="signal"></div>
+    <div id="history" class="history">Historique: Ajoutez des tours...</div>
 
-<canvas id="chart" width="300" height="150"></canvas>
+    <script>
+        let history = [];  // Multiplicateurs
+        let decimals = []; // Décimaux pour tendance
 
-<script>
-let history = [];
+        const CONFIG = {
+            CONSTANTE: 4294967295,
+            RTP: 0.97
+        };
 
-function weightedProb(history) {
-    let low = 0, mid = 0, high = 0;
-    let totalWeight = 0;
-
-    history.forEach((v, i) => {
-        let weight = history.length - i;
-        totalWeight += weight;
-
-        if (v < 2) low += weight;
-        else if (v < 5) mid += weight;
-        else high += weight;
-    });
-
-    return {
-        low: (low / totalWeight) * 100 || 0,
-        mid: (mid / totalWeight) * 100 || 0,
-        high: (high / totalWeight) * 100 || 0
-    };
-}
-
-function simulate10(probs) {
-    let out = [];
-    let rose = false;
-
-    for (let i = 0; i < 10; i++) {
-        let r = Math.random() * 100;
-
-        if (r < probs.low) {
-            out.push("🔵");
-        } else if (r < probs.low + probs.mid) {
-            out.push("🟣");
-        } else {
-            out.push("🔴⭐");
-            rose = true;
+        function calculateFromHash(hash8) {
+            const dec = parseInt(hash8.toLowerCase().padStart(8, '0'), 16);
+            const raw = (CONFIG.CONSTANTE * CONFIG.RTP) / dec;
+            return Math.max(1.00, Math.floor(raw * 100) / 100);
         }
-    }
 
-    return { out, rose };
-}
-
-let chart;
-
-function updateChart(data) {
-    if (chart) chart.destroy();
-
-    chart = new Chart(document.getElementById("chart"), {
-        type: 'line',
-        data: {
-            labels: data.map((_, i) => i + 1),
-            datasets: [{
-                label: 'Multiplicateur',
-                data: data
-            }]
+        function getZone(mult) {
+            if (mult >= 5) return { name: '🟣 ROSE (Risqué)', color: '#ff007b' };
+            if (mult >= 2) return { name: '🟣 VIOLET (Modéré)', color: '#a332ff' };
+            return { name: '🔵 BLEU (Attendre)', color: '#00f2ff' };
         }
-    });
-}
 
-function analyze() {
-    let mult = parseFloat(document.getElementById("mult").value);
+        function analyze() {
+            const hash = document.getElementById("hash").value.trim();
+            const mult = parseFloat(document.getElementById("mult").value);
 
-    if (isNaN(mult)) return;
+            if (!hash || hash.length !== 8 || !/^[0-9a-fA-F]{8}$/.test(hash) || isNaN(mult)) {
+                alert("❌ Hash 8 hex + multi valide requis!");
+                return;
+            }
 
-    history.unshift(mult);
-    if (history.length > 20) history.pop();
+            const calc = calculateFromHash(hash);
+            const match = Math.abs(calc - mult) < 0.01;
 
-    let probs = weightedProb(history);
+            if (!match) {
+                document.getElementById("result").innerHTML = `<span style="color: #ff4444;">⚠️ INCOHÉRENT: Calc ${calc.toFixed(2)}x ≠ ${mult.toFixed(2)}x</span>`;
+                return;
+            }
 
-    let sim = simulate10(probs);
+            // Ajout historique
+            history.unshift(mult);
+            decimals.unshift(parseInt(hash, 16));
+            if (history.length > 20) {
+                history.pop();
+                decimals.pop();
+            }
 
-    let confidence = (probs.high * 0.5 + probs.mid * 0.3 + probs.low * 0.2);
+            // Pression (améliorée)
+            let pressure = 50;
+            const lowCount = history.filter(v => v < 2).length;
+            if (lowCount >= 5) pressure = 90;
+            else if (lowCount >= 3) pressure = 70;
+            else if (lowCount >= 1) pressure = 50;
+            if (history[0] > 15) pressure = 20;  // Après gros rose
+            // Tendance décimal descendante = pression +
+            if (decimals.length >= 3) {
+                const trend = decimals.slice(0,3).reduce((a,b)=>a+b)/3 > decimals[2] ? 1 : 0;
+                pressure += trend * 15;
+            }
+            pressure = Math.max(0, Math.min(100, pressure));
 
-    let signal = "ATTENDRE";
-    if (confidence > 60) signal = "MISER";
-    if (probs.high > 30) signal = "FORT RISQUE 🔥";
+            const zone = getZone(mult);
 
-    document.getElementById("result").innerHTML = "Historique OK";
+            // UI
+            document.getElementById("result").innerHTML = `✅ VALIDÉ: ${calc.toFixed(2)}x | Zone: ${zone.name}`;
+            document.getElementById("confidence").innerHTML = `📊 Pression Serveur: ${pressure.toFixed(0)}%`;
+            document.getElementById("zone").innerHTML = `🎯 Action: ${pressure > 75 ? 'MISER VIOLET/ROSE' : pressure > 50 ? 'TEST BLEU' : 'ATTENDRE'}`;
+            document.getElementById("bar").style.width = pressure + '%';
+            document.getElementById("bar").setAttribute('data-label', `${pressure}% ${zone.name.split(' ')[0]}`);
 
-    document.getElementById("prob").innerHTML = `
-    🔵 Low: ${probs.low.toFixed(1)}%<br>
-    🟣 Mid: ${probs.mid.toFixed(1)}%<br>
-    🔴 High: ${probs.high.toFixed(1)}%
-    `;
-
-    document.getElementById("prediction").innerHTML =
-        "🎯 10 tours: " + sim.out.join(" ");
-
-    document.getElementById("signal").innerHTML =
-        "⚡ SIGNAL: " + signal +
-        (sim.rose ? "<br>⭐ ROSE détecté" : "<br>⚠️ Aucun rose");
-
-    updateChart(history);
-}
-</script>
-
+            // Historique
+            document.getElementById("history").innerHTML = `Historique (${history.length}/20): ${history.slice(0,10).map(v=>v.toFixed(2)+'x').join(' ')}... | Moy: ${history.reduce((a,b)=>a+b,0)/history.length.toFixed(2)}x`;
+        }
+    </script>
 </body>
 </html>
