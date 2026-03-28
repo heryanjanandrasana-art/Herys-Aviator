@@ -1,170 +1,180 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HERYS PRO V42</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            background: linear-gradient(135deg, #050505, #0a0a1a);
-            color: #00f2ff;
-            font-family: 'Orbitron', monospace;
-            text-align: center;
-            padding: 20px;
-            margin: 0;
-        }
-        h2 { font-size: 28px; text-shadow: 0 0 15px #00f2ff; margin-bottom: 30px; animation: glow 2s ease-in-out infinite alternate; }
-        @keyframes glow { from { text-shadow: 0 0 15px #00f2ff; } to { text-shadow: 0 0 25px #00f2ff, 0 0 35px #ff007b; } }
-        input, button {
-            padding: 15px;
-            margin: 10px;
-            border-radius: 10px;
-            border: 2px solid #00f2ff;
-            background: rgba(0,242,255,0.1);
-            color: #00f2ff;
-            font-family: inherit;
-            font-size: 16px;
-            width: 280px;
-            box-shadow: 0 0 10px rgba(0,242,255,0.3);
-            transition: all 0.3s;
-        }
-        input:focus { box-shadow: 0 0 20px #00f2ff; outline: none; }
-        button {
-            background: linear-gradient(45deg, #00f2ff, #ff007b);
-            color: #000;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        button:hover { box-shadow: 0 0 25px #00f2ff; transform: scale(1.05); }
-        #result, #confidence, #zone {
-            margin: 15px 0;
-            font-size: 20px;
-            font-weight: bold;
-            text-shadow: 0 0 10px currentColor;
-        }
-        .bar {
-            width: 80%;
-            height: 25px;
-            background: #1a1a1f;
-            margin: 25px auto;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
-            border: 2px solid #333;
-        }
-        .fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #00f2ff, #a332ff, #ff007b);
-            transition: width 0.8s ease-out;
-            box-shadow: 0 0 20px currentColor;
-            position: relative;
-        }
-        .fill::after {
-            content: attr(data-label);
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 12px;
-            font-weight: bold;
-            color: #000;
-            white-space: nowrap;
-        }
-        .history { font-size: 12px; opacity: 0.8; margin-top: 20px; max-height: 100px; overflow-y: auto; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HERYS ELITE V41</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
+<style>
+:root {
+    --gold: #d4af37;
+    --pink: #ec4899;
+    --blue: #3b82f6;
+    --violet: #a855f7;
+    --bg: #0a0a0a;
+}
+
+body {
+    background: var(--bg);
+    color: #fff;
+    font-family: sans-serif;
+    margin: 0;
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+}
+
+.container {
+    width: 100%;
+    max-width: 450px;
+    background: #161616;
+    border-radius: 20px;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    color: var(--gold);
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    margin: 5px 0;
+    border-radius: 10px;
+    border: 1px solid #444;
+    background: #222;
+    color: #fff;
+}
+
+button {
+    width: 100%;
+    padding: 15px;
+    margin-top: 10px;
+    background: var(--gold);
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+#display {
+    font-size: 3rem;
+    text-align: center;
+    margin: 15px 0;
+}
+
+.scan-item {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #222;
+    padding: 5px 0;
+}
+
+.stat {
+    margin-top: 15px;
+    padding: 10px;
+    background: #222;
+    border-radius: 10px;
+}
+</style>
 </head>
+
 <body>
-    <h2>🔥 HERYS PRO V42</h2>
-    <p style="opacity: 0.7;">Cosmos X Analyzer (Formule 4294967295 * 0.97)</p>
 
-    <input id="hash" placeholder="8 derniers hex (ex: 11760f1b)"><br>
-    <input id="mult" placeholder="Multiplicateur (ex: 14.22)" step="0.01"><br>
-    <button onclick="analyze()">🚀 ANALYSER & PRÉSSION</button>
+<div class="container">
 
-    <div id="result"></div>
-    <div id="confidence"></div>
-    <div id="zone"></div>
+<h1>HERYS ELITE V41</h1>
 
-    <div class="bar">
-        <div id="bar" class="fill" data-label=""></div>
-    </div>
+<input id="seed" placeholder="Server Seed (hash)">
+<input id="c1" placeholder="Client Seed 1" value="0">
+<input id="c2" placeholder="Client Seed 2" value="0">
+<input id="c3" placeholder="Client Seed 3" value="0">
+<input id="nonce" type="number" placeholder="Nonce">
 
-    <div id="history" class="history">Historique: Ajoutez des tours...</div>
+<button onclick="run()">SCANNER</button>
 
-    <script>
-        let history = [];  // Multiplicateurs
-        let decimals = []; // Décimaux pour tendance
+<div id="display">---</div>
 
-        const CONFIG = {
-            CONSTANTE: 4294967295,
-            RTP: 0.97
-        };
+<div class="stat">
+PROBA ROSE : <span id="prob">0%</span>
+</div>
 
-        function calculateFromHash(hash8) {
-            const dec = parseInt(hash8.toLowerCase().padStart(8, '0'), 16);
-            const raw = (CONFIG.CONSTANTE * CONFIG.RTP) / dec;
-            return Math.max(1.00, Math.floor(raw * 100) / 100);
-        }
+<div id="list"></div>
 
-        function getZone(mult) {
-            if (mult >= 5) return { name: '🟣 ROSE (Risqué)', color: '#ff007b' };
-            if (mult >= 2) return { name: '🟣 VIOLET (Modéré)', color: '#a332ff' };
-            return { name: '🔵 BLEU (Attendre)', color: '#00f2ff' };
-        }
+</div>
 
-        function analyze() {
-            const hash = document.getElementById("hash").value.trim();
-            const mult = parseFloat(document.getElementById("mult").value);
+<script>
 
-            if (!hash || hash.length !== 8 || !/^[0-9a-fA-F]{8}$/.test(hash) || isNaN(mult)) {
-                alert("❌ Hash 8 hex + multi valide requis!");
-                return;
-            }
+function crash(seed, c1, c2, c3, nonce) {
+    const input = seed + c1 + c2 + c3 + nonce;
+    const hash = CryptoJS.SHA512(input).toString();
 
-            const calc = calculateFromHash(hash);
-            const match = Math.abs(calc - mult) < 0.01;
+    if (parseInt(hash.substring(0, 8), 16) % 33 === 0) return 1.00;
 
-            if (!match) {
-                document.getElementById("result").innerHTML = `<span style="color: #ff4444;">⚠️ INCOHÉRENT: Calc ${calc.toFixed(2)}x ≠ ${mult.toFixed(2)}x</span>`;
-                return;
-            }
+    const h = parseInt(hash.substring(0, 13), 16) / Math.pow(2, 52);
+    return Math.floor((0.97 / (1 - h)) * 100) / 100;
+}
 
-            // Ajout historique
-            history.unshift(mult);
-            decimals.unshift(parseInt(hash, 16));
-            if (history.length > 20) {
-                history.pop();
-                decimals.pop();
-            }
+function analyze(results) {
+    let high = 0;
 
-            // Pression (améliorée)
-            let pressure = 50;
-            const lowCount = history.filter(v => v < 2).length;
-            if (lowCount >= 5) pressure = 90;
-            else if (lowCount >= 3) pressure = 70;
-            else if (lowCount >= 1) pressure = 50;
-            if (history[0] > 15) pressure = 20;  // Après gros rose
-            // Tendance décimal descendante = pression +
-            if (decimals.length >= 3) {
-                const trend = decimals.slice(0,3).reduce((a,b)=>a+b)/3 > decimals[2] ? 1 : 0;
-                pressure += trend * 15;
-            }
-            pressure = Math.max(0, Math.min(100, pressure));
+    results.forEach(r => {
+        if (r >= 10) high++;
+    });
 
-            const zone = getZone(mult);
+    return (high / results.length) * 100;
+}
 
-            // UI
-            document.getElementById("result").innerHTML = `✅ VALIDÉ: ${calc.toFixed(2)}x | Zone: ${zone.name}`;
-            document.getElementById("confidence").innerHTML = `📊 Pression Serveur: ${pressure.toFixed(0)}%`;
-            document.getElementById("zone").innerHTML = `🎯 Action: ${pressure > 75 ? 'MISER VIOLET/ROSE' : pressure > 50 ? 'TEST BLEU' : 'ATTENDRE'}`;
-            document.getElementById("bar").style.width = pressure + '%';
-            document.getElementById("bar").setAttribute('data-label', `${pressure}% ${zone.name.split(' ')[0]}`);
+function run() {
 
-            // Historique
-            document.getElementById("history").innerHTML = `Historique (${history.length}/20): ${history.slice(0,10).map(v=>v.toFixed(2)+'x').join(' ')}... | Moy: ${history.reduce((a,b)=>a+b,0)/history.length.toFixed(2)}x`;
-        }
-    </script>
+    const seed = document.getElementById("seed").value;
+    const c1 = document.getElementById("c1").value;
+    const c2 = document.getElementById("c2").value;
+    const c3 = document.getElementById("c3").value;
+    const nonce = parseInt(document.getElementById("nonce").value);
+
+    if (!seed || isNaN(nonce)) {
+        alert("Remplis les champs !");
+        return;
+    }
+
+    let html = "";
+    let results = [];
+
+    for (let i = 1; i <= 10; i++) {
+
+        const n = nonce + i;
+        const res = crash(seed, c1, c2, c3, n);
+
+        results.push(res);
+
+        let color = "#3b82f6";
+
+        if (res >= 10) color = "#ec4899";
+        else if (res >= 2) color = "#a855f7";
+
+        html += `
+        <div class="scan-item" style="color:${color}">
+            <span>TOUR ${n}</span>
+            <b>${res.toFixed(2)}x</b>
+        </div>`;
+    }
+
+    document.getElementById("list").innerHTML = html;
+
+    const prob = analyze(results);
+
+    document.getElementById("prob").innerText = prob.toFixed(1) + "%";
+
+    document.getElementById("display").innerText =
+        results[0].toFixed(2) + "x";
+
+}
+
+</script>
+
 </body>
 </html>
