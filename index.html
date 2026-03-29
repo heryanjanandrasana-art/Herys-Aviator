@@ -1,124 +1,297 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HERYS ELITE V3.1</title>
-
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Analyse provably-fair — Crash model</title>
 <style>
-body {
-    font-family: Arial;
-    background: #0f172a;
-    color: white;
-    text-align: center;
-}
-
-.container {
-    padding: 20px;
-}
-
-textarea {
-    width: 90%;
-    height: 120px;
-}
-
-button {
-    padding: 10px 20px;
-    margin-top: 10px;
-    background: #22c55e;
-    border: none;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-.result {
-    margin-top: 20px;
-    font-size: 18px;
-}
+  :root{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;}
+  body{margin:16px;background:#f7fafc;color:#0f172a}
+  h1{font-size:20px;margin:0 0 8px}
+  .card{background:#fff;border-radius:8px;padding:12px;margin-bottom:12px;box-shadow:0 1px 3px rgba(2,6,23,0.06)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{padding:6px 8px;border-bottom:1px solid #eef2f7;text-align:left}
+  th{background:#f1f5f9;font-weight:600}
+  input[type="text"], input[type="number"], select {padding:6px 8px;border:1px solid #cbd5e1;border-radius:6px;}
+  button{padding:8px 12px;border-radius:8px;border:0;background:#0ea5a4;color:white;cursor:pointer}
+  button.secondary{background:#64748b}
+  .small{font-size:12px;color:#475569}
+  .flex{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .muted{color:#64748b;font-size:13px}
+  pre{background:#0f172a;color:#e6eef8;padding:10px;border-radius:6px;overflow:auto}
+  @media (max-width:600px){ th,td{font-size:12px;padding:6px} h1{font-size:18px}}
 </style>
 </head>
-
 <body>
+  <h1>Analyse & prédiction — Crash model (alpha / (1 - r))</h1>
 
-<div class="container">
-    <h1>HERYS ELITE V3.1</h1>
+  <div class="card">
+    <div class="flex" style="justify-content:space-between">
+      <div>
+        <div class="small">Alpha estimé à partir des observations (moyenne)</div>
+        <div id="alphaDisplay" style="font-weight:700;font-size:18px">—</div>
+        <div class="muted">Modèle : multiplier ≈ floor((alpha / (1 - r)) * 100) / 100</div>
+      </div>
+      <div style="text-align:right">
+        <div class="small">MAE</div>
+        <div id="maeDisplay" style="font-weight:700;font-size:18px">—</div>
+      </div>
+    </div>
+  </div>
 
-    <p>Multiplicateurs</p>
+  <div class="card">
+    <div style="margin-bottom:8px" class="flex">
+      <div>
+        <label class="small">Ajouter une ligne (hex8 ou uint32) :</label><br>
+        <input id="inputHexOrVal" type="text" placeholder="ex: 2955a505 ou 693478661" />
+      </div>
+      <div>
+        <label class="small">Multiplicateur observé :</label><br>
+        <input id="inputMult" type="number" step="0.01" placeholder="ex: 1.15" />
+      </div>
+      <div style="align-self:end">
+        <button id="btnAdd">Ajouter</button>
+      </div>
+      <div style="align-self:end">
+        <button id="btnReset" class="secondary">Réinitialiser données</button>
+      </div>
+    </div>
 
-    <textarea id="data"></textarea>
+    <div style="margin-top:8px">
+      <div class="small">Données utilisées (editable)</div>
+      <table id="dataTable">
+        <thead><tr><th>index</th><th>value (uint32)</th><th>hex8</th><th>observé</th><th>prédit</th><th>err</th><th>action</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
 
-    <button onclick="analyser()">ANALYSER</button>
+  <div class="card">
+    <div class="flex" style="justify-content:space-between;align-items:center">
+      <div>
+        <div class="small">Cibles pour probabilité P(multiplier ≥ X)</div>
+        <div class="flex" style="margin-top:6px">
+          <input id="targetInput" type="number" step="0.01" value="1.15" />
+          <button id="btnCalc">Calculer P(X)</button>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div class="small">Résultat</div>
+        <div id="probDisplay" style="font-weight:700;font-size:18px">—</div>
+      </div>
+    </div>
 
-    <div class="result" id="result"></div>
-</div>
+    <div style="margin-top:10px">
+      <div class="small">Probabilités rapides</div>
+      <div class="flex" style="margin-top:6px;gap:12px;">
+        <button class="secondary" onclick="quickTarget(1.15)">P ≥ 1.15</button>
+        <button class="secondary" onclick="quickTarget(1.19)">P ≥ 1.19</button>
+        <button class="secondary" onclick="quickTarget(2.00)">P ≥ 2.00</button>
+        <button class="secondary" onclick="quickTarget(3.00)">P ≥ 3.00</button>
+        <button class="secondary" onclick="quickTarget(5.00)">P ≥ 5.00</button>
+        <button class="secondary" onclick="quickTarget(10.00)">P ≥ 10.00</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="small" style="margin-bottom:8px">Rapport (copiable)</div>
+    <pre id="report"></pre>
+    <div style="margin-top:8px" class="flex">
+      <button id="btnCopy">Copier le rapport</button>
+      <button id="btnExport" class="secondary">Exporter CSV</button>
+    </div>
+  </div>
 
 <script>
-function getTime() {
-    let now = new Date();
-    return now.toLocaleTimeString(); // HH:MM:SS
+// Constantes
+const UINT32_MAX = 4294967296.0;
+const PRECISION = 100; // arrondi à 2 décimales
+
+// Données initiales (les paires fournies)
+let data = [
+  { value: 3417983308, hex8: toHex8(3417983308), obs: 4.73 },
+  { value: 807682527,  hex8: toHex8(807682527),  obs: 1.19 },
+  { value: 3096432296, hex8: toHex8(3096432296), obs: 3.46 },
+  { value: 693478661,  hex8: toHex8(693478661),  obs: 1.15 },
+  { value: 2820552860, hex8: toHex8(2820552860), obs: 2.81 },
+  { value: 3322194384, hex8: toHex8(3322194384), obs: 4.26 },
+  { value: 530054269,  hex8: toHex8(530054269),  obs: 1.10 },
+  { value: 2255382870, hex8: toHex8(2255382870), obs: 2.03 }
+];
+
+// UTIL: convert uint32 -> 8-char hex (big-endian)
+function toHex8(val) {
+  const n = BigInt(val) & BigInt(0xFFFFFFFF);
+  let s = n.toString(16);
+  while (s.length < 8) s = '0' + s;
+  return s.toLowerCase();
+}
+// UTIL: convert hex8 -> uint32 (big-endian)
+function hex8ToUint32(hex) {
+  hex = hex.trim();
+  if (!/^[0-9a-fA-F]{1,8}$/.test(hex)) return NaN;
+  // pad to 8
+  if (hex.length < 8) hex = hex.padStart(8,'0');
+  return Number(BigInt('0x' + hex) & BigInt(0xFFFFFFFF));
 }
 
-function analyser() {
-    let input = document.getElementById("data").value;
-    let arr = input.split(",").map(x => parseFloat(x.trim()));
+function ratioFromValue(value) {
+  return value / UINT32_MAX;
+}
+function predictMultiplier(value, alpha) {
+  let r = ratioFromValue(value);
+  if (r >= 1.0) r = 0.999999999999;
+  const raw = alpha / (1.0 - r);
+  const scaled = Math.floor(raw * PRECISION) / PRECISION;
+  return scaled < 1.0 ? 1.0 : scaled;
+}
+function estimateAlphaFromObservation(value, obs) {
+  const r = ratioFromValue(value);
+  return obs * (1 - r);
+}
+function estimateAlphaFromMany(arr) {
+  if (!arr.length) return 1.0;
+  const alphas = arr.map(d => estimateAlphaFromObservation(d.value, d.obs));
+  const sum = alphas.reduce((a,b)=>a+b,0);
+  return sum / alphas.length;
+}
+function meanAbsoluteError(arr, alpha) {
+  if (!arr.length) return 0;
+  const sum = arr.reduce((acc,d)=>{
+    const pred = predictMultiplier(d.value, alpha);
+    return acc + Math.abs(pred - d.obs);
+  }, 0);
+  return sum / arr.length;
+}
 
-    let total = arr.length;
+// UI rendering
+const dataTableBody = document.querySelector('#dataTable tbody');
+const alphaDisplay = document.getElementById('alphaDisplay');
+const maeDisplay = document.getElementById('maeDisplay');
+const reportEl = document.getElementById('report');
+const probDisplay = document.getElementById('probDisplay');
 
-    let bleu = arr.filter(x => x < 2).length;
-    let violet = arr.filter(x => x >= 2 && x < 10).length;
-    let rose = arr.filter(x => x >= 10).length;
-
-    let p2 = (violet + rose) / total;
-    let p1 = bleu / total;
-    let p3 = rose / total;
-
-    // Score global
-    let score = (p2 * 0.5) + (p3 * 0.3) + ((1 - p1) * 0.2);
-
-    // Détection "zone rose"
-    let last = arr[arr.length - 1];
-    let signal = "";
-
-    if (p3 > 0.12 && last < 2) {
-        signal = "🔥 MOMENT POTENTIEL ROSE (phase volatile)";
-    } else if (p2 > 0.6) {
-        signal = "⚖️ Zone stable (violet dominant)";
-    } else {
-        signal = "⛔ Zone faible (risque élevé)";
-    }
-
-    let rec = "";
-
-    if (score > 0.65) {
-        rec = "SAFE (1.5x - 2x)";
-    } else if (score > 0.5) {
-        rec = "MODERATE (2x - 3x)";
-    } else {
-        rec = "RISK (attendre)";
-    }
-
-    document.getElementById("result").innerHTML = `
-        ⏰ Heure: ${getTime()} <br><br>
-
-        📊 Total: ${total} <br><br>
-
-        🔵 Bleu: ${bleu} (${(p1*100).toFixed(1)}%) <br>
-        🟣 Violet: ${violet} <br>
-        🔴 Rose: ${rose} (${(p3*100).toFixed(1)}%) <br><br>
-
-        🎯 Probabilité ≥2x: ${(p2*100).toFixed(1)}% <br><br>
-
-        ⚡ Score: ${score.toFixed(2)} <br><br>
-
-        📍 Analyse: <br>
-        ${signal} <br><br>
-
-        👉 Conseil: <br>
-        ${rec}
+function refreshUI() {
+  const alpha = estimateAlphaFromMany(data);
+  const mae = meanAbsoluteError(data, alpha);
+  alphaDisplay.textContent = alpha.toFixed(6);
+  maeDisplay.textContent = mae.toFixed(4) + ' x';
+  // table
+  dataTableBody.innerHTML = '';
+  data.forEach((d,i)=>{
+    const pred = predictMultiplier(d.value, alpha);
+    const err = Math.abs(pred - d.obs);
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${i+1}</td>
+      <td>${d.value}</td>
+      <td>${d.hex8}</td>
+      <td>${d.obs.toFixed(2)}</td>
+      <td>${pred.toFixed(2)}</td>
+      <td>${err.toFixed(2)}</td>
+      <td><button data-i="${i}" class="btnDel">suppr</button></td>
     `;
+    dataTableBody.appendChild(tr);
+  });
+  // wire delete buttons
+  document.querySelectorAll('.btnDel').forEach(b=>{
+    b.onclick = (ev=>{
+      const idx = Number(ev.target.dataset.i);
+      data.splice(idx,1);
+      refreshUI();
+      buildReport();
+    });
+  });
+  buildReport();
 }
-</script>
 
+function buildReport() {
+  const alpha = estimateAlphaFromMany(data);
+  const mae = meanAbsoluteError(data, alpha);
+  let txt = `Alpha estimé = ${alpha.toFixed(6)}\nMAE = ${mae.toFixed(4)} x\n\nLignes (value, hex8, obs, pred, err):\n`;
+  data.forEach((d,i)=>{
+    const pred = predictMultiplier(d.value, alpha);
+    const err = Math.abs(pred - d.obs);
+    txt += `${i+1}. ${d.value} , ${d.hex8} , obs=${d.obs.toFixed(2)} , pred=${pred.toFixed(2)} , err=${err.toFixed(2)}\n`;
+  });
+  txt += `\nProbabilités approximatives (P(mult >= X) ≈ alpha / X):\n`;
+  const targets = [1.15,1.19,2,3,5,10];
+  targets.forEach(t=>{
+    const p = Math.min(1, Math.max(0, alpha / t));
+    txt += `P(≥ ${t.toFixed(2)}x) ≈ ${p.toFixed(4)} (${(p*100).toFixed(2)}%)\n`;
+  });
+  reportEl.textContent = txt;
+}
+
+// Events
+document.getElementById('btnAdd').onclick = ()=>{
+  const raw = document.getElementById('inputHexOrVal').value.trim();
+  const mult = parseFloat(document.getElementById('inputMult').value);
+  if (!raw || isNaN(mult)) { alert('Remplissez hex8/value et multiplicateur'); return; }
+  let val = Number(raw);
+  let hx = '';
+  if (Number.isNaN(val)) {
+    // try interpret as hex
+    const maybe = raw.replace(/^0x/i,'').trim();
+    const v = hex8ToUint32(maybe);
+    if (Number.isNaN(v)) { alert('hex invalide'); return; }
+    val = v;
+    hx = maybe.padStart(8,'0').toLowerCase();
+  } else {
+    // numeric value provided
+    val = Math.floor(val) >>> 0; // ensure uint32
+    hx = toHex8(val);
+  }
+  data.push({ value: val, hex8: hx, obs: Math.round(mult*100)/100 });
+  document.getElementById('inputHexOrVal').value = '';
+  document.getElementById('inputMult').value = '';
+  refreshUI();
+};
+
+document.getElementById('btnReset').onclick = ()=>{
+  if (!confirm('Réinitialiser les données aux valeurs d\'origine ?')) return;
+  data = [
+    { value: 3417983308, hex8: toHex8(3417983308), obs: 4.73 },
+    { value: 807682527,  hex8: toHex8(807682527),  obs: 1.19 },
+    { value: 3096432296, hex8: toHex8(3096432296), obs: 3.46 },
+    { value: 693478661,  hex8: toHex8(693478661),  obs: 1.15 },
+    { value: 2820552860, hex8: toHex8(2820552860), obs: 2.81 },
+    { value: 3322194384, hex8: toHex8(3322194384), obs: 4.26 },
+    { value: 530054269,  hex8: toHex8(530054269),  obs: 1.10 },
+    { value: 2255382870, hex8: toHex8(2255382870), obs: 2.03 }
+  ];
+  refreshUI();
+};
+
+document.getElementById('btnCalc').onclick = ()=>{
+  const t = parseFloat(document.getElementById('targetInput').value);
+  if (isNaN(t) || t <= 0) { alert('Entrez une cible > 0'); return; }
+  const alpha = estimateAlphaFromMany(data);
+  const p = Math.min(1, Math.max(0, alpha / t));
+  probDisplay.textContent = `${(p*100).toFixed(2)} %  (≈ ${p.toFixed(4)})`;
+};
+
+function quickTarget(v) {
+  document.getElementById('targetInput').value = v;
+  document.getElementById('btnCalc').click();
+}
+
+document.getElementById('btnCopy').onclick = ()=>{
+  navigator.clipboard.writeText(reportEl.textContent).then(()=>alert('Rapport copié'));
+};
+document.getElementById('btnExport').onclick = ()=>{
+  let csv = 'value,hex8,observed\n';
+  data.forEach(d=> csv += `${d.value},${d.hex8},${d.obs}\n`);
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'data.csv'; document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+};
+
+// Init
+refreshUI();
+</script>
 </body>
 </html>
