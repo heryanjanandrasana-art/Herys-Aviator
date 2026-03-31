@@ -3,318 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HERYS ELITE V42 - SENTINEL PRO</title>
+    <title>HERYS ELITE V42.6 - GOLD EDITION</title>
     <style>
         :root {
-            --bg: #0d1117;
-            --card: #161b22;
-            --blue: #3498db;
-            --violet: #9b59b6;
-            --rose: #e91e63;
-            --gold: #f1c40f;
-            --white: #ffffff;
-            --border: #30363d;
-            --success: #2ecc71;
+            --bg: #010409; --card: #0d1117; --blue: #3498db; --violet: #9b59b6;
+            --rose: #e91e63; --gold: #f1c40f; --white: #ffffff; --border: #30363d;
+            --green: #2ecc71; --red: #ff4d4d;
         }
 
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: var(--bg);
-            color: var(--white);
-            display: flex;
-            justify-content: center;
-            padding: 10px;
-            margin: 0;
-        }
-
-        .app-container {
-            width: 100%;
-            max-width: 500px;
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 15px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-        }
-
-        h1 {
-            color: var(--rose);
-            text-align: center;
-            font-size: 1.1rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 15px;
-            border-bottom: 2px solid var(--rose);
-            padding-bottom: 8px;
-        }
-
-        .input-form {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--white); display: flex; justify-content: center; padding: 10px; margin: 0; }
+        .app-container { width: 100%; max-width: 500px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
+        
+        h1 { color: var(--rose); text-align: center; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; border-bottom: 2px solid var(--rose); padding-bottom: 10px; }
+        
+        .input-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
         .field { display: flex; flex-direction: column; }
         .full-width { grid-column: span 2; }
+        label { font-size: 0.7rem; color: #8b949e; margin-bottom: 4px; font-weight: bold; }
+        input { background: #010409; border: 1px solid var(--border); border-radius: 6px; padding: 12px; color: var(--white); font-family: monospace; font-size: 1rem; }
 
-        label { font-size: 0.65rem; color: #8b949e; margin-bottom: 2px; }
+        button { width: 100%; background: linear-gradient(135deg, var(--rose), var(--violet)); color: white; border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-bottom: 20px; transition: 0.3s; }
+        button:active { transform: scale(0.97); opacity: 0.8; }
 
-        input {
-            background: #010409;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            padding: 10px;
-            color: var(--white);
-            font-family: monospace;
-            font-size: 0.9rem;
-            outline: none;
-        }
+        .analysis-box { background: #010409; padding: 12px; border-radius: 6px; margin-bottom: 20px; border-left: 5px solid var(--gold); transition: 0.5s; }
+        .gold-alert { border-left-color: var(--green) !important; background: rgba(46, 204, 113, 0.1) !important; box-shadow: 0 0 15px var(--green); }
+        .trap-alert { border-left-color: var(--red) !important; background: rgba(255, 77, 77, 0.1) !important; }
 
-        input:focus { border-color: var(--rose); }
-
-        button {
-            width: 100%;
-            background: linear-gradient(135deg, var(--rose), var(--violet));
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-            margin: 10px 0;
-            font-size: 0.9rem;
-        }
-
-        .analysis-box {
-            background: #010409;
-            padding: 12px;
-            border-radius: 4px;
-            margin-bottom: 10px;
-            font-size: 0.75rem;
-            border-left: 4px solid var(--gold);
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .status-row { display: flex; justify-content: space-between; align-items: center; }
-
-        .results-table, .history-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.72rem;
-            margin-bottom: 15px;
-        }
-
-        .results-table th, .history-table th { background: #21262d; color: var(--gold); padding: 8px 2px; }
-        .results-table td, .history-table td {
-            border: 1px solid var(--border);
-            padding: 8px 2px;
-            text-align: center;
-        }
+        .progress-container { background: #21262d; height: 10px; border-radius: 5px; margin: 10px 0; overflow: hidden; }
+        .progress-bar { height: 100%; background: var(--rose); width: 0%; transition: 0.5s; }
+        
+        .status-label { font-weight: bold; text-align: center; display: block; margin-top: 5px; font-size: 0.9rem; }
+        
+        table { width: 100%; border-collapse: collapse; font-size: 0.75rem; margin-bottom: 20px; }
+        th { background: #21262d; color: var(--gold); padding: 10px 2px; }
+        td { border: 1px solid var(--border); padding: 10px 2px; text-align: center; }
 
         .color-blue { color: var(--blue); font-weight: bold; }
         .color-violet { color: var(--violet); font-weight: bold; }
         .color-rose { color: var(--rose); font-weight: bold; }
-        
-        .signal-badge {
-            background: var(--success);
-            color: black;
-            padding: 2px 6px;
-            border-radius: 10px;
-            font-weight: bold;
-            font-size: 0.6rem;
-            display: none;
-        }
-
-        .btn-clear {
-            background: transparent;
-            color: #8b949e;
-            border: 1px solid var(--border);
-            padding: 5px;
-            font-size: 0.6rem;
-            margin-top: 10px;
-        }
+        .prob-badge { background: rgba(255,255,255,0.1); padding: 3px 6px; border-radius: 4px; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
-    <h1>HERYS ELITE V42 - FINAL</h1>
+    <h1>HERYS ELITE V42.6 GOLD</h1>
     
-    <div class="input-form">
-        <div class="field"><label>N° Tour</label><input type="number" id="tour" placeholder="Tour"></div>
-        <div class="field"><label>Dernier X</label><input type="text" id="mult" placeholder="Ex: 1.25"></div>
-        <div class="field full-width"><label>Decimal (BigInt)</label><input type="number" id="decimal" placeholder="Entrez le décimal"></div>
+    <div class="input-group">
+        <div class="field"><label>Tour</label><input type="number" id="tour" placeholder="000"></div>
+        <div class="field"><label>Valeur X</label><input type="text" id="mult" placeholder="1.00"></div>
+        <div class="field full-width"><label>Decimal (BigInt)</label><input type="number" id="decimal" placeholder="Decimal Hash"></div>
     </div>
 
-    <button onclick="ajouterEtCalculer()">ANALYSE SENTINEL</button>
+    <button onclick="runGoldAnalysis()">LANCER L'ANALYSE GOLD</button>
 
-    <div id="output" style="display:none;">
-        <div class="analysis-box" id="diagContainer">
-            <div class="status-row" id="diagnostic"></div>
-            <div class="status-row">
-                <span id="signalText">Analyse en cours...</span>
-                <span id="signalBadge" class="signal-badge">SIGNAL FORT</span>
+    <div id="results" style="display:none;">
+        <div id="diagCard" class="analysis-box">
+            <div style="display:flex; justify-content:space-between; font-size:0.85rem;">
+                <span>Ratio: <b id="txtRatio">0%</b></span>
+                <span>Flux: <b id="txtFlux">➖</b></span>
             </div>
+            <div class="progress-container"><div id="barRatio" class="progress-bar"></div></div>
+            <span id="txtAdvice" class="status-label">ANALYSE...</span>
         </div>
 
         <h2>Nandrasana (Prédictions)</h2>
-        <table class="results-table">
-            <thead>
-                <tr>
-                    <th>Objectif</th>
-                    <th>X Target</th>
-                    <th>Heure</th>
-                    <th>Tour</th>
-                    <th>Prob.</th>
-                </tr>
-            </thead>
-            <tbody id="predictionBody"></tbody>
+        <table id="predictionTable">
+            <thead><tr><th>Cible</th><th>X</th><th>Heure</th><th>Tour</th><th>Prob.</th></tr></thead>
+            <tbody id="predBody"></tbody>
         </table>
 
-        <h2>Historique de Flux</h2>
-        <table class="history-table">
-            <thead>
-                <tr>
-                    <th>Tour</th>
-                    <th>X</th>
-                    <th>Ratio</th>
-                    <th>Flux</th>
-                </tr>
-            </thead>
-            <tbody id="historyBody"></tbody>
+        <h2>Historique & Séquences</h2>
+        <table>
+            <thead><tr><th>Tour</th><th>X</th><th>Ratio</th><th>Flux</th></tr></thead>
+            <tbody id="histBody"></tbody>
         </table>
-        
-        <button class="btn-clear" onclick="reinitialiser()">EFFACER TOUT L'HISTORIQUE</button>
+        <div style="text-align:right;"><button style="width:auto; padding:5px 10px; font-size:0.6rem; background:#21262d;" onclick="localStorage.clear(); location.reload();">Reset Session</button></div>
     </div>
 </div>
 
 <script>
-    let historique = JSON.parse(localStorage.getItem('herys_v42_hist')) || [];
-    let pressionCumulative = 0;
+    let session = JSON.parse(localStorage.getItem('herys_gold_db')) || [];
 
-    // Charger l'historique au démarrage
-    if (historique.length > 0) {
-        document.getElementById('output').style.display = 'block';
-        actualiserHistorique();
-        // Pré-remplir le tour suivant
-        document.getElementById('tour').value = historique[0].tour + 1;
-    }
+    function runGoldAnalysis() {
+        const tour = parseInt(document.getElementById('tour').value);
+        const mult = document.getElementById('mult').value;
+        const decimal = document.getElementById('decimal').value;
+        if (!tour || !mult || !decimal) return;
 
-    function ajouterEtCalculer() {
-        const tourEl = document.getElementById('tour');
-        const multEl = document.getElementById('mult');
-        const decimalEl = document.getElementById('decimal');
-
-        const tour = parseInt(tourEl.value);
-        const mult = parseFloat(multEl.value) || 0;
-        const decimal = parseInt(decimalEl.value);
-
-        if (!tour || isNaN(decimal)) return;
-
-        // Calcul du Ratio
-        const ratio = (decimal / 4294967295) * 100;
-        
-        // Gestion de la Pression (Basée sur tes vidéos)
-        if (mult < 1.20 && mult > 0) pressionCumulative += 20;
-        else if (mult >= 2.00) pressionCumulative = 0;
-
-        // Flux
+        const ratio = (parseInt(decimal) / 4294967295) * 100;
         let flux = "➖";
-        if (historique.length > 0) {
-            flux = ratio > historique[0].ratio ? "<span style='color:var(--success)'>↗️</span>" : "<span style='color:var(--rose)'>↘️</span>";
-        }
+        if (session.length > 0) { flux = ratio > session[0].ratio ? "↗️" : "↘️"; }
 
-        // Sauvegarde
-        historique.unshift({ tour, mult, ratio, flux });
-        if (historique.length > 8) historique.pop();
-        localStorage.setItem('herys_v42_hist', JSON.stringify(historique));
+        session.unshift({ tour, mult, ratio, flux });
+        if (session.length > 15) session.pop();
+        localStorage.setItem('herys_gold_db', JSON.stringify(session));
 
-        afficherResultats(tour, ratio, flux);
-        actualiserHistorique();
-
-        // Préparation tour suivant
-        tourEl.value = tour + 1;
-        multEl.value = "";
-        decimalEl.value = "";
-        multEl.focus(); // Remet le focus sur le multiplicateur pour mobile
+        updateUI(tour, ratio, flux, mult);
     }
 
-    function afficherResultats(tour, ratio, flux) {
-        document.getElementById('output').style.display = 'block';
-        const diagBox = document.getElementById('diagnostic');
-        const signalBadge = document.getElementById('signalBadge');
-        const signalText = document.getElementById('signalText');
-        const tableBody = document.getElementById('predictionBody');
+    function updateUI(tour, ratio, flux, mult) {
+        const resDiv = document.getElementById('results');
+        const diagCard = document.getElementById('diagCard');
+        const advice = document.getElementById('txtAdvice');
+        resDiv.style.display = 'block';
+        
+        document.getElementById('txtRatio').innerText = ratio.toFixed(2) + "%";
+        document.getElementById('barRatio').style.width = ratio + "%";
+        document.getElementById('txtFlux').innerText = flux;
+        document.getElementById('txtFlux').style.color = flux === "↗️" ? "var(--green)" : "var(--rose)";
 
-        let etat = "STABLE";
-        let color = "var(--gold)";
-
-        if (ratio < 25 || pressionCumulative > 30) {
-            etat = "EXPLOSION 🚀";
-            color = "var(--rose)";
-            signalBadge.style.display = "block";
-            signalText.innerText = "Favorable pour mise";
+        // Logique GOLD basée sur les tests
+        diagCard.className = "analysis-box";
+        if (ratio < 15) {
+            diagCard.classList.add('gold-alert');
+            advice.innerText = "🔥 SIGNAL D'OR : EXPLOSION ROSE IMMINENTE";
+            advice.style.color = "var(--green)";
         } else if (ratio > 75) {
-            etat = "RECHARGE ⚡";
-            color = "var(--blue)";
-            signalBadge.style.display = "none";
-            signalText.innerText = "Attente conseillée";
+            diagCard.classList.add('trap-alert');
+            advice.innerText = "🚫 ZONE DE PIÈGE : RECHARGE EN COURS";
+            advice.style.color = "var(--red)";
         } else {
-            signalBadge.style.display = "none";
-            signalText.innerText = "Analyse Neutre";
+            advice.innerText = "ZONE STABLE : DISTRIBUTION MODÉRÉE";
+            advice.style.color = "var(--gold)";
         }
 
-        diagBox.innerHTML = `<span>Ratio: <b style="color:${color}">${ratio.toFixed(2)}%</b></span> <span>Flux: ${flux}</span> <span>Etat: <b style="color:${color}">${etat}</b></span>`;
-
-        // Configuration Cibles
-        const predictions = [
-            { obj: "Sécurisé", target: "x2.00+", t: 3, c: "color-blue", p: 82 },
-            { obj: "Expert", target: "x5.00+", t: 8, c: "color-violet", p: 65 },
-            { obj: "Sentinel", target: "x20.00+", t: 20, c: "color-rose", p: 40 }
+        const now = new Date();
+        const targets = [
+            { id: "Safe", x: "x2.00", t: 3, tr: 4, p: 85, c: "color-blue" },
+            { id: "Elite", x: "x5.00", t: 7, tr: 11, p: 60, c: "color-violet" },
+            { id: "Gold", x: "x20.00+", t: 12, tr: 26, p: 45, c: "color-rose" }
         ];
 
-        tableBody.innerHTML = "";
-        const now = new Date();
-
-        predictions.forEach(p => {
-            const predTime = new Date(now.getTime() + (p.t / 2) * 60000); // Temps ajusté
-            const timeStr = predTime.getHours().toString().padStart(2, '0') + ":" + predTime.getMinutes().toString().padStart(2, '0');
-            
-            let probFinale = Math.min(p.p + (pressionCumulative / 2) + (100 - ratio) / 4, 99);
-
-            tableBody.innerHTML += `<tr>
-                <td>${p.obj}</td>
-                <td class="${p.c}">${p.target}</td>
-                <td>${timeStr}</td>
-                <td>${tour + p.t}</td>
-                <td class="color-rose"><b>${probFinale.toFixed(0)}%</b></td>
-            </tr>`;
+        const pBody = document.getElementById('predBody');
+        pBody.innerHTML = "";
+        targets.forEach(item => {
+            let pFinal = item.p;
+            if (ratio < 25) pFinal += 14; 
+            if (ratio > 80) pFinal = 5; // Verrouillage de sécurité
+            const time = new Date(now.getTime() + item.t * 60000);
+            const timeStr = time.getHours().toString().padStart(2, '0') + ":" + time.getMinutes().toString().padStart(2, '0');
+            pBody.innerHTML += `<tr><td>${item.id}</td><td class="${item.c}">${item.x}</td><td>${timeStr}</td><td>${tour + item.tr}</td><td><span class="prob-badge">${pFinal}%</span></td></tr>`;
         });
-    }
 
-    function actualiserHistorique() {
-        const hBody = document.getElementById('historyBody');
+        const hBody = document.getElementById('histBody');
         hBody.innerHTML = "";
-        historique.forEach(h => {
-            hBody.innerHTML += `<tr>
-                <td>${h.tour}</td>
-                <td>${h.mult || '-'}</td>
-                <td>${h.ratio.toFixed(1)}%</td>
-                <td>${h.flux}</td>
-            </tr>`;
+        session.forEach(h => {
+            let c = parseFloat(h.mult) < 2 ? 'color-blue' : parseFloat(h.mult) < 5 ? 'color-violet' : 'color-rose';
+            hBody.innerHTML += `<tr><td>${h.tour}</td><td class="${c}">${h.mult}</td><td>${h.ratio.toFixed(1)}%</td><td>${h.flux}</td></tr>`;
         });
     }
 
-    function reinitialiser() {
-        if(confirm("Effacer tout l'historique ?")) {
-            historique = [];
-            localStorage.removeItem('herys_v42_hist');
-            location.reload();
-        }
+    if (session.length > 0) {
+        const last = session[0];
+        updateUI(last.tour, last.ratio, last.flux, last.mult);
     }
 </script>
 </body>
