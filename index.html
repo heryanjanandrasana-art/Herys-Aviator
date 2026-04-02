@@ -1,163 +1,928 @@
 <!DOCTYPE html>
-<html lang="mg">
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HERYS ELITE V42.6 - GOLD EDITION</title>
-    <style>
-        :root {
-            --bg: #010409; --card: #0d1117; --blue: #3498db; --violet: #9b59b6;
-            --rose: #e91e63; --gold: #f1c40f; --white: #ffffff; --border: #30363d;
-            --green: #2ecc71; --red: #ff4d4d;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HERYS ELITE V44.1 - EXACT PREDICTOR</title>
+  <style>
+    :root{
+      --bg:#010409;
+      --card:#0d1117;
+      --card2:#111827;
+      --border:#30363d;
+      --text:#f0f6fc;
+      --muted:#8b949e;
+      --blue:#3498db;
+      --violet:#9b59b6;
+      --rose:#e91e63;
+      --gold:#f1c40f;
+      --green:#00c978;
+      --red:#ff4d4d;
+      --cyan:#00d1ff;
+      --orange:#ff9f43;
+    }
 
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--white); display: flex; justify-content: center; padding: 10px; margin: 0; }
-        .app-container { width: 100%; max-width: 500px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
-        
-        h1 { color: var(--rose); text-align: center; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; border-bottom: 2px solid var(--rose); padding-bottom: 10px; }
-        
-        .input-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .field { display: flex; flex-direction: column; }
-        .full-width { grid-column: span 2; }
-        label { font-size: 0.7rem; color: #8b949e; margin-bottom: 4px; font-weight: bold; }
-        input { background: #010409; border: 1px solid var(--border); border-radius: 6px; padding: 12px; color: var(--white); font-family: monospace; font-size: 1rem; }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:'Segoe UI',Arial,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      padding:12px;
+      display:flex;
+      justify-content:center;
+    }
 
-        button { width: 100%; background: linear-gradient(135deg, var(--rose), var(--violet)); color: white; border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-bottom: 20px; transition: 0.3s; }
-        button:active { transform: scale(0.97); opacity: 0.8; }
+    .app{
+      width:100%;
+      max-width:1100px;
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:16px;
+      box-shadow:0 14px 40px rgba(0,0,0,.45);
+    }
 
-        .analysis-box { background: #010409; padding: 12px; border-radius: 6px; margin-bottom: 20px; border-left: 5px solid var(--gold); transition: 0.5s; }
-        .gold-alert { border-left-color: var(--green) !important; background: rgba(46, 204, 113, 0.1) !important; box-shadow: 0 0 15px var(--green); }
-        .trap-alert { border-left-color: var(--red) !important; background: rgba(255, 77, 77, 0.1) !important; }
+    h1{
+      margin:0 0 16px;
+      text-align:center;
+      color:var(--rose);
+      letter-spacing:1px;
+      font-size:1.35rem;
+      text-transform:uppercase;
+      border-bottom:2px solid var(--rose);
+      padding-bottom:10px;
+    }
 
-        .progress-container { background: #21262d; height: 10px; border-radius: 5px; margin: 10px 0; overflow: hidden; }
-        .progress-bar { height: 100%; background: var(--rose); width: 0%; transition: 0.5s; }
-        
-        .status-label { font-weight: bold; text-align: center; display: block; margin-top: 5px; font-size: 0.9rem; }
-        
-        table { width: 100%; border-collapse: collapse; font-size: 0.75rem; margin-bottom: 20px; }
-        th { background: #21262d; color: var(--gold); padding: 10px 2px; }
-        td { border: 1px solid var(--border); padding: 10px 2px; text-align: center; }
+    h2{
+      margin:20px 0 10px;
+      font-size:1rem;
+      color:#fff;
+    }
 
-        .color-blue { color: var(--blue); font-weight: bold; }
-        .color-violet { color: var(--violet); font-weight: bold; }
-        .color-rose { color: var(--rose); font-weight: bold; }
-        .prob-badge { background: rgba(255,255,255,0.1); padding: 3px 6px; border-radius: 4px; }
-    </style>
+    .note{
+      background:#0b1220;
+      border:1px solid #1e2a3a;
+      border-left:4px solid var(--cyan);
+      color:#cfe8ff;
+      padding:12px;
+      border-radius:10px;
+      margin-bottom:14px;
+      font-size:.92rem;
+      line-height:1.5;
+    }
+
+    .legend{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+
+    .legend .pill{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:.78rem;
+      font-weight:800;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.05);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:10px;
+      margin-bottom:12px;
+    }
+
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:5px;
+    }
+
+    .field.full{
+      grid-column:span 2;
+    }
+
+    label{
+      font-size:.75rem;
+      color:var(--muted);
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.5px;
+    }
+
+    input{
+      width:100%;
+      padding:12px;
+      border-radius:8px;
+      border:1px solid var(--border);
+      background:#010409;
+      color:var(--text);
+      outline:none;
+      font-family:Consolas,monospace;
+      font-size:1rem;
+    }
+
+    input:focus{
+      border-color:var(--rose);
+      box-shadow:0 0 0 3px rgba(233,30,99,.12);
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin:8px 0 18px;
+    }
+
+    button{
+      border:none;
+      border-radius:10px;
+      padding:13px 16px;
+      cursor:pointer;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.5px;
+      color:white;
+      transition:.2s ease;
+    }
+
+    button:active{transform:scale(.98)}
+    .btn-main{
+      background:linear-gradient(135deg,var(--rose),var(--violet));
+      flex:1;
+      min-width:220px;
+    }
+    .btn-dark{
+      background:#21262d;
+    }
+
+    .cards{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:10px;
+      margin-bottom:16px;
+    }
+
+    .card{
+      background:var(--card2);
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:12px;
+    }
+
+    .card .k{
+      color:var(--muted);
+      font-size:.75rem;
+      text-transform:uppercase;
+      font-weight:700;
+      margin-bottom:6px;
+    }
+
+    .card .v{
+      font-size:1.25rem;
+      font-weight:800;
+    }
+
+    .big-card{
+      background:#0a111b;
+      border:1px solid #213047;
+      border-left:5px solid var(--gold);
+      border-radius:12px;
+      padding:14px;
+      margin-bottom:14px;
+    }
+
+    .state-good{ border-left-color: var(--green)!important; }
+    .state-mid{ border-left-color: var(--gold)!important; }
+    .state-risk{ border-left-color: var(--red)!important; }
+
+    .badge{
+      display:inline-block;
+      padding:4px 8px;
+      border-radius:999px;
+      font-size:.78rem;
+      font-weight:800;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.06);
+    }
+
+    .blue{color:var(--blue);font-weight:800}
+    .violet{color:var(--violet);font-weight:800}
+    .rose{color:var(--rose);font-weight:800}
+    .green{color:var(--green);font-weight:800}
+    .gold{color:var(--gold);font-weight:800}
+    .red{color:var(--red);font-weight:800}
+    .orange{color:var(--orange);font-weight:800}
+
+    .wait-short{
+      color:var(--green);
+      font-weight:800;
+    }
+
+    .wait-medium{
+      color:var(--gold);
+      font-weight:800;
+    }
+
+    .wait-long{
+      color:var(--red);
+      font-weight:800;
+    }
+
+    .wait-box{
+      display:inline-block;
+      padding:4px 8px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.04);
+      white-space:nowrap;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:.84rem;
+      margin-top:10px;
+      overflow:hidden;
+      border-radius:12px;
+    }
+
+    th{
+      background:#1b2430;
+      color:var(--gold);
+      padding:10px 8px;
+      text-transform:uppercase;
+      font-size:.72rem;
+      letter-spacing:.4px;
+    }
+
+    td{
+      border:1px solid var(--border);
+      padding:10px 8px;
+      text-align:center;
+    }
+
+    .small{
+      color:var(--muted);
+      font-size:.84rem;
+      line-height:1.45;
+    }
+
+    .muted{
+      color:var(--muted);
+    }
+
+    .mono{
+      font-family:Consolas,monospace;
+    }
+
+    .footer-note{
+      margin-top:14px;
+      padding:12px;
+      border-radius:10px;
+      background:#0b1220;
+      border:1px solid #1f2a38;
+      color:#d8e4f2;
+      font-size:.9rem;
+      line-height:1.5;
+    }
+
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr 1fr}
+      .cards{grid-template-columns:1fr 1fr}
+      table{font-size:.78rem}
+    }
+
+    @media (max-width: 560px){
+      .grid{grid-template-columns:1fr}
+      .field.full{grid-column:span 1}
+      .cards{grid-template-columns:1fr}
+    }
+  </style>
 </head>
 <body>
+  <div class="app">
+    <h1>HERYS ELITE V44.1 — Exact Predictor</h1>
 
-<div class="app-container">
-    <h1>HERYS ELITE V42.6 GOLD</h1>
-    
-    <div class="input-group">
-        <div class="field"><label>Tour</label><input type="number" id="tour" placeholder="000"></div>
-        <div class="field"><label>Valeur X</label><input type="text" id="mult" placeholder="1.00"></div>
-        <div class="field full-width"><label>Decimal (BigInt)</label><input type="number" id="decimal" placeholder="Decimal Hash"></div>
+    <div class="note">
+      Cette version calcule le <b>multiplicateur exact</b> avec la formule :
+      <span class="mono">max(1.00, floor((0.97 × 4294967296 / decimal) × 100) / 100)</span>.
+      <br><br>
+      Elle distingue clairement :
+      <b>calcul exact du tour courant</b> et <b>estimation probabiliste des prochains tours</b>.
+      <br><br>
+      <b>Nouveauté V44.1 :</b> les tableaux affichent désormais une <b>attente moyenne colorée</b> et une <b>fenêtre de tours estimés min / max</b>.
+      <div class="legend">
+        <span class="pill wait-short">Attente courte</span>
+        <span class="pill wait-medium">Attente moyenne</span>
+        <span class="pill wait-long">Attente longue</span>
+      </div>
     </div>
 
-    <button onclick="runGoldAnalysis()">LANCER L'ANALYSE GOLD</button>
+    <div class="grid">
+      <div class="field">
+        <label>Tour</label>
+        <input type="number" id="tour" placeholder="Ex: 15234" />
+      </div>
+
+      <div class="field">
+        <label>Decimal (0 → 4294967295)</label>
+        <input type="number" id="decimal" placeholder="Ex: 3592319515" />
+      </div>
+
+      <div class="field">
+        <label>Hex 32 bits optionnel</label>
+        <input type="text" id="hex32" placeholder="Ex: d61e721b" maxlength="8" />
+      </div>
+
+      <div class="field">
+        <label>X observé optionnel</label>
+        <input type="number" id="observed" step="0.01" placeholder="Ex: 1.15" />
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn-main" onclick="runAnalysis()">Lancer l'analyse exacte</button>
+      <button class="btn-dark" onclick="clearDB()">Vider la base</button>
+    </div>
 
     <div id="results" style="display:none;">
-        <div id="diagCard" class="analysis-box">
-            <div style="display:flex; justify-content:space-between; font-size:0.85rem;">
-                <span>Ratio: <b id="txtRatio">0%</b></span>
-                <span>Flux: <b id="txtFlux">➖</b></span>
-            </div>
-            <div class="progress-container"><div id="barRatio" class="progress-bar"></div></div>
-            <span id="txtAdvice" class="status-label">ANALYSE...</span>
+      <div id="statusCard" class="big-card">
+        <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;">
+          <div>
+            <div class="muted" style="font-size:.82rem;">Diagnostic principal</div>
+            <div id="mainAdvice" style="font-size:1.08rem;font-weight:800;">—</div>
+          </div>
+          <div class="badge" id="dominantBadge">—</div>
         </div>
+        <div class="small" id="subAdvice" style="margin-top:8px;">—</div>
+      </div>
 
-        <h2>Nandrasana (Prédictions)</h2>
-        <table id="predictionTable">
-            <thead><tr><th>Cible</th><th>X</th><th>Heure</th><th>Tour</th><th>Prob.</th></tr></thead>
-            <tbody id="predBody"></tbody>
-        </table>
+      <div class="cards">
+        <div class="card">
+          <div class="k">Multiplicateur exact</div>
+          <div class="v" id="exactMult">—</div>
+        </div>
+        <div class="card">
+          <div class="k">Classe exacte</div>
+          <div class="v" id="exactClass">—</div>
+        </div>
+        <div class="card">
+          <div class="k">Décimal utilisé</div>
+          <div class="v mono" id="usedDecimal">—</div>
+        </div>
+        <div class="card">
+          <div class="k">Contrôle X observé</div>
+          <div class="v" id="checkObserved">—</div>
+        </div>
+      </div>
 
-        <h2>Historique & Séquences</h2>
-        <table>
-            <thead><tr><th>Tour</th><th>X</th><th>Ratio</th><th>Flux</th></tr></thead>
-            <tbody id="histBody"></tbody>
-        </table>
-        <div style="text-align:right;"><button style="width:auto; padding:5px 10px; font-size:0.6rem; background:#21262d;" onclick="localStorage.clear(); location.reload();">Reset Session</button></div>
+      <h2>Prédiction demandée : seuils cumulatifs</h2>
+      <div class="small">
+        Ici, on affiche les probabilités de tomber sous les seuils <b>&lt; x2</b>, <b>&lt; x5</b>, <b>&lt; x20</b>,
+        ainsi que <b>&gt;= x20</b>.  
+        La colonne <b>Théorie</b> vient de la formule mathématique.  
+        La colonne <b>Estimation pondérée</b> mélange théorie + historique récent.  
+        <br>
+        <b>Tour min estimé</b> ≈ borne précoce plausible.  
+        <b>Tour max estimé</b> ≈ borne plus large plausible.  
+        Ce sont des repères mathématiques, pas des garanties.
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Seuil</th>
+            <th>Théorie</th>
+            <th>Estimation pondérée</th>
+            <th>Attente moyenne</th>
+            <th>Tour min estimé</th>
+            <th>Tour max estimé</th>
+          </tr>
+        </thead>
+        <tbody id="thresholdBody"></tbody>
+      </table>
+
+      <h2>Vue exclusive par classe</h2>
+      <div class="small">
+        Cette vue découpe les résultats en classes non chevauchantes, utile pour voir précisément la zone du multiplicateur.
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Classe</th>
+            <th>Théorie</th>
+            <th>Estimation pondérée</th>
+            <th>Fréquence historique</th>
+          </tr>
+        </thead>
+        <tbody id="classBody"></tbody>
+      </table>
+
+      <h2>Probabilité d'atteindre au moins</h2>
+      <div class="small">
+        Cette table répond à la question inverse : chance d'obtenir un multiplicateur <b>&gt;= x2</b>, <b>&gt;= x5</b>, <b>&gt;= x20</b>.
+        L’attente moyenne indique le nombre moyen de tours avant arrivée.  
+        Les colonnes min / max donnent une fenêtre de tours plausible à partir du tour courant.
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Cible</th>
+            <th>Théorie / tour</th>
+            <th>Estimation / tour</th>
+            <th>Attente moyenne</th>
+            <th>Tour min estimé</th>
+            <th>Tour max estimé</th>
+          </tr>
+        </thead>
+        <tbody id="hitBody"></tbody>
+      </table>
+
+      <h2>Historique des tours</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Tour</th>
+            <th>Decimal</th>
+            <th>X exact</th>
+            <th>Classe</th>
+            <th>X observé</th>
+            <th>Écart</th>
+          </tr>
+        </thead>
+        <tbody id="historyBody"></tbody>
+      </table>
+
+      <div class="footer-note">
+        <b>Important :</b> si le système est réellement “provably fair”, chaque nouveau hash reste indépendant.  
+        Donc cette page fournit :
+        <br>1) un <b>calcul exact</b> du tour courant,
+        <br>2) une <b>estimation probabiliste</b> des prochains tours à partir de la théorie + de l’historique,
+        <br>3) une <b>fenêtre estimative min / max</b> qui reste mathématique et non garantie.
+      </div>
     </div>
-</div>
+  </div>
 
-<script>
-    let session = JSON.parse(localStorage.getItem('herys_gold_db')) || [];
+  <script>
+    const STORAGE_KEY = "herys_exact_predictor_v44_1";
+    const MAX32 = 4294967296;
+    const HOUSE_EDGE = 0.97;
+    const K = HOUSE_EDGE * MAX32;
 
-    function runGoldAnalysis() {
-        const tour = parseInt(document.getElementById('tour').value);
-        const mult = document.getElementById('mult').value;
-        const decimal = document.getElementById('decimal').value;
-        if (!tour || !mult || !decimal) return;
+    let session = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
 
-        const ratio = (parseInt(decimal) / 4294967295) * 100;
-        let flux = "➖";
-        if (session.length > 0) { flux = ratio > session[0].ratio ? "↗️" : "↘️"; }
+    const CLASS_META = {
+      lt2:   { label: "< x2",        color: "blue"   },
+      b2_5:  { label: "x2 à < x5",   color: "violet" },
+      b5_20: { label: "x5 à < x20",  color: "rose"   },
+      gte20: { label: ">= x20",      color: "green"  }
+    };
 
-        session.unshift({ tour, mult, ratio, flux });
-        if (session.length > 15) session.pop();
-        localStorage.setItem('herys_gold_db', JSON.stringify(session));
-
-        updateUI(tour, ratio, flux, mult);
+    function saveDB() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
     }
 
-    function updateUI(tour, ratio, flux, mult) {
-        const resDiv = document.getElementById('results');
-        const diagCard = document.getElementById('diagCard');
-        const advice = document.getElementById('txtAdvice');
-        resDiv.style.display = 'block';
-        
-        document.getElementById('txtRatio').innerText = ratio.toFixed(2) + "%";
-        document.getElementById('barRatio').style.width = ratio + "%";
-        document.getElementById('txtFlux').innerText = flux;
-        document.getElementById('txtFlux').style.color = flux === "↗️" ? "var(--green)" : "var(--rose)";
+    function clearDB() {
+      localStorage.removeItem(STORAGE_KEY);
+      session = [];
+      document.getElementById("results").style.display = "none";
+      document.getElementById("tour").value = "";
+      document.getElementById("decimal").value = "";
+      document.getElementById("hex32").value = "";
+      document.getElementById("observed").value = "";
+    }
 
-        // Logique GOLD basée sur les tests
-        diagCard.className = "analysis-box";
-        if (ratio < 15) {
-            diagCard.classList.add('gold-alert');
-            advice.innerText = "🔥 SIGNAL D'OR : EXPLOSION ROSE IMMINENTE";
-            advice.style.color = "var(--green)";
-        } else if (ratio > 75) {
-            diagCard.classList.add('trap-alert');
-            advice.innerText = "🚫 ZONE DE PIÈGE : RECHARGE EN COURS";
-            advice.style.color = "var(--red)";
-        } else {
-            advice.innerText = "ZONE STABLE : DISTRIBUTION MODÉRÉE";
-            advice.style.color = "var(--gold)";
+    function pct(v) {
+      return (v * 100).toFixed(2) + "%";
+    }
+
+    function fmtMult(v) {
+      if (v === Infinity) return "∞";
+      return v.toFixed(2) + "x";
+    }
+
+    function fmtDiff(v) {
+      if (v === null || !Number.isFinite(v)) return "—";
+      return (v >= 0 ? "+" : "") + v.toFixed(2);
+    }
+
+    function colorizeLabel(key) {
+      const meta = CLASS_META[key];
+      return `<span class="${meta.color}">${meta.label}</span>`;
+    }
+
+    function parseHex32(hex) {
+      const clean = String(hex || "").trim().replace(/^0x/i, "");
+      if (!/^[0-9a-fA-F]{1,8}$/.test(clean)) return null;
+      return parseInt(clean, 16);
+    }
+
+    function computeExactMultiplier(decimal) {
+      if (!Number.isFinite(decimal) || decimal < 0 || decimal > 4294967295) return null;
+      if (decimal === 0) return Infinity;
+      return Math.max(1.00, Math.floor((K / decimal) * 100) / 100);
+    }
+
+    function classKeyFromMultiplier(mult) {
+      if (mult === Infinity) return "gte20";
+      if (mult < 2) return "lt2";
+      if (mult < 5) return "b2_5";
+      if (mult < 20) return "b5_20";
+      return "gte20";
+    }
+
+    function exactTheory() {
+      const total = MAX32;
+
+      const pGte2  = (Math.floor(K / 2)  + 1) / total;
+      const pGte5  = (Math.floor(K / 5)  + 1) / total;
+      const pGte20 = (Math.floor(K / 20) + 1) / total;
+
+      const categories = {
+        lt2:   1 - pGte2,
+        b2_5:  pGte2 - pGte5,
+        b5_20: pGte5 - pGte20,
+        gte20: pGte20
+      };
+
+      return {
+        gte2: pGte2,
+        gte5: pGte5,
+        gte20: pGte20,
+        lt2: categories.lt2,
+        lt5: categories.lt2 + categories.b2_5,
+        lt20: categories.lt2 + categories.b2_5 + categories.b5_20,
+        categories
+      };
+    }
+
+    function decayedCounts(data, halfLife = 8) {
+      const counts = { lt2: 0, b2_5: 0, b5_20: 0, gte20: 0 };
+      let total = 0;
+
+      data.forEach((row, index) => {
+        const weight = Math.pow(0.5, index / halfLife);
+        counts[row.classKey] += weight;
+        total += weight;
+      });
+
+      return { counts, total };
+    }
+
+    function rawHistoryFreq(data) {
+      const counts = { lt2: 0, b2_5: 0, b5_20: 0, gte20: 0 };
+      const total = data.length || 1;
+
+      data.forEach(row => {
+        counts[row.classKey]++;
+      });
+
+      return {
+        lt2: counts.lt2 / total,
+        b2_5: counts.b2_5 / total,
+        b5_20: counts.b5_20 / total,
+        gte20: counts.gte20 / total
+      };
+    }
+
+    function blendedPrediction(data) {
+      const theory = exactTheory();
+      const prior = theory.categories;
+
+      const priorStrength = 18;
+      const { counts, total } = decayedCounts(data, 8);
+
+      const probs = {
+        lt2:   (counts.lt2   + priorStrength * prior.lt2)   / (total + priorStrength),
+        b2_5:  (counts.b2_5  + priorStrength * prior.b2_5)  / (total + priorStrength),
+        b5_20: (counts.b5_20 + priorStrength * prior.b5_20) / (total + priorStrength),
+        gte20: (counts.gte20 + priorStrength * prior.gte20) / (total + priorStrength)
+      };
+
+      return {
+        categories: probs,
+        lt2: probs.lt2,
+        lt5: probs.lt2 + probs.b2_5,
+        lt20: probs.lt2 + probs.b2_5 + probs.b5_20,
+        gte2: probs.b2_5 + probs.b5_20 + probs.gte20,
+        gte5: probs.b5_20 + probs.gte20,
+        gte20: probs.gte20
+      };
+    }
+
+    function expectedWaitTours(p) {
+      if (p <= 0) return Infinity;
+      return 1 / p;
+    }
+
+    function expectedWaitLabel(p) {
+      const wait = expectedWaitTours(p);
+      return Number.isFinite(wait) ? wait.toFixed(2) + " tours" : "∞";
+    }
+
+    function waitClass(p) {
+      const wait = expectedWaitTours(p);
+      if (!Number.isFinite(wait)) return "wait-long";
+      if (wait <= 2.5) return "wait-short";
+      if (wait <= 6) return "wait-medium";
+      return "wait-long";
+    }
+
+    function waitLabelHtml(p) {
+      const cls = waitClass(p);
+      return `<span class="wait-box ${cls}">${expectedWaitLabel(p)}</span>`;
+    }
+
+    function geometricHitByNTours(p, targetProbability) {
+      if (p <= 0) return Infinity;
+      if (p >= 1) return 1;
+      return Math.max(1, Math.ceil(Math.log(1 - targetProbability) / Math.log(1 - p)));
+    }
+
+    function estimatedTourMin(currentTour, p) {
+      const n = geometricHitByNTours(p, 0.25);
+      if (!Number.isFinite(n)) return Infinity;
+      return currentTour + n;
+    }
+
+    function estimatedTourMax(currentTour, p) {
+      const n = geometricHitByNTours(p, 0.75);
+      if (!Number.isFinite(n)) return Infinity;
+      return currentTour + n;
+    }
+
+    function estimatedTourMinLabel(currentTour, p) {
+      const t = estimatedTourMin(currentTour, p);
+      return Number.isFinite(t) ? "Tour " + t : "—";
+    }
+
+    function estimatedTourMaxLabel(currentTour, p) {
+      const t = estimatedTourMax(currentTour, p);
+      return Number.isFinite(t) ? "Tour " + t : "—";
+    }
+
+    function estimatedTourMinHtml(currentTour, p) {
+      const cls = waitClass(p);
+      return `<span class="${cls}">${estimatedTourMinLabel(currentTour, p)}</span>`;
+    }
+
+    function estimatedTourMaxHtml(currentTour, p) {
+      const cls = waitClass(p);
+      return `<span class="${cls}">${estimatedTourMaxLabel(currentTour, p)}</span>`;
+    }
+
+    function dominantCategory(pred) {
+      const entries = Object.entries(pred.categories);
+      entries.sort((a, b) => b[1] - a[1]);
+      return entries[0][0];
+    }
+
+    function compareObserved(observed, exact) {
+      if (!Number.isFinite(observed)) {
+        return { text: "Non fourni", cls: "muted", diff: null };
+      }
+      if (exact === Infinity) {
+        return { text: "Théorique: ∞", cls: "green", diff: null };
+      }
+      const diff = observed - exact;
+      const ok = Math.abs(diff) < 0.01;
+      return {
+        text: ok ? "OK" : "Écart détecté",
+        cls: ok ? "green" : "red",
+        diff
+      };
+    }
+
+    function adviceFromCurrent(mult, pred) {
+      const hit20 = pred.gte20;
+      const hit5 = pred.gte5;
+      const dom = dominantCategory(pred);
+
+      if (mult < 2 && hit5 > 0.22) {
+        return {
+          title: "Zone basse observée + probabilité modérée de rebond",
+          sub: "Le tour courant est faible, mais l'estimation pondérée garde une chance non négligeable d'atteindre x5 ou plus dans les prochains tours.",
+          state: "state-good",
+          badge: CLASS_META[dom].label
+        };
+      }
+
+      if (mult >= 20 || hit20 > 0.07) {
+        return {
+          title: "Haute volatilité détectée",
+          sub: "Soit le tour courant est déjà élevé, soit l'historique récent remonte légèrement la probabilité d'une grosse sortie. Cela reste une estimation, pas une certitude.",
+          state: "state-risk",
+          badge: CLASS_META[dom].label
+        };
+      }
+
+      return {
+        title: "Zone statistiquement normale",
+        sub: "Le moteur affiche une estimation cohérente avec la théorie du modèle. Le résultat le plus probable reste la zone basse ou moyenne.",
+        state: "state-mid",
+        badge: CLASS_META[dom].label
+      };
+    }
+
+    function runAnalysis() {
+      const tourVal = document.getElementById("tour").value.trim();
+      const decimalVal = document.getElementById("decimal").value.trim();
+      const hexVal = document.getElementById("hex32").value.trim();
+      const observedVal = document.getElementById("observed").value.trim();
+
+      const tour = parseInt(tourVal, 10);
+
+      let decimal = decimalVal !== "" ? Number(decimalVal) : null;
+      if ((decimal === null || !Number.isFinite(decimal)) && hexVal) {
+        decimal = parseHex32(hexVal);
+        if (decimal !== null) {
+          document.getElementById("decimal").value = decimal;
         }
+      }
 
-        const now = new Date();
-        const targets = [
-            { id: "Safe", x: "x2.00", t: 3, tr: 4, p: 85, c: "color-blue" },
-            { id: "Elite", x: "x5.00", t: 7, tr: 11, p: 60, c: "color-violet" },
-            { id: "Gold", x: "x20.00+", t: 12, tr: 26, p: 45, c: "color-rose" }
-        ];
+      if (!Number.isInteger(tour)) {
+        alert("Entre un numéro de tour valide.");
+        return;
+      }
 
-        const pBody = document.getElementById('predBody');
-        pBody.innerHTML = "";
-        targets.forEach(item => {
-            let pFinal = item.p;
-            if (ratio < 25) pFinal += 14; 
-            if (ratio > 80) pFinal = 5; // Verrouillage de sécurité
-            const time = new Date(now.getTime() + item.t * 60000);
-            const timeStr = time.getHours().toString().padStart(2, '0') + ":" + time.getMinutes().toString().padStart(2, '0');
-            pBody.innerHTML += `<tr><td>${item.id}</td><td class="${item.c}">${item.x}</td><td>${timeStr}</td><td>${tour + item.tr}</td><td><span class="prob-badge">${pFinal}%</span></td></tr>`;
-        });
+      if (!Number.isFinite(decimal) || decimal < 0 || decimal > 4294967295) {
+        alert("Entre un decimal valide entre 0 et 4294967295.");
+        return;
+      }
 
-        const hBody = document.getElementById('histBody');
-        hBody.innerHTML = "";
-        session.forEach(h => {
-            let c = parseFloat(h.mult) < 2 ? 'color-blue' : parseFloat(h.mult) < 5 ? 'color-violet' : 'color-rose';
-            hBody.innerHTML += `<tr><td>${h.tour}</td><td class="${c}">${h.mult}</td><td>${h.ratio.toFixed(1)}%</td><td>${h.flux}</td></tr>`;
-        });
+      const exact = computeExactMultiplier(decimal);
+      if (exact === null) {
+        alert("Impossible de calculer le multiplicateur.");
+        return;
+      }
+
+      const observed = observedVal === "" ? null : Number(observedVal);
+      const classKey = classKeyFromMultiplier(exact);
+
+      session.unshift({
+        tour,
+        decimal,
+        exact,
+        observed,
+        classKey,
+        time: Date.now()
+      });
+
+      if (session.length > 200) session.pop();
+      saveDB();
+      render();
     }
 
-    if (session.length > 0) {
-        const last = session[0];
-        updateUI(last.tour, last.ratio, last.flux, last.mult);
+    function render() {
+      if (!session.length) return;
+
+      const theory = exactTheory();
+      const pred = blendedPrediction(session);
+      const hist = rawHistoryFreq(session);
+
+      const current = session[0];
+      const check = compareObserved(current.observed, current.exact);
+      const advice = adviceFromCurrent(current.exact, pred);
+
+      document.getElementById("results").style.display = "block";
+
+      document.getElementById("exactMult").textContent = fmtMult(current.exact);
+      document.getElementById("exactClass").innerHTML = colorizeLabel(current.classKey);
+      document.getElementById("usedDecimal").textContent = String(current.decimal);
+
+      document.getElementById("checkObserved").innerHTML =
+        `<span class="${check.cls}">${check.text}</span>` +
+        (check.diff !== null ? `<div class="small">Écart: ${fmtDiff(check.diff)}</div>` : "");
+
+      const statusCard = document.getElementById("statusCard");
+      statusCard.className = "big-card " + advice.state;
+      document.getElementById("mainAdvice").textContent = advice.title;
+      document.getElementById("subAdvice").textContent = advice.sub;
+      document.getElementById("dominantBadge").textContent = "Classe dominante estimée : " + advice.badge;
+
+      const thresholdBody = document.getElementById("thresholdBody");
+      thresholdBody.innerHTML = `
+        <tr>
+          <td class="blue"><b>&lt; x2</b></td>
+          <td>${pct(theory.lt2)}</td>
+          <td>${pct(pred.lt2)}</td>
+          <td>${waitLabelHtml(pred.lt2)}</td>
+          <td>${estimatedTourMinHtml(current.tour, pred.lt2)}</td>
+          <td>${estimatedTourMaxHtml(current.tour, pred.lt2)}</td>
+        </tr>
+        <tr>
+          <td class="violet"><b>&lt; x5</b></td>
+          <td>${pct(theory.lt5)}</td>
+          <td>${pct(pred.lt5)}</td>
+          <td>${waitLabelHtml(pred.lt5)}</td>
+          <td>${estimatedTourMinHtml(current.tour, pred.lt5)}</td>
+          <td>${estimatedTourMaxHtml(current.tour, pred.lt5)}</td>
+        </tr>
+        <tr>
+          <td class="rose"><b>&lt; x20</b></td>
+          <td>${pct(theory.lt20)}</td>
+          <td>${pct(pred.lt20)}</td>
+          <td>${waitLabelHtml(pred.lt20)}</td>
+          <td>${estimatedTourMinHtml(current.tour, pred.lt20)}</td>
+          <td>${estimatedTourMaxHtml(current.tour, pred.lt20)}</td>
+        </tr>
+        <tr>
+          <td class="green"><b>>= x20</b></td>
+          <td>${pct(theory.gte20)}</td>
+          <td>${pct(pred.gte20)}</td>
+          <td>${waitLabelHtml(pred.gte20)}</td>
+          <td>${estimatedTourMinHtml(current.tour, pred.gte20)}</td>
+          <td>${estimatedTourMaxHtml(current.tour, pred.gte20)}</td>
+        </tr>
+      `;
+
+      const classBody = document.getElementById("classBody");
+      classBody.innerHTML = `
+        <tr>
+          <td>${colorizeLabel("lt2")}</td>
+          <td>${pct(theory.categories.lt2)}</td>
+          <td>${pct(pred.categories.lt2)}</td>
+          <td>${pct(hist.lt2)}</td>
+        </tr>
+        <tr>
+          <td>${colorizeLabel("b2_5")}</td>
+          <td>${pct(theory.categories.b2_5)}</td>
+          <td>${pct(pred.categories.b2_5)}</td>
+          <td>${pct(hist.b2_5)}</td>
+        </tr>
+        <tr>
+          <td>${colorizeLabel("b5_20")}</td>
+          <td>${pct(theory.categories.b5_20)}</td>
+          <td>${pct(pred.categories.b5_20)}</td>
+          <td>${pct(hist.b5_20)}</td>
+        </tr>
+        <tr>
+          <td>${colorizeLabel("gte20")}</td>
+          <td>${pct(theory.categories.gte20)}</td>
+          <td>${pct(pred.categories.gte20)}</td>
+          <td>${pct(hist.gte20)}</td>
+        </tr>
+      `;
+
+      const hitBody = document.getElementById("hitBody");
+      hitBody.innerHTML = `
+        <tr>
+          <td class="blue"><b>>= x2</b></td>
+          <td>${pct(theory.gte2)}</td>
+          <td>${pct(pred.gte2)}</td>
+          <td>${waitLabelHtml(pred.gte2)}</td>
+          <td>${estimatedTourMinHtml(current.tour, pred.gte2)}</td>
+          <td>${estimatedTourMaxHtml(current.tour, pred.gte2)}</td>
+        </tr>
+        <tr>
+          <td class="violet"><b>>= x5</b></td>
+          <td>${pct(theory.gte5)}</td>
+          <td>${pct(pred.gte5)}</td>
+          <td>${waitLabelHtml(pred.gte5)}</td>
+          <td>${estimatedTourMinHtml(current.tour, pred.gte5)}</td>
+          <td>${estimatedTourMaxHtml(current.tour, pred.gte5)}</td>
+        </tr>
+        <tr>
+          <td class="rose"><b>>= x20</b></td>
+          <td>${pct(theory.gte20)}</td>
+          <td>${pct(pred.gte20)}</td>
+          <td>${waitLabelHtml(pred.gte20)}</td>
+          <td>${estimatedTourMinHtml(current.tour, pred.gte20)}</td>
+          <td>${estimatedTourMaxHtml(current.tour, pred.gte20)}</td>
+        </tr>
+      `;
+
+      const historyBody = document.getElementById("historyBody");
+      historyBody.innerHTML = "";
+      session.forEach(row => {
+        const diff = (Number.isFinite(row.observed) && row.exact !== Infinity) ? (row.observed - row.exact) : null;
+        historyBody.innerHTML += `
+          <tr>
+            <td>${row.tour}</td>
+            <td class="mono">${row.decimal}</td>
+            <td>${fmtMult(row.exact)}</td>
+            <td>${colorizeLabel(row.classKey)}</td>
+            <td>${Number.isFinite(row.observed) ? row.observed.toFixed(2) + "x" : "—"}</td>
+            <td>${diff === null ? "—" : fmtDiff(diff)}</td>
+          </tr>
+        `;
+      });
     }
-</script>
+
+    document.getElementById("hex32").addEventListener("input", function () {
+      const val = parseHex32(this.value);
+      if (val !== null) {
+        document.getElementById("decimal").value = val;
+      }
+    });
+
+    if (session.length) {
+      render();
+    }
+  </script>
 </body>
 </html>
